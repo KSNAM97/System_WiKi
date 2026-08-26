@@ -21,19 +21,19 @@
 
 ## 💻 Shell Script
 
-* [변수 · 환경변수](shell/01-variables.md)
-* [Metacharacters](shell/02-metacharacters.md)
-* [조건문 (if · case)](shell/03-conditions.md)
-* [반복문 (for · while)](shell/04-loops.md)
-* [cron · crond](shell/05-cron.md)
-* [배열 · 위치 매개변수](shell/06-arrays-parameters.md)
+* [변수 · 환경변수](shell-script/01-variables.md)
+* [Metacharacters](shell-script/02-metacharacters.md)
+* [조건문 (if · case)](shell-script/03-conditions.md)
+* [반복문 (for · while)](shell-script/04-loops.md)
+* [cron · crond](shell-script/05-cron.md)
+* [배열 · 위치 매개변수](shell-script/06-arrays-parameters.md)
 
 ## 🗄️ Database (MariaDB)
 
-* [설치 · 계정 · 권한](database/01-setup.md)
-* [SQL 문법 · DDL · DML](database/02-sql-syntax.md)
-* [emp · dept 실습](database/03-emp-dept.md)
-* [실습 문제](database/practice.md)
+* [설치 · 계정 · 권한](database-mariadb/01-setup.md)
+* [SQL 문법 · DDL · DML](database-mariadb/02-sql-syntax.md)
+* [emp · dept 실습](database-mariadb/03-emp-dept.md)
+* [실습 문제](database-mariadb/practice.md)
 
 ## 🌐 HTML
 

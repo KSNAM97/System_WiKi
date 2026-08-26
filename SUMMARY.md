@@ -58,5 +58,7 @@
 * [Pod 개념 · livenessProbe](kubernetes/05-pod-concepts.md)
 * [Controller (RC·RS·Deploy·DS·SS·Job·CronJob)](kubernetes/06-controller.md)
 * [Service (ClusterIP · NodePort · LoadBalancer · ExternalName · Headless)](kubernetes/07-service.md)
+* [Readiness Probe](kubernetes/07-2-readiness-probe.md)
 * [Ingress (경로 기반 라우팅 · Ingress Controller)](kubernetes/08-ingress.md)
 * [Label · Label Selector · Node Label · nodeSelector](kubernetes/09-label.md)
+* [Pod Scheduling (nodeSelector · Affinity · Taint&Toleration · Cordon/Drain)](kubernetes/10-pod-scheduling.md)

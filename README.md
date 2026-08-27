@@ -13,4 +13,4 @@
 - **Docker** — 컨테이너 가상화, 이미지, 네트워크, Compose
 - **Kubernetes** — 클러스터 구성, Pod/Controller/Service/Ingress, Label
 
-왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동해서 참고하세요.
+왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

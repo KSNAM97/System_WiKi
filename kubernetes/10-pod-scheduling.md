@@ -529,7 +529,64 @@ NAME                          READY   STATUS    RESTARTS   AGE   IP           NO
 affinity-required-preferred   1/1    Running   0          71s   10.244.1.4   k8s-worker1   <none>            <none>
 ```
 
-required와 preferred를 동시에 만족하는 k8s-worker1(80점 아님, 여기선 70점)에 배치된다. 다음으로 여러 preferred 조건에 weight를 함께 부여하는 경우:
+required와 preferred를 동시에 만족하는 k8s-worker1(80점 아님, 여기선 70점)에 배치된다.
+
+동일한 조건을 Deployment로 replicas 5개까지 확장해도 결과는 같다.
+
+```yaml
+# step4-2-preferred.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: affinity-required-preferred
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: nginx-affinity
+  template:
+    metadata:
+      labels:
+        app: nginx-affinity
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: env
+                operator: In
+                values: [prod]
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 70
+            preference:
+              matchExpressions:
+              - key: region
+                operator: In
+                values: [seoul]
+      containers:
+      - name: nginx
+        image: nginx:1.29.1
+        ports:
+        - containerPort: 80
+```
+
+```bash
+[root@k8s-master ~]# kubectl  apply  -f  step4-2-preferred.yaml
+deployment.apps/affinity-required-preferred created
+
+[root@k8s-master ~]# kubectl  get  pods  -o  wide
+NAME                                          READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+affinity-required-preferred-7c478d5784-4vnjf  1/1     Running   0          3s    10.244.1.5    k8s-worker1   <none>            <none>
+affinity-required-preferred-7c478d5784-fstvm  1/1     Running   0          3s    10.244.1.8    k8s-worker1   <none>            <none>
+affinity-required-preferred-7c478d5784-vg2xb  1/1     Running   0          3s    10.244.1.7    k8s-worker1   <none>            <none>
+affinity-required-preferred-7c478d5784-xqwld  1/1     Running   0          3s    10.244.1.6    k8s-worker1   <none>            <none>
+affinity-required-preferred-7c478d5784-zgsd2  1/1     Running   0          3s    10.244.1.9    k8s-worker1   <none>            <none>
+
+[root@k8s-master ~]# kubectl  delete  -f  step4-2-preferred.yaml
+```
+
+5개 Pod 모두 required+preferred 조건을 동시에 만족하는 k8s-worker1에 배치된다. 다음으로 여러 preferred 조건에 weight를 함께 부여하는 경우:
 
 ```yaml
 # step4-3-preferred.yaml
@@ -582,6 +639,126 @@ spec:
 - k8s-worker3: env=prod(required 통과) + region=seoul(+50) + disk=hdd(+0) = 총점 50
 
 우선순위는 worker1(80) > worker3(50) > worker2(30)이며, Pod는 가장 높은 점수인 k8s-worker1에 우선적으로 생성된다. worker1의 리소스가 부족해지면 다음으로 점수가 높은 worker3에 생성된다.
+
+**EX5) Control-Plane(Master)을 임시 Worker Node로 활용**
+
+```bash
+# Control-Plane(Master)에서 Taint 확인
+[root@k8s-master ~]# kubectl  describe  nodes  k8s-master  | grep  Taint
+Taints:             node-role.kubernetes.io/control-plane:NoSchedule
+
+# -i 옵션으로 대/소문자 구분 없이 확인
+[root@k8s-master ~]# kubectl  describe  nodes  k8s-master  | grep -i  taint
+Taints:             node-role.kubernetes.io/control-plane:NoSchedule
+```
+
+Control-Plane에는 Taint가 설정되어 있기 때문에 Pod가 생성되지 않는다(`control-plane:NoSchedule`). k8s-worker1/k8s-worker2는 Taint가 없다(`Taints: <none>`).
+
+```bash
+# Control-Plane(Master)의 Taint를 삭제
+[root@k8s-master ~]# kubectl  taint  node  k8s-master  node-role.kubernetes.io/control-plane-
+node/k8s-master untainted
+
+[root@k8s-master ~]# kubectl  describe  nodes  k8s-master  | grep  Taint
+Taints:             <none>
+```
+
+```yaml
+# deploy-nginx-notaint.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-nginx
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.29.1
+```
+
+```bash
+[root@k8s-master ~]# kubectl  apply  -f  deploy-nginx-notaint.yaml
+deployment.apps/deploy-nginx created
+
+[root@k8s-master ~]# kubectl  get  pods  -o  wide
+NAME                           READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+deploy-nginx-5c68c45fb6-9d8qr  1/1     Running   0          43s   10.244.0.28   k8s-master    <none>            <none>
+deploy-nginx-5c68c45fb6-kkch2  1/1     Running   0          43s   10.244.1.13   k8s-worker1   <none>            <none>
+deploy-nginx-5c68c45fb6-ps2d8  1/1     Running   0          43s   10.244.1.14   k8s-worker1   <none>            <none>
+deploy-nginx-5c68c45fb6-zkvlh  1/1     Running   0          43s   10.244.2.5    k8s-worker2   <none>            <none>
+deploy-nginx-5c68c45fb6-zsvkx  1/1     Running   0          43s   10.244.2.4    k8s-worker2   <none>            <none>
+```
+
+Taint를 제거하면 Master에도 Pod가 배치된다. 리소스 부족으로 Worker Node를 추가할 수 없는 경우 Master를 임시 Worker Node로 사용할 수 있다.
+
+```bash
+# Control-Plane(Master)에 다시 Taint 설정 (Taint : Key=Value:Effect)
+[root@k8s-master ~]# kubectl  taint  node  k8s-master  node-role.kubernetes.io/control-plane:NoSchedule
+node/k8s-master tainted
+```
+
+Taint의 원본 설정은 `node-role.kubernetes.io/control-plane:NoSchedule` (Key:Effect)이며, Taint는 Value를 생략할 수 있다.
+
+```bash
+[root@k8s-master ~]# kubectl  describe  nodes  k8s-master  | grep Taint
+Taints:             node-role.kubernetes.io/control-plane:NoSchedule
+
+# 다시 Taint를 설정해도 기존에 생성된 Pod는 삭제되거나 이동되지 않는다
+[root@k8s-master ~]# kubectl  get  pods  -o  wide
+NAME                           READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+deploy-nginx-5c68c45fb6-9d8qr  1/1     Running   0          43s   10.244.0.28   k8s-master    <none>            <none>
+deploy-nginx-5c68c45fb6-kkch2  1/1     Running   0          43s   10.244.1.13   k8s-worker1   <none>            <none>
+deploy-nginx-5c68c45fb6-ps2d8  1/1     Running   0          43s   10.244.1.14   k8s-worker1   <none>            <none>
+deploy-nginx-5c68c45fb6-zkvlh  1/1     Running   0          43s   10.244.2.5    k8s-worker2   <none>            <none>
+deploy-nginx-5c68c45fb6-zsvkx  1/1     Running   0          43s   10.244.2.4    k8s-worker2   <none>            <none>
+
+[root@k8s-master ~]# kubectl  delete  pods  deploy-nginx-5c68c45fb6-9d8qr
+pod "deploy-nginx-5c68c45fb6-9d8qr" deleted from default namespace
+
+[root@k8s-master ~]# kubectl  get  pods  -o  wide
+NAME                           READY   STATUS    RESTARTS   AGE     IP            NODE          NOMINATED NODE   READINESS GATES
+deploy-nginx-5c68c45fb6-jkn76  1/1     Running   0          2s      10.244.2.6    k8s-worker2   <none>            <none>
+deploy-nginx-5c68c45fb6-kkch2  1/1     Running   0          8m58s   10.244.1.13   k8s-worker1   <none>            <none>
+deploy-nginx-5c68c45fb6-ps2d8  1/1     Running   0          8m58s   10.244.1.14   k8s-worker1   <none>            <none>
+deploy-nginx-5c68c45fb6-zkvlh  1/1     Running   0          8m58s   10.244.2.5    k8s-worker2   <none>            <none>
+deploy-nginx-5c68c45fb6-zsvkx  1/1     Running   0          8m58s   10.244.2.4    k8s-worker2   <none>            <none>
+```
+
+삭제된 Master의 Pod가 다시 Master로 스케줄되지 않고 k8s-worker2로 대체 생성된다.
+
+```bash
+# Deployment로 Pod를 10개로 증가
+[root@k8s-master ~]# kubectl  scale  deployment  deploy-nginx  --replicas=10
+deployment.apps/deploy-nginx scaled
+
+# Pod를 증가시켜도 Master에는 Pod가 다시 생성되지 않는다
+[root@k8s-master ~]# kubectl  get  pods  -o  wide
+NAME                           READY   STATUS    RESTARTS   AGE    IP            NODE
+deploy-nginx-5c68c45fb6-f2842  1/1     Running   0          14s    10.244.1.17   k8s-worker1
+deploy-nginx-5c68c45fb6-gc8lp  1/1     Running   0          14s    10.244.2.7    k8s-worker2
+deploy-nginx-5c68c45fb6-jkn76  1/1     Running   0          2m10s  10.244.2.6    k8s-worker2
+deploy-nginx-5c68c45fb6-kkch2  1/1     Running   0          11m    10.244.1.13   k8s-worker1
+deploy-nginx-5c68c45fb6-kqpmv  1/1     Running   0          14s    10.244.1.16   k8s-worker1
+deploy-nginx-5c68c45fb6-n5879  1/1     Running   0          14s    10.244.1.15   k8s-worker1
+deploy-nginx-5c68c45fb6-ps2d8  1/1     Running   0          11m    10.244.1.14   k8s-worker1
+deploy-nginx-5c68c45fb6-s7lmp  1/1     Running   0          14s    10.244.2.8    k8s-worker2
+deploy-nginx-5c68c45fb6-zkvlh  1/1     Running   0          11m    10.244.2.5    k8s-worker2
+deploy-nginx-5c68c45fb6-zsvkx  1/1     Running   0          11m    10.244.2.4    k8s-worker2
+
+[root@k8s-master ~]# kubectl  delete  deployments  deploy-nginx
+deployment.apps "deploy-nginx" deleted from default namespace
+```
+
+재-Taint 이후에는 새로 생성되는 Pod가 Master에 스케줄되지 않는다 — 임시로 Taint를 제거해 Master를 Worker처럼 활용한 뒤, 다시 Taint를 설정하면 정상적인 Control-Plane 상태로 돌아온다.
 
 ## Pod Affinity 실습
 

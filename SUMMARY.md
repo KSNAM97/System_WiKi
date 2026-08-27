@@ -62,3 +62,4 @@
 * [Ingress (경로 기반 라우팅 · Ingress Controller)](kubernetes/08-ingress.md)
 * [Label · Label Selector · Node Label · nodeSelector](kubernetes/09-label.md)
 * [Pod Scheduling (nodeSelector · Affinity · Taint&Toleration · Cordon/Drain)](kubernetes/10-pod-scheduling.md)
+* [Storage (Volume · PV/PVC · StorageClass · NFS · Dynamic Provisioning)](kubernetes/11-storage.md)

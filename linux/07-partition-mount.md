@@ -119,66 +119,40 @@ Partition은 **주 파티션(Primary Partition)**, **확장 파티션(Extend Par
 
 ### 파티션 구성 예시
 
-```
-EX1) 2개의 Partiton이 필요한 환경
+**EX1) 파티션 2개가 필요한 환경**
 
-	|     P	|      P	|
+| 구성 | 설명 |
+|---|---|
+| Primary + Primary | Primary 2개만 사용 (Extended 불필요) |
+| Primary + Extended(Logical 1개) | Primary 1개 + Extended 안에 Logical 1개 |
+| Extended(Logical 2개) | Extended 안에 Logical 2개 |
 
+**EX2) 파티션 3개가 필요한 환경**
 
-	|     P	|      L	|
-		-----E----
+| 구성 | 설명 |
+|---|---|
+| Primary + Primary + Primary | Primary 3개만 사용 (Extended 불필요) |
+| Primary + Primary + Extended(Logical 1개) | Primary 2개 + Extended 안에 Logical 1개 |
+| Primary + Extended(Logical 2개) | Primary 1개 + Extended 안에 Logical 2개 |
+| Extended(Logical 3개) | Extended 안에 Logical 3개 |
 
-	|     L	|      L	|
-	---------E---------
+**EX3) 파티션 4개가 필요한 환경**
 
+| 구성 | 설명 |
+|---|---|
+| Primary + Primary + Primary + Primary | Primary 4개만 사용 (Extended 불필요) |
+| Primary + Primary + Extended(Logical 2개) | Primary 2개 + Extended 안에 Logical 2개 |
+| Primary + Extended(Logical 3개) | Primary 1개 + Extended 안에 Logical 3개 |
 
+**EX4) 파티션 5개가 필요한 환경**
 
+| 구성 | 설명 |
+|---|---|
+| Primary + Primary + Primary + Extended(Logical 2개) | Primary 3개 + Extended 안에 Logical 2개 |
+| Primary + Primary + Extended(Logical 3개) | Primary 2개 + Extended 안에 Logical 3개 |
+| Primary + Extended(Logical 4개) | Primary 1개 + Extended 안에 Logical 4개 |
 
-EX2) 3개의 Partiton이 필요한 환경
-
-
-	|     P	|      P	|      P	|
-
-
-	|     P	|     P	|      L	|
-			-----E----
-
-	|     P	|     L	|      L	|
-		---------E---------
-
-	|     L	|     L	|      L	|
-	--------------E-------------
-
-
-EX3) 4개의 Partiton이 필요한 환경
-
-	|     P	|     P	|     P	|     P	|
-
-
-	|     P	|     P	|     L	|     L	|
-                           	---------E---------
-
-	|     P	|     L	|     L	|     L	|
-                           -------------E--------------
-
-
-
-
-
-EX4) 5개의 Partiton이 필요한 환경
-
-	|     P	|     P	|     P	|     L	|     L	|
-                           		---------E---------
-
-	|     P	|     P	|     L	|     L	|     L	|
-                           	-------------E--------------
-
-	|     P	|     L	|     L	|     L	|     L	|
-                           ------------------E------------------
-
-	|     P	|     P	|     P	|     P	|     L	|	<----- X (Partiton은 4개까지만 사용가능)
-                           			----E----
-```
+> **주의:** `Primary + Primary + Primary + Primary + Logical`(Primary 4개 + Logical 1개) 구성은 **불가능**하다. Primary는 최대 4개까지만 슬롯을 사용할 수 있으므로, Primary를 4개 모두 채우면 Extended를 만들 자리가 없어 5번째 파티션(Logical)을 추가할 수 없다. 5개 이상이 필요하면 반드시 Primary 중 하나를 Extended로 바꿔 그 안에 Logical을 만들어야 한다.
 
 **정리**: Partition은 시스템 안정성·보안·리소스 관리를 위해 분리하며, **Primary(최대 4개) → Extended(1개, 컨테이너) → Logical(5번부터, 무제한)** 구조로 4개 제한을 우회한다.
 
@@ -257,36 +231,36 @@ EX4) 5개의 Partiton이 필요한 환경
 ## Partition 구성 (fdisk 실습)
 
 ```bash
-[root@localhost ~]# fdisk  -l			<---- 현재 구성된 Partiton 확인
+[root@localhost ~]# fdisk  -l			<---- 현재 구성된 Partition 확인
 
-[root@localhost ~]# fdisk  [경로/장치명]	<---- Partiton 구성
+[root@localhost ~]# fdisk  [경로/장치명]	<---- Partition 구성
 ```
 
 - **Partition을 나누기전 옵션**
-  - `-p` : 설정한 Partiton을 확인하는 옵션
-  - `-w` : 설정한 Partiton을 저정하는 옵션
-  - `-d` : 설정한 Partiton을 삭제하는 옵션
+  - `-p` : 설정한 Partition을 확인하는 옵션
+  - `-w` : 설정한 Partition을 저정하는 옵션
+  - `-d` : 설정한 Partition을 삭제하는 옵션
 
 - **Partition을 구성하는 옵션**
-  - `-p` : 설정된 Partiton을 확인하는 옵션
+  - `-p` : 설정된 Partition을 확인하는 옵션
   - `-n` : 새로운 파티션을 생성하는 옵션
-  - `-p` : Primary Partiton을 구성하는 옵션 (주 파티션)
-  - `-e` : Extend Partiton을 구성하는 옵션 (확장 파티션)
-  - `-l` : Logical Partiton을 구성하는 옵션 (논리 파티션)
+  - `-p` : Primary Partition을 구성하는 옵션 (주 파티션)
+  - `-e` : Extend Partition을 구성하는 옵션 (확장 파티션)
+  - `-l` : Logical Partition을 구성하는 옵션 (논리 파티션)
 
 ```bash
-[root@localhost ~]# fisk  -l	 : Partiton 정보 확인
+[root@localhost ~]# fisk  -l	 : Partition 정보 확인
 
 # df (disk free)
 # 파일시스템 관점에서 "현재 마운트된 것" 위주로 보여줌
-[root@localhost ~]# df	: Partiton , Memory , mount경로 정보 확인  (mount까지 설정된 정보만 확인 가능)
+[root@localhost ~]# df	: Partition , Memory , mount경로 정보 확인  (mount까지 설정된 정보만 확인 가능)
 [root@localhost ~]# df -h	: 사람이 읽기 쉬운 단위(GB, MB)로 출력
 [root@localhost ~]# df -T	: 파일시스템 종류도 함께 표시 (ext4, xfs 등)
 [root@localhost ~]# df -Th	: 파일시스템 종류도 함께 표시하면서 사람이 읽기 쉬운 단위로 출력
 
 #lsblk (list block devices)
 # 디스크/파티션 관점에서 "블록 장치 전체"를 보여준다. (마운트되지 않은 파티션도 확인된다.)
-[root@localhost ~]# lsblk	: Partiton , Memory , mount경로 정보 확인
+[root@localhost ~]# lsblk	: Partition , Memory , mount경로 정보 확인
 [root@localhost ~]# lsblk -f	: 파일시스템 정보, LABEL, UUID 표시
 ```
 
@@ -308,7 +282,7 @@ brw-rw----  1 root disk      8,  48  7월 10 13:04 sdd
 brw-rw----  1 root disk      8,  64  7월 10 13:04 sde
 ```
 
-### 2) 'fdisk' 명령어를 사용하여 Partiton을 분할하여 사용한다.
+### 2) 'fdisk' 명령어를 사용하여 Partition을 분할하여 사용한다.
 
 **EX1-2) '/dev/sdb'의 100G 용량중 주 파티션으로 30G를 할당해야한다.**
 
@@ -334,7 +308,7 @@ Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-209715199, default 209715199
 
 Created a new partition 1 of type 'Linux' and of size 30 GiB.t
 
-Command (m for help): p			<---- 설정한 Partiton 확인
+Command (m for help): p			<---- 설정한 Partition 확인
 Disk /dev/sdb: 100 GiB, 107374182400 bytes, 209715200 sectors
 Disk model: VMware Virtual S
 Units: sectors of 1 * 512 = 512 bytes
@@ -346,7 +320,7 @@ Disk identifier: 0x266a5e81
 Device     Boot Start       End Sectors    Size Id Type
 /dev/sdb1        2048 62916607 62914560  30G 83 Linux
 
-Command (m for help): w			<---- 설정한 Partiton 저장
+Command (m for help): w			<---- 설정한 Partition 저장
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
@@ -360,7 +334,7 @@ brw-rw----  1 root disk      8,   0  7월 10 13:04 sda
 brw-rw----  1 root disk      8,   1  7월 10 13:04 sda1
 brw-rw----  1 root disk      8,   2  7월 10 13:04 sda2
 brw-rw----  1 root disk      8,  16  7월 10 14:42 sdb
-brw-rw----  1 root disk      8,  17  7월 10 14:42 sdb1	<---- sdb Partiton 확인
+brw-rw----  1 root disk      8,  17  7월 10 14:42 sdb1	<---- sdb Partition 확인
 brw-rw----  1 root disk      8,  32  7월 10 13:04 sdc
 brw-rw----  1 root disk      8,  48  7월 10 13:04 sdd
 brw-rw----  1 root disk      8,  64  7월 10 13:04 sde
@@ -447,7 +421,7 @@ sde     	8:64   0  100G  0 disk
 sr0    	 11:0    1  7.9G  0 rom
 ```
 
-**EX1-4) '/dev/sdb'의 100G 용량중 주 파티션으로 할당한 20G Partiton을 삭제해야한다.**
+**EX1-4) '/dev/sdb'의 100G 용량중 주 파티션으로 할당한 20G Partition을 삭제해야한다.**
 
 ```bash
 Welcome to fdisk (util-linux 2.37.4).
@@ -455,12 +429,12 @@ Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
 
-Command (m for help): d		<---- Partiton 삭제
+Command (m for help): d		<---- Partition 삭제
 Partition number (1,2, default 2): 2	<---- 2번 주 파티션
 
 Partition 2 has been deleted.
 
-Command (m for help): p		<---- Partiton 삭제 확인
+Command (m for help): p		<---- Partition 삭제 확인
 Disk /dev/sdb: 100 GiB, 107374182400 bytes, 209715200 sectors
 Disk model: VMware Virtual S
 Units: sectors of 1 * 512 = 512 bytes
@@ -484,7 +458,7 @@ brw-rw----  1 root disk      8,   0  7월 10 13:04 sda
 brw-rw----  1 root disk      8,   1  7월 10 13:04 sda1
 brw-rw----  1 root disk      8,   2  7월 10 13:04 sda2
 brw-rw----  1 root disk      8,  16  7월 10 14:42 sdb
-brw-rw----  1 root disk      8,  17  7월 10 14:42 sdb1	<---- sdb Partiton 확인
+brw-rw----  1 root disk      8,  17  7월 10 14:42 sdb1	<---- sdb Partition 확인
 brw-rw----  1 root disk      8,  32  7월 10 13:04 sdc
 brw-rw----  1 root disk      8,  48  7월 10 13:04 sdd
 brw-rw----  1 root disk      8,  64  7월 10 13:04 sde
@@ -589,7 +563,7 @@ sdd
 sde
 ```
 
-**EX1-6) 아래의 조건에 맞게 Partiton을 구성하시오**
+**EX1-6) 아래의 조건에 맞게 Partition을 구성하시오**
 - '/dev/sdb'의 100G 용량중 논리 파티션으로 20G를 할당해야한다.
 - '/dev/sdb'의 100G 용량중 논리 파티션으로 20G를 할당해야한다.
 - '/dev/sdb'의 100G 용량중 논리 파티션으로 10G를 할당해야한다.
@@ -683,7 +657,7 @@ sdd      	  8:48     0   100G  	0 	disk
 sde      	  8:64     0   100G  	0 	disk
 ```
 
-**EX1-7) 설정한 모든 Partiton을 삭제해야한다.**
+**EX1-7) 설정한 모든 Partition을 삭제해야한다.**
 
 ```bash
 [root@Server-A ~]# fdisk  /dev/sdb
@@ -729,13 +703,13 @@ Syncing disks.
 [root@Server-A ~]#
 ```
 
-**EX2) 100G의 '/dev/sdb'를 아래의 조건에 맞게 Partiton을 구성하시오**
-- 30GB 용량의 Partiton을 구성하시오
-- 30GB 용량의 Partiton을 구성하시오
-- 10GB 용량의 Partiton을 구성하시오
-- 10GB 용량의 Partiton을 구성하시오
-- 10GB 용량의 Partiton을 구성하시오
-- 10GB 용량의 Partiton을 구성하시오
+**EX2) 100G의 '/dev/sdb'를 아래의 조건에 맞게 Partition을 구성하시오**
+- 30GB 용량의 Partition을 구성하시오
+- 30GB 용량의 Partition을 구성하시오
+- 10GB 용량의 Partition을 구성하시오
+- 10GB 용량의 Partition을 구성하시오
+- 10GB 용량의 Partition을 구성하시오
+- 10GB 용량의 Partition을 구성하시오
 
 ```bash
 [root@Server-A ~]# fdisk  /dev/sdb
@@ -823,13 +797,13 @@ sda      	  8:0    	0  20G  	0  disk
 ├─sda1	  8:1    	0  4G  	0  part 	[SWAP]
 └─sda2	  8:2    	0  16G  	0  part 	/
 sdb      	  8:16   	0  100G  	0  disk
-├─sdb1	  8:17   	0  30G  	0  part	<---- Primary Partiton
-├─sdb2	  8:18   	0  30G  	0  part	<---- Primary Partiton
-├─sdb3	  8:19   	0  1K  	0  part	<---- Extend Partiton
-├─sdb5	  8:21   	0  10G  	0  part	<---- Logical Partiton
-├─sdb6	  8:22   	0  10G  	0  part	<---- Logical Partiton
-├─sdb7	  8:23   	0  10G  	0  part	<---- Logical Partiton
-└─sdb8	  8:24   	0  10G  	0  part	<---- Logical Partiton
+├─sdb1	  8:17   	0  30G  	0  part	<---- Primary Partition
+├─sdb2	  8:18   	0  30G  	0  part	<---- Primary Partition
+├─sdb3	  8:19   	0  1K  	0  part	<---- Extend Partition
+├─sdb5	  8:21   	0  10G  	0  part	<---- Logical Partition
+├─sdb6	  8:22   	0  10G  	0  part	<---- Logical Partition
+├─sdb7	  8:23   	0  10G  	0  part	<---- Logical Partition
+└─sdb8	  8:24   	0  10G  	0  part	<---- Logical Partition
 sdc      	  8:32   	0  100G  	0  disk
 sdd      	  8:48   	0  100G  	0  disk
 sde      	  8:64   	0  100G	0  disk

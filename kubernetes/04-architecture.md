@@ -349,6 +349,28 @@ kubectl get ns
 kubectl create namespace soldesk --dry-run=client -o yaml > soldesk-ns.yaml
 ```
 
+`-n`(`--namespace`)와 `--output`/`-o` 옵션이 같은 의미로 동작하는 것을 실제 Pod 생성/조회로 확인한다.
+
+```bash
+# 같은 의미
+[root@k8s-master ~]# kubectl  run  --image=nginx:latest webserver  --namespace  soldesk
+pod/pods created
+
+# 같은 의미
+[root@k8s-master ~]# kubectl  run  --image=nginx:latest webserver  -n soldesk
+pod/pods created
+
+# 같은 의미
+[root@k8s-master ~]# kubectl  get  pods  -n  soldesk  --output  wide
+NAME       READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+webserve   1/1     Running   0          27m   10.244.2.10   k8s-worker2   <none>            <none>
+
+# 같은 의미
+[root@k8s-master ~]# kubectl  get  pods  -n  soldesk  -o  wide
+NAME       READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+webserve   1/1     Running   0          27m   10.244.2.10   k8s-worker2   <none>            <none>
+```
+
 ---
 
 ## 클러스터 노드 및 네임스페이스 확인
@@ -599,6 +621,30 @@ pod "studyweb" deleted from studydesk namespace
 -작업시 namespace를 변경하기위해서 -n  soldesk (--namespace) 명령어를 계속 사용해야 한다.
 
 -변경 방법: k8s의 config 파일에 namespace를 등록해야 한다.
+
+```bash
+[root@k8s-master ~]# kubectl  config  --help
+Modify kubeconfig files using subcommands like "kubectl config set
+current-context my-context".
+# ~~~~~~~~~~ 중간 생략 ~~~~~~~~~~
+Available Commands:
+  current-context      Display the current-context
+  delete-cluster       kubeconfig에서 지정된 클러스터를 삭제합니다
+  delete-context       kubeconfig에서 지정된 컨텍스트를 삭제합니다
+  delete-user          Delete the specified user from the kubeconfig
+  get-clusters         kubeconfig에 정의된 클러스터를 표시합니다
+  get-contexts         하나 또는 여러 컨텍스트를 설명합니다
+  get-users            Display users defined in the kubeconfig
+  rename-context       Rename a context from the kubeconfig file
+  set                  Set an individual value in a kubeconfig file
+  set-cluster          Set a cluster entry in kubeconfig
+  set-context          Set a context entry in kubeconfig
+  set-credentials      Set a user entry in kubeconfig
+  unset                Unset an individual value in a kubeconfig file
+  use-context          Set the current-context in a kubeconfig file
+  view                 병합된 kubeconfig 설정 또는 지정된 kubeconfig 파일을 표시합니다
+# ~~~~~~~~~~ 중간 생략 ~~~~~~~~~~
+```
 
 ```bash
 [root@k8s-master ~]# kubectl  config  view

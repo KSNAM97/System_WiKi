@@ -1,10 +1,5 @@
 # Docker 00 — Docker 설치
 
-## 목차
-
-1. [Ubuntu에 Docker 설치](#ubuntu에-docker-설치)
-2. [Rocky Linux에 Docker 설치](#rocky-linux에-docker-설치)
-
 참고: https://docs.docker.com/ , https://docs.docker.com/desktop/setup/install/linux/
 
 ## Ubuntu에 Docker 설치

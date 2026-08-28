@@ -1,17 +1,5 @@
 # 도커 컨테이너
 
-## 목차
-
-1. [컨테이너란(Container)?](#컨테이너란container)
-2. [컨테이너 만들기](#컨테이너-만들기)
-3. [Dockerfile 문법](#dockerfile-문법)
-4. [Docker Image 생성 실습 (Node.js)](#docker-image-생성-실습-nodejs)
-5. [Rocky Linux 기반 Web Server 실습](#rocky-linux-기반-web-server-실습)
-6. [Ubuntu Linux 기반 Web Server 실습](#ubuntu-linux-기반-web-server-실습)
-7. [Dockerfile을 이용한 MySQL Image 생성](#dockerfile을-이용한-mysql-image-생성)
-8. [Image 배포하기](#image-배포하기)
-9. [Docker Registry](#docker-registry)
-
 # 컨테이너란(Container)?
 
 -**컨테이너**는 애플리케이션과 그 실행 환경을 하나로 묶어 배포할 수 있는 단위다. 이미지 하나로 여러 서버에 동일한 실행 환경을 재현하거나, 서비스별로 컨테이너를 나누어 독립적으로 개발·배포·확장할 수 있어 MSA 구조에서 특히 널리 활용된다.

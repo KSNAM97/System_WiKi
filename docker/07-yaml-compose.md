@@ -1,24 +1,5 @@
 # Docker 07 — YAML 문법 & Docker Compose
 
-## 목차
-
-1. [YAML 문법](#yaml-문법)
-   1. [YAML의 문법](#yaml의-문법)
-   2. [YAML에서 쓰이는 데이터 타입](#yaml에서-쓰이는-데이터-타입)
-   3. [줄바꿈과 여러 줄 문자열 쓰기](#줄바꿈과-여러-줄-문자열-쓰기)
-   4. [주석(comment)](#주석comment)
-   5. [앵커(&)와 별칭(*)](#앵커와-별칭)
-2. [Docker Compose](#docker-compose)
-   1. [Docker Compose 개요](#docker-compose-개요)
-   2. [step1: nginx 단일 컨테이너](#step1-nginx-단일-컨테이너)
-   3. [step1: httpd 단일 컨테이너](#step1-httpd-단일-컨테이너)
-   4. [step1: MySQL Pull](#step1-mysql-pull)
-   5. [step1: nginx with Dockerfile + build](#step1-nginx-with-dockerfile--build)
-   6. [step2: nginx 2개 컨테이너](#step2-nginx-2개-컨테이너)
-   7. [step2: nginx 2개 컨테이너 (Dockerfile build)](#step2-nginx-2개-컨테이너-dockerfile-build)
-   8. [step2: MySQL + phpMyAdmin 2-container](#step2-mysql--phpmyadmin-2-container)
-   9. [step3-1: Web Server 2대 + Reverse Proxy](#step3-1-web-server-2대--reverse-proxy)
-
 # YAML 문법
 
 ## YAML의 문법

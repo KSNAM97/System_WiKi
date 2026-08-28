@@ -1,34 +1,5 @@
 # K8s-04 쿠버네티스 아키텍처
 
-## 목차
-
-1. [쿠버네티스 전체 구조 개요](#쿠버네티스-전체-구조-개요)
-2. [마스터(Control Plane) 컴포넌트](#마스터control-plane-컴포넌트)
-3. [워커 노드(Node) 컴포넌트](#워커-노드node-컴포넌트)
-4. [전체 구성요소](#전체-구성요소)
-5. [전체 배포 흐름 (0~6단계)](#전체-배포-흐름-06단계)
-6. [namespace](#namespace)
-7. [클러스터 노드 및 네임스페이스 확인](#클러스터-노드-및-네임스페이스-확인)
-8. [YAML로 Pod 생성](#yaml로-pod-생성)
-9. [- 와 -- 옵션 차이](#--와---옵션-차이)
-10. [namespace에 pod 생성](#namespace에-pod-생성)
-11. [Base namespace 변경 (Context 관리)](#base-namespace-변경-context-관리)
-12. [커스텀 Nginx 이미지 생성 및 Kubernetes 배포 실습](#커스텀-nginx-이미지-생성-및-kubernetes-배포-실습)
-13. [왜 자원 제한이 필요한가](#왜-자원-제한이-필요한가)
-14. [ResourceQuota](#resourcequota)
-15. [LimitRange](#limitrange)
-16. [EX1) 베이스라인 만들기](#ex1-베이스라인-만들기)
-17. [EX2) 파드 개수 제한](#ex2-파드-개수-제한)
-18. [EX3-1) requests.cpu 총합 제한](#ex3-1-requestscpu-총합-제한)
-19. [EX3-2) requests.memory 총합 제한](#ex3-2-requestsmemory-총합-제한)
-20. [Limits-EX1) limits.cpu / limits.memory 총합 제한](#limits-ex1-limitscpu--limitsmemory-총합-제한)
-21. [Limits-EX2) resources 없는 파드 생성 금지 확인](#limits-ex2-resources-없는-파드-생성-금지-확인)
-22. [EX1) LimitRange 최소값 제한](#ex1-limitrange-최소값-제한)
-23. [EX2) LimitRange min/max 범위 강제](#ex2-limitrange-minmax-범위-강제)
-24. [Limit-TEST) CPU / Memory Limit 초과 동작 확인](#limit-test-cpu--memory-limit-초과-동작-확인)
-
----
-
 ## 쿠버네티스 전체 구조 개요
 
 쿠버네티스 클러스터의 전체 골격을 먼저 살펴본다. 클러스터 구조를 이해하면 API Server부터 kubelet까지 이어지는 배포 흐름을 추적할 수 있고, Namespace로 dev/prod 등 환경을 분리하거나 ResourceQuota·LimitRange로 자원 사용을 통제하는 데도 이 구조에 대한 이해가 바탕이 된다.

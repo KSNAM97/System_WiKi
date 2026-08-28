@@ -1,12 +1,5 @@
 # DB 04 — 제약조건 (Constraint)
 
-## 목차
-
-1. [제약조건이란](#제약조건이란)
-2. [기본키 (Primary Key, PK)](#기본키-primary-key-pk)
-3. [고유키 (Unique Key, UNIQUE)](#고유키-unique-key-unique)
-4. [외래키 (Foreign Key, FK)](#외래키-foreign-key-fk)
-
 ## 제약조건이란
 
 - 테이블에 들어가는 데이터를 규칙으로 관리하는 장치이다.

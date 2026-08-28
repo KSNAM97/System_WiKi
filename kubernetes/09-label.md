@@ -1,49 +1,5 @@
 # 쿠버네티스 Label
 
-## 목차
-
-1. [Label이란?](#label이란)
-2. [Label의 기본 구조](#label의-기본-구조)
-3. [Label과 Name의 차이](#label과-name의-차이)
-4. [Label 확인하기](#label-확인하기)
-5. [특정 Label을 가진 오브젝트 조회](#특정-label을-가진-오브젝트-조회)
-6. [여러 Label을 이용한 조회](#여러-label을-이용한-조회)
-7. [Label 추가, 변경, 삭제](#label-추가-변경-삭제)
-8. [Label Selector](#label-selector)
-9. [Service에서 Label 사용](#service에서-label-사용)
-10. [Deployment에서 Label 사용](#deployment에서-label-사용)
-11. [Label과 Annotation의 차이](#label과-annotation의-차이)
-12. [실습: 10개의 Pod 생성](#실습-10개의-pod-생성)
-13. [Label 확인 실습](#label-확인-실습)
-14. [AND 조건 실습](#and-조건-실습)
-15. [번외 OR 검색](#번외-or-검색)
-16. [Label 변경 실습](#label-변경-실습)
-17. [Label 삭제 실습](#label-삭제-실습)
-18. [Label Selector와 Service 실습](#label-selector와-service-실습)
-19. [Node Label이란?](#node-label이란)
-20. [Node Label을 사용하는 이유](#node-label을-사용하는-이유)
-21. [Node Label의 기본 구조](#node-label의-기본-구조)
-22. [특정 Label을 가진 Node 조회](#특정-label을-가진-node-조회)
-23. [Node Label의 가장 중요한 목적](#node-label의-가장-중요한-목적)
-24. [Node Label과 Pod Label의 차이](#node-label과-pod-label의-차이)
-25. [Node Label과 nodeSelector](#node-label과-nodeselector)
-26. [Node Label을 이용한 배치 과정](#node-label을-이용한-배치-과정)
-27. [Node Label 변경](#node-label-변경)
-28. [Node Label 삭제](#node-label-삭제)
-29. [여러 Node Label 사용](#여러-node-label-사용)
-30. [Node Label의 대표적인 활용 예](#node-label의-대표적인-활용-예)
-31. [Node Label 실습](#node-label-실습)
-32. [Worker Node에 Label 추가](#worker-node에-label-추가)
-33. [Label을 이용하여 Node 선택](#label을-이용하여-node-선택)
-34. [Node에 두 번째 Label 추가](#node에-두-번째-label-추가)
-35. [여러 Label을 이용해 Node 선택](#여러-label을-이용해-node-선택)
-36. [Node Label을 사용하여 Pod를 특정 Node에 배치](#node-label을-사용하여-pod를-특정-node에-배치)
-37. [HDD Node에 Pod 배치](#hdd-node에-pod-배치)
-38. [Node Label 변경 실습](#node-label-변경-실습)
-39. [문제 상황 해결](#문제-상황-해결)
-
----
-
 ## Label이란?
 
 **Label**은 쿠버네티스의 오브젝트(Pod, Service, Deployment 등)를 분류하고 식별하기 위한 가장 기본적인 메타데이터 개념이며, Service나 Deployment가 관리할 Pod를 찾거나 nodeSelector로 Pod를 특정 Node에 배치할 때 이 Label을 기준으로 삼는다.

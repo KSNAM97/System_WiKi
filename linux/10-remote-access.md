@@ -1,12 +1,5 @@
 # Linux 10 — 원격 접속: SSH · SCP · vsFTP · SFTP
 
-## 목차
-
-1. [SSH / Telnet / 프로세스 / 데몬 (10-1)](#ssh-telnet-프로세스-데몬-10-1)
-2. [SCP (Secure Copy) (10-2)](#scp-secure-copy-10-2)
-3. [vsFTP (10-3)](#vsftp-10-3)
-4. [SFTP (10-4)](#sftp-10-4)
-
 ## SSH / Telnet / 프로세스 / 데몬 (10-1)
 
 #### SSH / Telnet / 프로세스 / 데몬 정리

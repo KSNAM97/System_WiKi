@@ -1,14 +1,5 @@
 # Docker 05 — Docker Container Storage
 
-## 목차
-
-1. [Docker Container Storage 개요](#docker-container-storage-개요)
-2. [Docker Container Storage 실습 (MySQL)](#docker-container-storage-실습-mysql)
-3. [Nginx 웹 로그를 이용한 데이터 영구 보존 실습](#nginx-웹-로그를-이용한-데이터-영구-보존-실습)
-4. [웹데이터 Read-Only 서비스](#웹데이터-read-only-서비스)
-5. [텍스트 파일 작성 + Nginx autoindex 설정](#텍스트-파일-작성--nginx-autoindex-설정)
-6. [2대의 Web 서버가 1대의 DB를 공유하는 실습](#2대의-web-서버가-1대의-db를-공유하는-실습)
-
 ## Docker Container Storage 개요
 
 - 도커 컨테이너는 이미지 + **쓰기 계층(write layer)**으로 구성되며, 이 쓰기 계층은 휘발성이므로 DB 데이터나 웹 로그처럼 영구히 보존해야 하는 데이터는 Volume이나 Bind Mount(`-v /dbdata:/var/lib/mysql` 등)로 분리해 컨테이너 밖에 저장해야 한다.

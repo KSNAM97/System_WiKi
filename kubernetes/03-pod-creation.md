@@ -1,12 +1,5 @@
 # K8s-03 쿠버네티스 Pod 생성
 
-## 목차
-
-1. [노드 확인](#노드-확인)
-2. [Kubernetes Pod 개념](#kubernetes-pod-개념)
-3. [Pod 생성](#pod-생성)
-4. [Deployment로 Pod 관리](#deployment로-pod-관리)
-
 ## 노드 확인
 
 Pod를 생성하기 전에 클러스터를 구성하는 **노드(Node)**의 상태를 먼저 확인한다. Pod는 `kubectl run`으로 즉시 만들어 간단히 확인할 수도 있고, 여러 개를 안정적으로 운영하며 장애 시 자동으로 복구되도록 Deployment로 관리할 수도 있다. `kubectl` 명령으로 노드 목록과 상세 정보를 조회할 수 있다.

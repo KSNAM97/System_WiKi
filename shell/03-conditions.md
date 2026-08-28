@@ -1,14 +1,5 @@
 # Shell Script 조건문 (Conditions)
 
-## 목차
-
-1. [expr, let (산술 연산)](#expr-let-산술-연산)
-2. [exit 코드 & test 명령](#exit-코드--test-명령)
-3. [조건문 (if/elif/else, case)](#조건문-ifelifelse-case)
-4. [조건문을 스크립트 파일로 작성하기](#조건문을-스크립트-파일로-작성하기)
-5. [read 명령어](#read-명령어)
-6. [case 문](#case-문)
-
 ## expr, let (산술 연산)
 
 ### expr (Expression evaluator)

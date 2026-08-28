@@ -1,18 +1,5 @@
 # K8s-08. Ingress (경로 기반 라우팅 · Ingress Controller · Canary Deployment)
 
-## 목차
-
-1. [Ingress](#ingress)
-2. [Ingress와 Ingress Controller의 관계](#ingress와-ingress-controller의-관계)
-3. [Ingress 동작과정 (예시)](#ingress-동작과정-예시)
-4. [ingress-nginx 설치](#ingress-nginx-설치)
-5. [soldeskweb 데모 실습 (webserver-demo)](#soldeskweb-데모-실습-webserver-demo)
-6. [강좌 페이지 만들기](#강좌-페이지-만들기)
-7. [로그인 / 회원가입 페이지 (auth)](#로그인--회원가입-페이지-auth)
-8. [정규표현식 기반 Ingress (ingress-html.yaml)](#정규표현식-기반-ingress-ingress-htmlyaml)
-9. [Canary Deployment](#canary-deployment)
-10. [Canary Deployment 실습](#canary-deployment-실습)
-
 ## Ingress
 
 **Ingress**는 외부에서 들어오는 HTTP/HTTPS 요청을 받아서, 규칙에 따라 내부의 여러 Service로 연결해주는 라우팅 규칙 집합이다. 서비스가 하나둘뿐이라면 NodePort나 LoadBalancer만으로도 충분하지만, 서비스가 여러 개로 늘어나 경로 기반 라우팅이나 HTTPS 인증서의 중앙 관리, 단일 진입점 구성이 필요해지면 Ingress를 사용한다.

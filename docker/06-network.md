@@ -1,13 +1,5 @@
 # Docker 06 — 컨테이너간 통신 (네트워크)
 
-## 목차
-
-1. [Container Network Model](#container-network-model)
-2. [포트 포워딩(port-forwarding)의 개념](#포트-포워딩port-forwarding의-개념)
-3. [컨테이너 생성 및 네트워크 확인](#컨테이너-생성-및-네트워크-확인)
-4. [컨테이너 포트 외부로 노출하기](#컨테이너-포트-외부로-노출하기)
-5. [user-defined bridge network](#user-defined-bridge-network)
-
 ## Container Network Model
 
 - 도커는 컨테이너를 생성할 때 네트워크를 자동으로 구성하며, 컨테이너 간 통신은 가상의 네트워크 구조를 통해 이뤄진다. 외부에서 컨테이너에 접근하려면 `-p`로 포트를 바인딩해야 하고, 컨테이너끼리 이름으로 통신하려면 기본 docker0 bridge 대신 user-defined bridge 네트워크를 만들어 연결해야 한다.

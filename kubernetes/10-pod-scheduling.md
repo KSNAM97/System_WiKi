@@ -2,30 +2,6 @@
 
 > Pod를 어느 Node에 배치할지 kube-scheduler가 결정하는 과정과, nodeSelector·Affinity/Anti-Affinity·Taint & Toleration·Cordon/Drain으로 배치를 직접 제어하는 방법을 정리한다.
 
-## 목차
-
-1. [Pod Scheduling 개념](#pod-scheduling-개념)
-2. [스케줄러가 Node를 선택하는 방식](#스케줄러가-node를-선택하는-방식)
-3. [배치 가능한 Node의 조건](#배치-가능한-node의-조건)
-4. [스케줄링을 직접 제어하는 대표 방법 4가지](#스케줄링을-직접-제어하는-대표-방법-4가지)
-5. [nodeSelector](#nodeselector)
-6. [Affinity / Anti-Affinity란](#affinity--anti-affinity란)
-7. [Node Affinity](#node-affinity)
-8. [Pod Affinity / Anti-Affinity](#pod-affinity--anti-affinity)
-9. [Node Affinity 실습](#node-affinity-실습)
-10. [Pod Affinity 실습](#pod-affinity-실습)
-11. [Pod Anti-Affinity 실습](#pod-anti-affinity-실습)
-12. [Taint & Toleration이란](#taint--toleration이란)
-13. [Taint의 기본 구조와 Effect](#taint의-기본-구조와-effect)
-14. [Toleration이란](#toleration이란)
-15. [Taint와 Node Affinity의 차이](#taint와-node-affinity의-차이)
-16. [Taint & Toleration 실습](#taint--toleration-실습)
-17. [Cordon & Drain이란](#cordon--drain이란)
-18. [Cordon과 Drain의 차이](#cordon과-drain의-차이)
-19. [Cordon & Drain 실습](#cordon--drain-실습)
-
----
-
 ## Pod Scheduling 개념
 
 Pod Scheduling은 Pod를 어느 Node(서버)에 올려서 실행할지 결정하는 과정이다. Pod는 그냥 만들어진다고 바로 실행되지 않으며, 반드시 배치될 Node가 결정되어야 한다. 클러스터 운영 중 자원이 부족하거나 특정 조건을 만족하는 Node가 없을 때 이 결정 과정에서 문제가 생길 수 있어, 이때는 이 결정을 담당하는 kube-scheduler(스케줄러)의 동작 방식을 이해해야 한다.

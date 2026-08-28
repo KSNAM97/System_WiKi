@@ -1,13 +1,5 @@
 # Linux 허가권 (Permission) / 소유권 (Ownership)
 
-## 목차
-
-1. [허가권 (Permission)](#허가권-permission)
-2. [소유권 (Ownership)](#소유권-ownership)
-3. [특수 권한 Umask](#특수-권한-umask)
-4. [특수 권한 (Set-UID / Set-GID / Sticky-bit)](#특수-권한-set-uid--set-gid--sticky-bit)
-5. [Set-GID](#set-gid)
-
 ## 허가권 (Permission)
 
 Linux는 여러 사용자가 동시에 접속해 같은 파일 시스템을 공유하는 멀티유저 OS이며, 허가권은 이 과정에서 다른 사용자에게 정보가 노출되거나 시스템 파일이 임의로 변경되는 것을 막기 위해 파일/디렉터리 접근을 세밀하게 제어하는 기능이다.

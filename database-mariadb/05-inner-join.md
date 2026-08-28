@@ -1,15 +1,5 @@
 # DB 05 — INNER JOIN
 
-## 목차
-
-1. [JOIN](#join)
-2. [INNER JOIN](#inner-join)
-3. [INNER JOIN이 필요한 이유](#inner-join이-필요한-이유)
-4. [INNER JOIN 기본 문법](#inner-join-기본-문법)
-5. [실습용 테이블 - customer](#실습용-테이블---customer)
-6. [실습용 테이블 - orders](#실습용-테이블---orders)
-7. [INNER JOIN 실습 (EX1~EX12)](#inner-join-실습-ex1ex12)
-
 ## JOIN
 
 - 두 개 이상 테이블을 연결해서 필요한 데이터를 조회하는 기능이다.

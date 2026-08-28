@@ -1,15 +1,5 @@
 # Shell Script 변수 (Variables) & 환경변수
 
-## 목차
-
-1. [커널(Kernel)과 쉘(Shell)](#커널kernel과-쉘shell)
-2. [쉘 스크립트(Shell Script)](#쉘-스크립트shell-script)
-3. [GUI/CLI 환경 전환 및 쉘 관리](#guicli-환경-전환-및-쉘-관리)
-4. [Bash shell 변수](#bash-shell-변수)
-5. [변수 실습 예제 (EX1~EX14)](#변수-실습-예제-ex1ex14)
-6. [Shell 환경 변수](#shell-환경-변수)
-7. [환경변수 실습 예제 (EX1~EX9)](#환경변수-실습-예제-ex1ex9)
-
 ## 커널(Kernel)과 쉘(Shell)
 
 **커널(Kernel)**은 운영체제의 핵심 부분이다. 변수는 반복되는 경로나 값을 한 곳에서 관리하고, 환경변수로 승격해 자식 프로세스와 설정을 공유하는 데 쓰인다.

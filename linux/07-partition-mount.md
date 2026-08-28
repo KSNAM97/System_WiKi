@@ -1,15 +1,5 @@
 # Linux 07 — 파티션 · 마운트 · Automount
 
-## 목차
-
-1. [Disk Type](#disk-type)
-2. [Partition](#partition)
-3. [File System](#file-system)
-4. [Partition 구성 (fdisk 실습)](#partition-구성-fdisk-실습)
-5. [File System 구성 (mkfs)](#file-system-구성-mkfs)
-6. [Mount](#mount)
-7. [Automount](#automount-7-2)
-
 ## Disk Type
 
 새 디스크를 추가해 사용하거나 서버 재부팅 후에도 스토리지를 자동으로 연결해 두려면 디스크 종류를 이해하고 파티션과 마운트 과정을 거쳐야 한다.

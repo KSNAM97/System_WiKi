@@ -1,16 +1,5 @@
 # HTML 기초 (Hyper Text Markup Language)
 
-## 목차
-
-1. [HTML(Hyper Text Markup Language)이란](#htmlhyper-text-markup-language이란)
-2. [HTML 기본 구조](#html-기본-구조)
-3. [텍스트 표시 방법](#텍스트-표시-방법)
-4. [태그의 구분 & 인라인 텍스트 요소](#태그의-구분--인라인-텍스트-요소)
-5. [이미지 태그](#이미지-태그)
-6. [컨테이너 태그](#컨테이너-태그)
-7. [링크](#링크)
-8. [입력 태그 (Form)](#입력-태그-form)
-
 ## HTML(Hyper Text Markup Language)이란
 
 HTML이라는 이름은 **HyperText**, **Markup**, **Language** 세 가지 개념이 합쳐진 것이다. 각각의 의미를 이해하면 HTML이 무엇을 위한 언어인지 파악할 수 있다. 웹 페이지의 제목, 단락, 이미지, 링크, 입력 폼 등을 배치하는 구조를 정의하는 데 쓰이며, 정적인 소개 페이지부터 서버사이드 템플릿, 이메일 뉴스레터에 이르기까지 폭넓게 활용된다.

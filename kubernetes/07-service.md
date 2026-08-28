@@ -1,25 +1,5 @@
 # Kubernetes Service
 
-## 목차
-
-1. [Service란?](#service란)
-2. [Service의 핵심 역할](#service의-핵심-역할)
-3. [Service가 하는 일 (동작 개념)](#service가-하는-일-동작-개념)
-4. [Service가 Pod를 찾는 방법 (Label & Selector)](#service가-pod를-찾는-방법-label--selector)
-5. [Kubernetes Service Type](#kubernetes-service-type)
-6. [Service 주요 타입 상세](#service-주요-타입-상세)
-7. [Service 타입별 실무 활용 가이드](#service-타입별-실무-활용-가이드)
-8. [Deployment + Service YAML 기본 예시](#deployment--service-yaml-기본-예시)
-9. [ClusterIP 실습](#clusterip-실습)
-10. [NodePort 실습](#nodeport-실습)
-11. [LoadBalancer 실습](#loadbalancer-실습)
-12. [ExternalName 실습](#externalname-실습)
-13. [EX) ExternalName Service를 생성하여 naver라는 이름으로 google.com에 접근](#ex-externalname-service를-생성하여-naver라는-이름으로-googlecom에-접근)
-14. [Headless Service 실습](#headless-service-실습)
-15. [EX) Headless Service와 StatefulSet을 연동해서 Pod 3개를 생성하고, 각 Pod가 고정된 이름으로 DNS 조회되는지 확인](#ex-headless-service와-statefulset을-연동해서-pod-3개를-생성하고-각-pod가-고정된-이름으로-dns-조회되는지-확인)
-
----
-
 ## Service란?
 
 쿠버네티스 **Service**는 계속 바뀌는 Pod들을 대신해서 고정된 단일 진입점(주소와 이름)을 제공해주는 객체이다.

@@ -1,17 +1,5 @@
 # Linux-04 사용자 및 그룹 관리
 
-## 목차
-
-1. [Linux 계정 개요](#linux-계정-개요)
-2. [사용자 계정 관련 파일](#사용자-계정-관련-파일)
-3. [사용자 계정 생성 (useradd)](#사용자-계정-생성-useradd)
-4. [사용자 계정 수정 (usermod)](#사용자-계정-수정-usermod)
-5. [사용자 계정 삭제 (userdel)](#사용자-계정-삭제-userdel)
-6. [사용자 계정 Password 관리 (passwd)](#사용자-계정-password-관리-passwd)
-7. [su 명령어 (사용자 계정 전환)](#su-명령어-사용자-계정-전환)
-8. [그룹 관리 (groupadd / groupmod / groupdel)](#그룹-관리-groupadd--groupmod--groupdel)
-9. [SUDO (Substitute User and Do)](#sudo-substitute-user-and-do)
-
 ## Linux 계정 개요
 
 - Linux는 관리자 계정인 root 계정과 일반 사용자 계정으로 나누어 관리하며, 신입 직원의 계정 생성부터 퇴직자의 계정 삭제까지 계정과 그룹을 관리하는 명령어들이 실무에서 꾸준히 쓰인다.

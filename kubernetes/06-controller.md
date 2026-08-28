@@ -1,22 +1,5 @@
 # Kubernetes Controller
 
-## 목차
-
-1. [파드 3개 요청시 쿠버네티스 동작 순서](#파드-3개-요청시-쿠버네티스-동작-순서)
-2. [Kubernetes Controller](#kubernetes-controller-1)
-3. [ReplicationController (RC)](#replicationcontroller-rc)
-4. [ReplicaSet](#replicaset)
-5. [ReplicaSet (selector or)](#replicaset-selector-or)
-6. [실습 B — selector 사고 재현과 복구](#실습-b--selector-사고-재현과-복구)
-7. [Deployment](#deployment)
-8. [Rolling Update](#rolling-update)
-9. [Rolling Update & Rollback (실습)](#rolling-update--rollback-실습)
-10. [DaemonSet](#daemonset)
-11. [StatefulSet](#statefulset)
-12. [쿠버네티스는 desired state를 관리한다 (Job 도입부 실습)](#쿠버네티스는-desired-state를-관리한다-job-도입부-실습)
-13. [Job Controller](#job-controller)
-14. [CronJob](#cronjob)
-
 ## 파드 3개 요청시 쿠버네티스 동작 순서
 
 상황: 사용자가 파드 3개를 유지해라라고 요청 (Deployment / ReplicaSet 생성). 쿠버네티스에는 이렇게 원하는 상태를 계속 유지하도록 감시·복구하는 여러 컨트롤러가 있으며, Deployment는 무중단 배포와 Rollback을, DaemonSet은 모든 노드에 하나씩 배치되는 것을, StatefulSet은 고유 이름과 전용 디스크가 필요한 인스턴스를, Job과 CronJob은 한 번 또는 주기적으로 실행되고 끝나는 작업을 각각 담당한다.

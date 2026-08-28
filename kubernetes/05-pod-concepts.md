@@ -1,30 +1,5 @@
 # K8s-05 쿠버네티스 Pod 개념과 동작 원리
 
-## 목차
-
-1. [Pod란 무엇인가](#pod란-무엇인가)
-2. [Single Container Pod와 Multi Container Pod](#single-container-pod와-multi-container-pod)
-3. [CLI를 사용한 pod 생성](#cli를-사용한-pod-생성)
-4. [YAML 파일을 사용한 pod 생성](#yaml-파일을-사용한-pod-생성)
-5. [CLI를 YAML 파일로 생성해서 pod 생성](#cli를-yaml-파일로-생성해서-pod-생성)
-6. [multi container pod 생성](#multi-container-pod-생성)
-7. [컨테이너로 접속](#컨테이너로-접속)
-8. [Pod 동작 flow](#pod-동작-flow)
-9. [쿠버네티스 Pod - livenessProbe](#쿠버네티스-pod---livenessprobe)
-10. [livenessProbe 메커니즘](#livenessprobe-메커니즘)
-11. [livenessProbe 기본 설정](#livenessprobe-기본-설정)
-12. [/health 경로를 이용한 livenessProbe 실습](#health-경로를-이용한-livenessprobe-실습)
-13. [EX1) 커스텀 이미지 + livenessProbe 실습](#ex1-커스텀-이미지--livenessprobe-실습)
-14. [smlinux/unhealthy 이미지 실습](#smlinuxunhealthy-이미지-실습)
-15. [EX) tcpSocket Probe를 이용한 SSH 서비스 장애 감지 및 자동 복구](#ex-tcpsocket-probe를-이용한-ssh-서비스-장애-감지-및-자동-복구)
-16. [실습 3) exec probe - /healthy 파일 존재 여부 검사](#실습-3-exec-probe---healthy-파일-존재-여부-검사)
-17. [Pod - init container & infra container](#pod---init-container--infra-container)
-18. [EX1) Init Container를 이용하여 메인 컨테이너의 실행을 지연시키시오.](#ex1-init-container를-이용하여-메인-컨테이너의-실행을-지연시키시오)
-19. [EX2) init이 실패하면 main 컨테이너는 실행되지 않는다.](#ex2-init이-실패하면-main-컨테이너는-실행되지-않는다)
-20. [EX3) Init Container와 emptyDir 볼륨을 이용하여 nginx 웹 페이지를 생성](#ex3-init-container와-emptydir-볼륨을-이용하여-nginx-웹-페이지를-생성)
-21. [Infra Container (pause)](#infra-container-pause)
-22. [Static Pod란 무엇인가](#static-pod란-무엇인가)
-
 ## Pod란 무엇인가
 
 **Pod**는 쿠버네티스에서 **컨테이너**를 실행하는 가장 작은 단위이며, 웹서버와 로그수집기처럼 여러 컨테이너를 하나로 묶거나 livenessProbe로 죽은 컨테이너를 자동 재시작하는 등 컨테이너 실행과 관련된 여러 기능이 이 Pod 단위를 중심으로 이루어진다.

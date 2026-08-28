@@ -1,19 +1,5 @@
 # SQL 문법 (DDL / DML / DCL)
 
-## 목차
-
-1. [SQL 문법 종류](#sql-문법-종류)
-2. [데이터 정의 언어(DDL: Data Define Language)](#데이터-정의-언어ddl-data-define-language)
-3. [데이터 조작 언어(DML: Data Manipulation Language)](#데이터-조작-언어dml-data-manipulation-language)
-4. [데이터 제어 언어(DCL: Data Control Language)](#데이터-제어-언어dcl-data-control-language)
-5. [Database 생성 삭제](#database-생성-삭제)
-6. [테이블 생성](#테이블-생성)
-7. [테이블 삭제와 테이블 수정](#테이블-삭제와-테이블-수정)
-8. [테이블 구조 수정 (ALTER TABLE)](#테이블-구조-수정-alter-table)
-9. [Table 자료형](#table-자료형)
-10. [테이블 생성 시 옵션(제약조건, Constraints)](#테이블-생성-시-옵션제약조건-constraints)
-11. [실습: member 테이블로 배우는 ALTER / INSERT / SELECT / UPDATE / DELETE](#실습-member-테이블로-배우는-alter--insert--select--update--delete)
-
 ## SQL 문법 종류
 
 **SQL** 문법은 크게 3가지 종류로 나눌 수 있다. 테이블을 만들고 구조를 바꾸는 작업, 데이터를 조회·삽입·수정·삭제하는 작업, 사용자 권한을 부여하거나 회수하는 작업처럼 목적에 따라 사용하는 명령의 종류가 달라진다.

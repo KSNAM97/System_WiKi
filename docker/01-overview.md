@@ -1,18 +1,5 @@
 # Docker 01 — 도커, 컨테이너의 이해
 
-## 목차
-
-1. [도커 (Docker)](#도커-docker)
-2. [도커의 컨테이너 개념](#도커의-컨테이너-개념)
-3. [전통적인 서버 관리 방식](#전통적인-서버-관리-방식)
-4. [도커를 사용한 서버 관리 방식](#도커를-사용한-서버-관리-방식)
-5. [Docker 이미지를 만드는 기능 (Build)](#docker-이미지를-만드는-기능-build)
-6. [Docker Image Layer](#docker-image-layer)
-7. [Docker 이미지 생성 방식](#docker-이미지-생성-방식)
-8. [Docker 이미지를 공유하는 기능 (Ship / Share)](#docker-이미지를-공유하는-기능-ship--share)
-9. [Docker 이미지를 동작시키는 기능 (Run)](#docker-이미지를-동작시키는-기능-run)
-10. [Bare Metal vs Virtual Machine vs Container](#bare-metal-vs-virtual-machine-vs-container)
-
 ## 도커 (Docker)
 
 - **도커(Docker)**는 애플리케이션을 **컨테이너(Container)**라는 격리된 환경에서 실행할 수 있도록 도와주는 오픈소스 컨테이너 플랫폼이다. 개발 환경과 운영 환경이 달라 생기는 문제를 줄이고, 여러 서버에 동일한 실행 환경을 빠르게 복제하거나 하나의 서버에서 여러 서비스를 격리해 운영하려는 목적으로 널리 쓰인다.

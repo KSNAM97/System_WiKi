@@ -1,10 +1,5 @@
 # Shell Script 배열(Array) & 위치 매개변수 (Positional Parameters)
 
-## 목차
-
-1. [배열 (Array)](#배열-array)
-2. [위치 매개변수 (Positional Parameters)](#위치-매개변수-positional-parameters)
-
 ## 배열 (Array)
 
 **배열(Array)**은 여러 개의 값을 하나의 변수에 순서대로 저장하는 자료 구조이다. 서버 목록이나 파일 목록처럼 여러 관련 값을 하나로 묶어 관리하거나, 스크립트 실행 시 전달된 인자(위치 매개변수)를 다루는 데 주로 쓰인다.

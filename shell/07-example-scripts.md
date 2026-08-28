@@ -1,29 +1,5 @@
 # Shell-07 실습 문제
 
-## 목차
-
-1. [개요](#개요)
-2. [PART 1. 변수 & 환경변수](#part-1-변수--환경변수)
-3. [PART 2. Metacharacters (메타문자)](#part-2-metacharacters-메타문자)
-4. [PART 3. expr & let](#part-3-expr--let)
-5. [PART 4. exit & test](#part-4-exit--test)
-6. [PART 5. 조건문 (if)](#part-5-조건문-if)
-7. [PART 6. 반복문 (for / while / until)](#part-6-반복문-for--while--until)
-8. [PART 7. 배열 (Array)](#part-7-배열-array)
-9. [PART 8. 종합 스크립트 문제](#part-8-종합-스크립트-문제)
-10. [PART 9. 위치 매개변수 (Positional Parameters)](#part-9-위치-매개변수-positional-parameters)
-11. [PART 10. case 문 & read 입력](#part-10-case-문--read-입력)
-12. [PART 11. break · continue · 폴링(polling)](#part-11-break--continue--폴링polling)
-13. [PART 12. 배열 심화](#part-12-배열-심화)
-14. [PART 13. 실무 종합 심화 (Level 3)](#part-13-실무-종합-심화-level-3)
-15. [PART 14. cron · anacron (스케줄 자동화)](#part-14-cron--anacron-스케줄-자동화)
-16. [PART 15. 허가권 & 소유권 (chmod · chown · umask · 특수권한)](#part-15-허가권--소유권-chmod--chown--umask--특수권한)
-17. [PART 16. 네트워크 서비스 자동화 (SSH · SCP · FTP)](#part-16-네트워크-서비스-자동화-ssh--scp--ftp)
-18. [최종 문제](#최종-문제)
-    - [최종 문제 1) Rocky Linux 9 필수 패키지 & 셸 환경 일괄 설정 스크립트](#최종-문제-1-rocky-linux-9-필수-패키지--셸-환경-일괄-설정-스크립트)
-    - [최종 문제 2) .vimrc + 안전 alias 배포 스크립트](#최종-문제-2-vimrc--안전-alias-배포-스크립트)
-    - [최종 문제 3) guest 계정 dotfile 배포 재실행 스크립트](#최종-문제-3-guest-계정-dotfile-배포-재실행-스크립트)
-
 ## 개요
 
 앞선 SH-01 ~ SH-06 문서에서 다룬 변수, 조건문, 반복문, 함수, 배열 등의 문법을 실무 스크립트 작성에 어떻게 적용하는지 확인하는 실습 문제다. 먼저 PART 1~16 구성으로 변수·메타문자·expr/let·exit/test·조건문·반복문·배열·위치 매개변수·case·break/continue·cron/anacron·허가권/소유권·네트워크 서비스 자동화(SSH·SCP·FTP)까지 기본기를 문항별로 점검하고(각 문항은 요구사항 → 힌트 → 정답 순서로 구성), 마지막 "최종 문제" 절에서는 실제 운영 환경(Rocky Linux 9)에서 사용 중인 통합형 정답 스크립트 3개를 통해 `set -euo pipefail`, 함수 분리, 배열, `case`, 반복문, heredoc, 로그 함수, 색상 코드 등 이 챕터에서 다룬 개념이 실무 스크립트 안에서 어떻게 종합적으로 조합되는지 확인한다.

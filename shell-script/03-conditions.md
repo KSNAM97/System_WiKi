@@ -1,13 +1,5 @@
 # Shell Script 조건문 (Conditions)
 
-## 목차
-
-1. [exit 코드 & test 명령](#exit-코드--test-명령)
-2. [조건문 (if/elif/else, case)](#조건문-ifelifelse-case)
-3. [조건문을 스크립트 파일로 작성하기](#조건문을-스크립트-파일로-작성하기)
-4. [read 명령어](#read-명령어)
-5. [case 문](#case-문)
-
 ## exit 코드 & test 명령
 
 ### exit (종료 상태 전달)

@@ -1,15 +1,5 @@
 # Linux 08 — 스토리지 심화: Disk Quota · RAID · LVM
 
-## 목차
-
-1. [Disk Quota (8-1)](#disk-quota-8-1)
-2. [RAID 이론 (8-2)](#raid-이론-8-2)
-3. [Linear RAID 실습 (8-2)](#linear-raid-실습-8-2)
-4. [RAID 0 실습 (8-3)](#raid-0-실습-8-3)
-5. [RAID 1 실습 (8-4)](#raid-1-실습-8-4)
-6. [RAID 5 실습 (8-6)](#raid-5-실습-8-6)
-7. [LVM (8-8)](#lvm-8-8)
-
 ## Disk Quota (8-1)
 
 ### Disk Quota

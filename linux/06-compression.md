@@ -1,13 +1,5 @@
 # Linux 압축 (Compress) / tar
 
-## 목차
-
-1. [1) gzip](#1-gzip)
-2. [2) bzip2](#2-bzip2)
-3. [3) xz](#3-xz)
-4. [압축 명령어 실습 (gzip / bzip2 / xz)](#압축-명령어-실습-gzip--bzip2--xz)
-5. [tar (tape archive)](#tar-tape-archive)
-
 ## 1) gzip
 
 압축은 파일이 사용하는 저장 공간을 줄이는 기능이다. 디스크 공간 절약, 네트워크 전송 시간 단축, 여러 파일을 하나로 묶어 관리, 백업 파일의 효율적 보관을 위해 사용하며, Windows에서는 알집·반디집 같은 GUI 프로그램을 주로 쓰지만 Linux에서는 gzip, bzip2, xz, tar 같은 명령어를 직접 사용하는 경우가 많다.

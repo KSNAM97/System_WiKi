@@ -2,28 +2,6 @@
 
 > Pod와 데이터를 분리해야 하는 이유, Storage 3단계 구조, Volume/PV/PVC/StorageClass 핵심 개념, emptyDir·hostPath·NFS 기반 PV/PVC 실습, StorageClass를 이용한 Dynamic Provisioning까지 정리한다.
 
-## 목차
-
-1. [Pod와 데이터 분리](#pod와-데이터-분리)
-2. [Storage 전체 구조](#storage-전체-구조)
-3. [핵심 개념 4가지](#핵심-개념-4가지)
-4. [Volume 종류](#volume-종류)
-5. [emptyDir 실습 (2개 Pod 비교)](#emptydir-실습-2개-pod-비교)
-6. [emptyDir 실습 (컨테이너 2개 간 공유)](#emptydir-실습-컨테이너-2개-간-공유)
-7. [hostPath 실습](#hostpath-실습)
-8. [nodeSelector + hostPath 실습](#nodeselector--hostpath-실습)
-9. [hostPath type 필드 옵션](#hostpath-type-필드-옵션)
-10. [PV / PVC 개념](#pv--pvc-개념)
-11. [Access Mode](#access-mode)
-12. [volumeMode](#volumemode)
-13. [PersistentVolumeReclaimPolicy](#persistentvolumereclaimpolicy)
-14. [NFS 서버 설치 및 설정](#nfs-서버-설치-및-설정)
-15. [PV/PVC(NFS) 생성 및 Pod 마운트 실습](#pvpvcnfs-생성-및-pod-마운트-실습)
-16. [StorageClass · Dynamic Provisioning 개념](#storageclass--dynamic-provisioning-개념)
-17. [StorageClass + Dynamic Provisioning 실습](#storageclass--dynamic-provisioning-실습)
-
----
-
 ## Pod와 데이터 분리
 
 Pod는 원래 언제든지 사라질 수 있는 존재다.

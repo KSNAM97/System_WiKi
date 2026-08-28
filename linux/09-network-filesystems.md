@@ -1,11 +1,5 @@
 # Linux 09 — 네트워크 파일시스템: NFS · Samba
 
-## 목차
-
-1. [NFS (Network File System) — 이론 + 실습 (9-1)](#nfs-network-file-system-—-이론-+-실습-9-1)
-2. [NFS 연습 문제 (9-2)](#nfs-연습-문제-9-2)
-3. [Samba Server (9-3)](#samba-server-9-3)
-
 ## NFS (Network File System) — 이론 + 실습 (9-1)
 
 ### NFS (Network File System)

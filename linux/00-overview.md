@@ -2,24 +2,6 @@
 
 > GNU/Linux 개요, 커널·쉘 구조, 배포판 종류 및 특징
 
-## 목차
-
-1. [리눅스란?](#리눅스란)
-2. [GNU/Linux 철학](#gnulinux-철학)
-3. [가상머신 (Virtual Machine)](#가상머신-virtual-machine)
-4. [커널(Kernel)](#커널kernel)
-5. [쉘(Shell)](#쉘shell)
-6. [리눅스 배포판(Distribution)](#리눅스-배포판distribution)
-7. [리눅스 디렉터리 구조 (FHS)](#리눅스-디렉터리-구조-fhs)
-8. [패키지 관리 (dnf)](#패키지-관리-dnf)
-9. [기본 시스템 명령어](#기본-시스템-명령어)
-10. [GNU 프로젝트 상세](#gnu-프로젝트-상세)
-11. [커널 버전 역사](#커널-버전-역사)
-12. [쉘 동작 흐름 (ls -l 입력 시)](#쉘-동작-흐름-ls--l-입력-시)
-13. [Red Hat 계열 계보](#red-hat-계열-계보)
-14. [VMware Workstation Pro vs Player](#vmware-workstation-pro-vs-player)
-15. [실습용 VM 구성표](#실습용-vm-구성표)
-
 ## 리눅스란?
 
 - **운영체제(OS)**: 하드웨어를 제어하고 응용 프로그램이 동작하는 환경을 제공하는 소프트웨어

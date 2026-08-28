@@ -2,21 +2,6 @@
 
 > Pod가 사용자 요청을 받을 준비가 되었는지 확인하는 Probe. Liveness Probe와 달리 실패해도 컨테이너를 재시작하지 않고 Service 트래픽 대상에서만 제외한다.
 
-## 목차
-
-1. [Readiness Probe](#readiness-probe)
-2. [Readiness Probe의 동작](#readiness-probe의-동작)
-3. [Readiness Probe의 목적](#readiness-probe의-목적)
-4. [Readiness Probe와 Service의 관계](#readiness-probe와-service의-관계)
-5. [Readiness Probe와 Liveness Probe 차이](#readiness-probe와-liveness-probe-차이)
-6. [Readiness Probe 검사 방법](#readiness-probe-검사-방법)
-7. [Readiness Probe 주요 옵션](#readiness-probe-주요-옵션)
-8. [실습: HTTP Readiness Probe Deployment 생성](#실습-http-readiness-probe-deployment-생성)
-9. [실습: Service 생성 및 Endpoint 확인](#실습-service-생성-및-endpoint-확인)
-10. [실습: Readiness Probe 실패 상태 만들기](#실습-readiness-probe-실패-상태-만들기)
-
----
-
 ## Readiness Probe
 
 Readiness Probe는 Pod가 현재 사용자 요청을 받을 준비가 되었는지 확인하는 기능이다. 컨테이너가 실행 중이라고 해서 항상 서비스를 제공할 준비가 된 것은 아니다.

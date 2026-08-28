@@ -1,12 +1,5 @@
 # Linux 11 — 네트워크 서비스: DHCP · DNS
 
-## 목차
-
-1. [DHCP Server (10-5)](#dhcp-server-10-5)
-2. [DNS Caching Server (10-6)](#dns-caching-server-10-6)
-3. [Master DNS Server (10-7)](#master-dns-server-10-7)
-4. [Master DNS Server 옵션 (10-8)](#master-dns-server-옵션-10-8)
-
 ## DHCP Server (10-5)
 
 ### DHCP (Dynamic Host Configuration Protocol)

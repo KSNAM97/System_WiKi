@@ -1,17 +1,5 @@
 # Linux-03 VI 편집기
 
-## 목차
-
-1. [VI (Visual Editor) Editor 개요](#vi-visual-editor-editor-개요)
-2. [VI 3가지 Mode (모드)](#vi-3가지-mode-모드)
-3. [VI 실행 형식](#vi-실행-형식)
-4. [명령 Mode 단축키](#명령-mode-단축키)
-5. [입력 Mode 전환 키](#입력-mode-전환-키)
-6. [실행 Mode 명령어](#실행-mode-명령어)
-7. [.swp (Swap File)](#swp-swap-file)
-8. [VI Editor Shell Command (실행 Mode에서 쉘 명령어)](#vi-editor-shell-command-실행-mode에서-쉘-명령어)
-9. [VI 편집기 치환 (Substitute)](#vi-편집기-치환-substitute)
-
 ## VI (Visual Editor) Editor 개요
 
 - VI는 Linux, Unix 계열에서 가장 많이 사용되는 텍스트 편집기이며, GUI가 없는 서버 환경에서 설정 파일이나 쉘 스크립트를 직접 편집할 때 널리 쓰인다.

@@ -1,23 +1,5 @@
 # K8s-02 쿠버네티스 설치
 
-## 목차
-
-1. [쿠버네티스 설치 도구 개요](#쿠버네티스-설치-도구-개요)
-2. [쿠버네티스 클러스터 구성](#쿠버네티스-클러스터-구성)
-3. [0단계. 노드 기본 설정 (마스터, 워커 모두 실행)](#0단계-노드-기본-설정-마스터-워커-모두-실행)
-4. [Docker 설치 (선택적 참고)](#docker-설치-선택적-참고)
-5. [Kubernetes 설치 (Rocky Linux 9 kubeadm)](#kubernetes-설치-rocky-linux-9-kubeadm)
-6. [STEP 1. 모든 노드 공통 사전 준비 (마스터, 워커 모두 실행)](#step-1-모든-노드-공통-사전-준비-마스터-워커-모두-실행)
-7. [STEP 2. containerd 설치 (모든 노드)](#step-2-containerd-설치-모든-노드)
-8. [STEP 3. kubeadm / kubelet / kubectl 설치](#step-3-kubeadm--kubelet--kubectl-설치)
-9. [STEP 4. 마스터 노드 초기화 (마스터만)](#step-4-마스터-노드-초기화-마스터만)
-10. [STEP 5. kubectl 설정 (마스터만)](#step-5-kubectl-설정-마스터만)
-11. [STEP 6. CNI(Flannel) 설치 (컨트롤 플레인만)](#step-6-cniflannel-설치-컨트롤-플레인만)
-12. [STEP 7. 워커 노드 조인](#step-7-워커-노드-조인)
-13. [kubectl bash completion 설정](#kubectl-bash-completion-설정)
-14. [kubectl](#kubectl)
-15. [기타 유용한 명령](#기타-유용한-명령)
-
 ## 쿠버네티스 설치 도구 개요
 
 쿠버네티스 클러스터는 학습이나 소규모 환경에서는 kubeadm으로 각 구성 요소를 직접 설치하며 구조를 이해하는 방식으로, 기업의 대규모 환경에서는 kubespray로 HA 클러스터를 자동화 구성하는 방식으로 설치한다. 쿠버네티스 클러스터를 직접 구성할 때 사용하는 대표 도구인 **kubeadm**과 **kubespray**, 그리고 Pod 네트워크를 담당하는 **CNI**를 정리한다.

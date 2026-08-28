@@ -1,15 +1,5 @@
 # EMP / DEPT 테이블 실습
 
-## 목차
-
-1. [테이블 스키마 (CREATE TABLE)](#테이블-스키마-create-table)
-2. [실습 내용](#실습-내용)
-3. [WHERE 절](#where-절)
-4. [ORDER BY 정렬 기능](#order-by-정렬-기능)
-5. [LIKE 검색 기능](#like-검색-기능)
-6. [GROUP BY 개념](#group-by-개념)
-7. [HAVING](#having)
-
 ## 테이블 스키마 (CREATE TABLE)
 
 **EMP**(사원)와 **DEPT**(부서) 두 테이블을 생성하고 기본 샘플 데이터를 적재하는 스크립트이다. Oracle에서 전통적으로 쓰이던 emp/dept 구조를 그대로 옮겨온 것으로, JOIN·집계 함수·서브쿼리 같은 SQL 문법을 실습하는 표준 예제로 널리 쓰인다. **PRIMARY KEY**와 **FOREIGN KEY** 제약을 통해 두 테이블 간의 관계를 정의한다.

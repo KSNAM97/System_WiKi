@@ -33,6 +33,8 @@
 * [설치 · 계정 · 권한](database-mariadb/01-setup.md)
 * [SQL 문법 · DDL · DML](database-mariadb/02-sql-syntax.md)
 * [emp · dept 실습](database-mariadb/03-emp-dept.md)
+* [제약조건 (PK · Unique · FK)](database-mariadb/04-constraint.md)
+* [INNER JOIN 실습](database-mariadb/05-inner-join.md)
 * [실습 문제](database-mariadb/practice.md)
 
 ## 🌐 HTML
@@ -41,6 +43,7 @@
 
 ## 🐳 Docker
 
+* [Docker 설치](docker/00-install.md)
 * [도커 개요 · VM vs Container](docker/01-overview.md)
 * [Dockerfile · 이미지 빌드](docker/02-container.md)
 * [컨테이너 생명주기 · exec](docker/03-using-containers.md)

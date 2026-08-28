@@ -848,6 +848,29 @@ cache Pod를 다시 생성하면 Pending이던 frontend가 즉시 같은 노드�
 cache Pod의 Label은 `app=cache`이고, frontend Pod는 `app=cache` Pod가 있는 Node를 선호하도록 `preferredDuringSchedulingIgnoredDuringExecution`, `weight: 80`, `topologyKey: kubernetes.io/hostname`을 사용해 2개 생성한다.
 
 ```yaml
+# affinity-step5-cache.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cache
+  labels:
+    app: cache
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.29.1
+```
+
+```bash
+[root@k8s-master ~]# kubectl apply -f affinity-step5-cache.yaml
+pod/cache created
+
+[root@k8s-master ~]# kubectl get pod cache -o wide
+NAME    READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+cache   1/1     Running   0          4s    10.244.2.13   k8s-worker2   <none>            <none>
+```
+
+```yaml
 # affinity-step5-frontend.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -1379,6 +1402,20 @@ Drain은 Node를 비우는 과정에서 새로운 Pod가 해당 Node로 들어�
 ## Cordon & Drain 실습
 
 **EX1) cordon으로 신규 Pod 배치 차단**
+
+cordon은 기존 Pod에는 영향을 주지 않고 새로운 Pod만 배치되지 않게 만든다는 것을 확인한다.
+
+```yaml
+# cordon-step1.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cordon-test-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.29.1
+```
 
 ```bash
 [root@k8s-master ~]# kubectl  apply  -f  cordon-step1.yaml

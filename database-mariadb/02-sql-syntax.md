@@ -362,7 +362,13 @@ INSERT INTO test VALUES('hong', '1234', 20, '2026-07-31');
 
 ## 실습: member 테이블로 배우는 ALTER / INSERT / SELECT / UPDATE / DELETE
 
-아래는 실제 `member` 테이블을 생성하고, **ALTER**, **INSERT**, **SELECT**, **WHERE**, **UPDATE**, **DELETE**를 순서대로 실습하는 예제 모음이다. 각 EX(실습) 뒤에는 실행한 SQL과 그 결과(DESC 출력 또는 SELECT 결과)가 그대로 포함되어 있다.
+아래는 실제 `member` 테이블을 생성하고, **ALTER**, **INSERT**, **SELECT**, **WHERE**, **UPDATE**, **DELETE**를 순서대로 실습하는 예제 모음이다. 각 EX(실습) 뒤에는 실행한 SQL과 그 결과(DESC 출력 또는 SELECT 결과)가 그대로 포함되어 있다. 이후 프롬프트가 `MariaDB [MyDB]>` 로 표시되는 것에서 알 수 있듯, `MyDB` 데이터베이스를 만들고 그 안에서 작업한다.
+
+```sql
+-- MyDB 데이터베이스 생성 후 선택 (이후 프롬프트가 MariaDB [MyDB]>로 바뀐다)
+CREATE DATABASE MyDB;
+USE MyDB;
+```
 
 ```sql
 CREATE TABLE member (

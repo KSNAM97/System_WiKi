@@ -27,7 +27,7 @@
 * [반복문 (for · while)](shell-script/04-loops.md)
 * [cron · crond](shell-script/05-cron.md)
 * [배열 · 위치 매개변수](shell-script/06-arrays-parameters.md)
-* [실전 예시 스크립트](shell/07-example-scripts.md)
+* [실습 문제](shell/07-example-scripts.md)
 
 ## 🗄️ Database (MariaDB)
 

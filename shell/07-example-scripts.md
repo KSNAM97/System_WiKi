@@ -1,37 +1,37 @@
-# Shell-07 실전 예시 스크립트
+# Shell-07 실습 문제
 
 ## 목차
 
 1. [개요](#개요)
-2. [rl9_setup.sh — Rocky Linux 9 필수 패키지 & 셸 환경 일괄 설정](#rl9_setupsh--rocky-linux-9-필수-패키지--셸-환경-일괄-설정)
-3. [vimrc_setup.sh — .vimrc + 안전 alias 배포](#vimrc_setupsh--vimrc--안전-alias-배포)
-4. [guest_setup.sh — guest 계정 dotfile 배포 재실행](#guest_setupsh--guest-계정-dotfile-배포-재실행)
+2. [문제 1) Rocky Linux 9 필수 패키지 & 셸 환경 일괄 설정 스크립트](#문제-1-rocky-linux-9-필수-패키지--셸-환경-일괄-설정-스크립트)
+3. [문제 2) .vimrc + 안전 alias 배포 스크립트 (최종본)](#문제-2-vimrc--안전-alias-배포-스크립트-최종본)
+4. [문제 3) guest 계정 dotfile 배포 재실행 스크립트](#문제-3-guest-계정-dotfile-배포-재실행-스크립트)
 
 ## 개요
 
-앞선 SH-01 ~ SH-06 문서에서 다룬 변수, 조건문, 반복문, 함수, 배열 등의 문법이 실무 스크립트에서 실제로 어떻게 조합되어 쓰이는지 확인하기 위한 예시 파일 모음이다. 세 스크립트 모두 Rocky Linux 9 환경에서 신규 서버 초기 세팅 시 사용하는 실전 셸 스크립트이며, `set -euo pipefail`, 함수 분리, 배열, `case`, 반복문, heredoc, 로그 함수, 색상 코드 등 이 챕터에서 다룬 개념이 두루 사용된다.
+앞선 SH-01 ~ SH-06 문서에서 다룬 변수, 조건문, 반복문, 함수, 배열 등의 문법을 실무 스크립트 작성에 어떻게 적용하는지 확인하는 실습 문제다. 각 문제는 요구사항을 먼저 제시하고, 실제 운영 환경(Rocky Linux 9)에서 사용 중인 정답 스크립트를 이어서 제공한다. `set -euo pipefail`, 함수 분리, 배열, `case`, 반복문, heredoc, 로그 함수, 색상 코드 등 이 챕터에서 다룬 개념이 두루 사용된다.
 
-## rl9_setup.sh — Rocky Linux 9 필수 패키지 & 셸 환경 일괄 설정
+## 문제 1) Rocky Linux 9 필수 패키지 & 셸 환경 일괄 설정 스크립트
 
-SRE/시스템 엔지니어에게 필요한 CLI 도구를 카테고리별로 일괄 설치하고, root와 모든 일반 계정(UID 1000 이상) 및 `/etc/skel`(신규 계정 템플릿)에 동일한 셸 환경(`.bashrc`, `.vimrc`, starship 프롬프트, Oh My Bash)을 배포하는 스크립트다.
+**요구사항**
 
-**주요 구조**
+SRE/시스템 엔지니어에게 필요한 CLI 도구를 카테고리별로 일괄 설치하고, root와 모든 일반 계정(UID 1000 이상) 및 `/etc/skel`(신규 계정 템플릿)에 동일한 셸 환경(`.bashrc`, `.vimrc`, starship 프롬프트, Oh My Bash)을 배포하는 스크립트(`rl9_setup.sh`)를 작성하라. 다음 조건을 만족해야 한다.
 
-- `set -euo pipefail` : 에러 발생 시 즉시 종료, 미정의 변수 참조 시 종료, 파이프라인 중간 실패도 감지
-- `log_info/log_ok/log_warn/log_err/log_step` : 색상 코드(`\033[...]`)를 적용한 로그 출력 함수
-- `str_width()` : UTF-8 바이트 수와 문자 수의 차이를 이용해 한글(CJK)이 섞인 문자열의 터미널 표시 폭을 계산
-- `show_resources()` : `top`, `free`, `df`를 파싱해 CPU/RAM/SWAP/DISK 사용률을 프로그레스 바로 표시
-- `install_pkg()` : `dnf`, `dnf_multi`, `dnf_group`, `dnf_module`, `pip`, `manual` 6가지 설치 방식을 인자로 받아 분기 처리하는 공통 설치 함수 (배열 `INSTALLED`/`FAILED`/`RETRY_LIST`에 결과 누적)
-- `install_all_packages()` : 빌드 도구, 모니터링, 네트워크, 스토리지, 언어 런타임, 컨테이너, IaC, 로그 처리, 보안, CLI 생산성, Python 생태계 11개 카테고리 패키지를 `install_pkg` 호출로 나열
-- `write_starship_toml()` / `configure_starship()` : heredoc으로 starship 프롬프트 설정 파일을 생성하고 대상 계정에 배포
-- `write_vimrc()` / `configure_vimrc()` : heredoc으로 `.vimrc`를 생성하고 기존 파일은 날짜 백업 후 배포
-- `install_ohmybash()` / `configure_ohmybash()` : Oh My Bash를 비대화형 설치하고 `.bashrc`의 `OSH_THEME`/`plugins` 설정을 `sed`로 조정
-- `configure_bashrc()` : 안전 alias(`rm -i` 등), lsd alias, fzf 키바인딩, zoxide, starship init을 `.bashrc`에 순서대로 추가 (각 블록은 마커 주석으로 중복 실행 방지)
-- `list_target_users()` : `awk`로 `/etc/passwd`를 파싱해 root + UID 1000 이상 로그인 가능 계정만 추출
-- `configure_system_wide()` : `/etc/starship.toml`, `/etc/skel/.vimrc`, `/etc/skel/.bashrc`에도 동일 설정 배포 (신규 계정 자동 적용)
-- `retry_failed()` : 1차 설치 실패 패키지를 재시도
-- `print_final_report()` : 설치 성공/실패 목록과 설치율을 계산해 최종 보고서 출력
-- `main()` : 위 함수들을 순서대로 호출하는 진입점, 마지막 줄 `main "$@"`
+- `set -euo pipefail`로 에러 발생 시 즉시 종료, 미정의 변수 참조 시 종료, 파이프라인 중간 실패도 감지할 것
+- 색상 코드(`\033[...]`)를 적용한 `log_info/log_ok/log_warn/log_err/log_step` 로그 함수를 둘 것
+- 한글(CJK)이 섞인 문자열의 터미널 표시 폭을 계산하는 `str_width()` 함수를 만들 것 (UTF-8 바이트 수와 문자 수의 차이 이용)
+- `top`, `free`, `df`를 파싱해 CPU/RAM/SWAP/DISK 사용률을 프로그레스 바로 보여주는 `show_resources()`를 만들 것
+- `dnf`, `dnf_multi`, `dnf_group`, `dnf_module`, `pip`, `manual` 6가지 설치 방식을 인자로 받아 분기 처리하는 공통 설치 함수 `install_pkg()`를 만들고, 배열 `INSTALLED`/`FAILED`/`RETRY_LIST`에 결과를 누적할 것
+- 빌드 도구, 모니터링, 네트워크, 스토리지, 언어 런타임, 컨테이너, IaC, 로그 처리, 보안, CLI 생산성, Python 생태계 11개 카테고리의 패키지를 `install_pkg` 호출로 설치하는 `install_all_packages()`를 작성할 것
+- heredoc으로 starship 프롬프트 설정과 `.vimrc`를 생성하는 `write_starship_toml()`/`write_vimrc()`, 그리고 이를 대상 계정에 배포하는 `configure_starship()`/`configure_vimrc()`를 작성할 것 (기존 파일은 날짜 백업 후 배포)
+- Oh My Bash를 비대화형으로 설치하고 `.bashrc`의 `OSH_THEME`/`plugins` 설정을 `sed`로 조정하는 `install_ohmybash()`/`configure_ohmybash()`를 작성할 것
+- 안전 alias(`rm -i` 등), lsd alias, fzf 키바인딩, zoxide, starship init을 `.bashrc`에 순서대로 추가하는 `configure_bashrc()`를 작성하되, 각 블록은 마커 주석으로 중복 실행을 방지할 것
+- `awk`로 `/etc/passwd`를 파싱해 root + UID 1000 이상 로그인 가능 계정만 추출하는 `list_target_users()`를 작성할 것
+- `/etc/starship.toml`, `/etc/skel/.vimrc`, `/etc/skel/.bashrc`에도 동일 설정을 배포해 신규 계정에 자동 적용되도록 `configure_system_wide()`를 작성할 것
+- 1차 설치 실패 패키지를 재시도하는 `retry_failed()`와, 설치 성공/실패 목록·설치율을 계산해 보여주는 `print_final_report()`를 작성할 것
+- 위 함수들을 순서대로 호출하는 진입점 `main()`을 작성하고 스크립트 마지막에서 호출할 것
+
+### 정답
 
 ```bash
 #!/usr/bin/env bash
@@ -1067,11 +1067,22 @@ if [[ "${1:-}" != "--source-only" ]]; then
 fi
 ```
 
-**정리**: `set -euo pipefail`, 함수 분리, 배열(`declare -a`), `case`, `for`/`while` 반복문, heredoc(`<< 'TAG'`), 파라미터 확장(`${var#prefix}`, `${var%%.*}`), 산술 연산(`$(( ))`), 서브셸 명령치환(`$(...)`) 등 SH-01 ~ SH-06에서 다룬 문법이 실제 운영 스크립트에서 어떻게 조합되는지 보여주는 대표 예시다. 맨 끝의 `--source-only` 가드 덕분에 아래 `guest_setup.sh`처럼 다른 스크립트가 이 파일을 `source`로 불러와 개별 함수만 재사용할 수 있다.
+**해설**: `set -euo pipefail`, 함수 분리, 배열(`declare -a`), `case`, `for`/`while` 반복문, heredoc(`<< 'TAG'`), 파라미터 확장(`${var#prefix}`, `${var%%.*}`), 산술 연산(`$(( ))`), 서브셸 명령치환(`$(...)`) 등 SH-01 ~ SH-06에서 다룬 문법이 실제 운영 스크립트에서 어떻게 조합되는지 보여주는 대표 예시다. 맨 끝의 `--source-only` 가드 덕분에 아래 `guest_setup.sh`처럼 다른 스크립트가 이 파일을 `source`로 불러와 개별 함수만 재사용할 수 있다.
 
-## vimrc_setup.sh — .vimrc + 안전 alias 배포 (최종본)
+## 문제 2) .vimrc + 안전 alias 배포 스크립트 (최종본)
 
-`rl9_setup.sh`의 `.vimrc`/alias 배포 로직만 분리한 경량 버전이다. `set -euo pipefail`, `EUID` 체크 후 `exec sudo bash "$0" "$@"`로 자기 자신을 재실행하는 패턴, 함수 인자 처리(`local path=$1 owner=${2:-}`), `awk`를 이용한 `/etc/passwd` 파싱, `while read` 반복문으로 root + 모든 일반 계정에 `.vimrc`와 안전 alias를 배포하고 `/etc/skel`에도 동일하게 적용한다. 최종본에서는 `/usr/bin/vi`가 vim-minimal인 환경에서 `alternatives`로 vim-enhanced로 교체하는 로직이 추가되어, `alias vi='vim'`이 통하지 않는 `sudo vi` 직접 실행 시에도 문법강조가 적용된다.
+**요구사항**
+
+root + 모든 일반 계정(UID 1000 이상) + `/etc/skel`(신규 계정)에 `.vimrc`와 안전 alias를 배포하는 스크립트(`vimrc_setup.sh`)를 작성하라. 다음 조건을 만족해야 한다.
+
+- `set -euo pipefail`을 선언하고, `EUID` 체크 후 root가 아니면 `exec sudo bash "$0" "$@"`로 자기 자신을 root 권한으로 재실행할 것
+- `/usr/bin/vi`가 vim-minimal(Small version)인 경우 vim-enhanced(Huge)로 교체할 것 — `alias vi='vim'`은 대화형 셸에서만 동작하므로 `sudo vi`로 직접 열 때도 문법강조가 적용되도록 `alternatives`로 바이너리 자체를 교체해야 한다. 기존 vim-minimal 바이너리는 백업해 둘 것
+- `.vimrc` 내용을 담은 `VIMRC_CONTENT`와 안전 alias(`rm -i` 등) + `EDITOR`/`KUBE_EDITOR`/`LS_COLORS` 환경변수를 담은 `ALIAS_BLOCK`을 변수로 정의할 것
+- 대상 경로에 `.vimrc`를 배포하는 `deploy_vimrc()`와 `.bashrc`에 alias 블록을 추가하는 `deploy_alias()`를 작성하되, 각각 기존 파일은 날짜 백업 후 덮어쓰고, alias는 마커 주석으로 중복 추가를 방지할 것
+- `awk`로 `/etc/passwd`를 파싱해 root + UID 1000 이상 로그인 가능 계정을 추출하고, `while read` 반복문으로 각 계정의 홈 디렉터리에 `.vimrc`/alias를 배포할 것
+- 마지막으로 `/etc/skel`에도 동일하게 배포해 신규 계정에 자동 적용되도록 할 것
+
+### 정답
 
 ```bash
 #!/usr/bin/env bash
@@ -1207,11 +1218,21 @@ echo -e "  alias  : ${CYAN}source ~/.bashrc${RESET} 또는 ${CYAN}exec bash${RES
 echo
 ```
 
-**정리**: `rl9_setup.sh`의 `write_vimrc`/`configure_vimrc` 로직을 단독 스크립트로 분리한 형태로, `EUID` 체크와 `exec sudo bash "$0" "$@"` 자기 재실행 패턴, `alternatives`를 이용한 시스템 바이너리 교체, 함수 인자 기본값 처리(`${2:-}`), `awk` 필드 파싱, 파이프(`|`)로 연결된 `while read` 반복문 등 Shell Script 챕터의 핵심 문법이 짧은 스크립트 안에 응축되어 있다.
+**해설**: `rl9_setup.sh`의 `write_vimrc`/`configure_vimrc` 로직을 단독 스크립트로 분리한 형태로, `EUID` 체크와 `exec sudo bash "$0" "$@"` 자기 재실행 패턴, `alternatives`를 이용한 시스템 바이너리 교체, 함수 인자 기본값 처리(`${2:-}`), `awk` 필드 파싱, 파이프(`|`)로 연결된 `while read` 반복문 등 Shell Script 챕터의 핵심 문법이 짧은 스크립트 안에 응축되어 있다.
 
-## guest_setup.sh — guest 계정 dotfile 배포 재실행
+## 문제 3) guest 계정 dotfile 배포 재실행 스크립트
 
-`rl9_setup.sh`가 이미 시스템 전체에 배포된 뒤, guest 계정 하나에만 Oh My Bash/starship/`.bashrc` 설정을 재적용하고 싶을 때 쓰는 짧은 래퍼 스크립트다. `sudo -u guest bash -c '...'`로 guest 계정 컨텍스트에서 명령을 실행하고, `rl9_setup.sh`를 `--source-only`로 `source`하여 `main()`은 실행하지 않고 `install_ohmybash`/`configure_ohmybash`/`configure_starship`/`configure_bashrc` 함수만 재사용한다.
+**요구사항**
+
+`rl9_setup.sh`가 이미 시스템 전체에 배포된 뒤, guest 계정 하나에만 Oh My Bash/starship/`.bashrc` 설정을 재적용하는 짧은 래퍼 스크립트(`guest_setup.sh`)를 작성하라. 다음 조건을 만족해야 한다.
+
+- `set -euo pipefail`을 선언할 것
+- `sudo -u guest bash -c '...'`로 guest 계정 컨텍스트에서 명령을 실행할 것
+- 먼저 guest 계정의 `~/.bashrc`를 날짜 백업할 것
+- `rl9_setup.sh`를 `--source-only` 옵션으로 `source`하여 `main()`은 실행하지 않고 함수 정의만 로드할 것
+- 로드한 `install_ohmybash`, `configure_ohmybash`, `configure_starship`, `configure_bashrc` 함수를 `"guest" "$HOME"` 인자로 순서대로 호출해 guest 계정에 Oh My Bash 설치, OMB `.bashrc` 조정, starship.toml 배포, 안전 alias/lsd/fzf/zoxide/starship init 추가를 재적용할 것
+
+### 정답
 
 ```bash
 #!/usr/bin/env bash
@@ -1234,4 +1255,4 @@ configure_bashrc   "guest" "$HOME"          # 안전 alias, lsd, fzf, zoxide, st
 '
 ```
 
-**정리**: 별도 셸에서 실행되는 `sudo -u guest bash -c '...'` 안의 `$HOME`/`$(date +%F)`는 작은따옴표로 감싸 바깥 스크립트가 아닌 guest 계정의 서브셸에서 평가되도록 한 점이 핵심이다. `rl9_setup.sh`에 추가된 `--source-only` 가드(SH-07의 rl9_setup.sh 마지막 부분 참고)가 있어야만 이 스크립트가 정상 동작한다.
+**해설**: 별도 셸에서 실행되는 `sudo -u guest bash -c '...'` 안의 `$HOME`/`$(date +%F)`는 작은따옴표로 감싸 바깥 스크립트가 아닌 guest 계정의 서브셸에서 평가되도록 한 점이 핵심이다. `rl9_setup.sh`에 추가된 `--source-only` 가드(문제 1의 정답 마지막 부분 참고)가 있어야만 이 스크립트가 정상 동작한다.

@@ -5,10 +5,11 @@
 1. [개요](#개요)
 2. [rl9_setup.sh — Rocky Linux 9 필수 패키지 & 셸 환경 일괄 설정](#rl9_setupsh--rocky-linux-9-필수-패키지--셸-환경-일괄-설정)
 3. [vimrc_setup.sh — .vimrc + 안전 alias 배포](#vimrc_setupsh--vimrc--안전-alias-배포)
+4. [guest_setup.sh — guest 계정 dotfile 배포 재실행](#guest_setupsh--guest-계정-dotfile-배포-재실행)
 
 ## 개요
 
-앞선 SH-01 ~ SH-06 문서에서 다룬 변수, 조건문, 반복문, 함수, 배열 등의 문법이 실무 스크립트에서 실제로 어떻게 조합되어 쓰이는지 확인하기 위한 예시 파일 모음이다. 두 스크립트 모두 Rocky Linux 9 환경에서 신규 서버 초기 세팅 시 사용하는 실전 셸 스크립트이며, `set -euo pipefail`, 함수 분리, 배열, `case`, 반복문, heredoc, 로그 함수, 색상 코드 등 이 챕터에서 다룬 개념이 두루 사용된다.
+앞선 SH-01 ~ SH-06 문서에서 다룬 변수, 조건문, 반복문, 함수, 배열 등의 문법이 실무 스크립트에서 실제로 어떻게 조합되어 쓰이는지 확인하기 위한 예시 파일 모음이다. 세 스크립트 모두 Rocky Linux 9 환경에서 신규 서버 초기 세팅 시 사용하는 실전 셸 스크립트이며, `set -euo pipefail`, 함수 분리, 배열, `case`, 반복문, heredoc, 로그 함수, 색상 코드 등 이 챕터에서 다룬 개념이 두루 사용된다.
 
 ## rl9_setup.sh — Rocky Linux 9 필수 패키지 & 셸 환경 일괄 설정
 
@@ -1058,38 +1059,85 @@ main() {
     print_final_report "$target_list"
 }
 
-main "$@"
+# --source-only 로 source 하면 main()을 실행하지 않고 함수 정의만 로드한다.
+# (guest_setup.sh 등 다른 스크립트에서 install_ohmybash/configure_starship 등
+#  개별 함수만 재사용할 때 사용)
+if [[ "${1:-}" != "--source-only" ]]; then
+    main "$@"
+fi
 ```
 
-**정리**: `set -euo pipefail`, 함수 분리, 배열(`declare -a`), `case`, `for`/`while` 반복문, heredoc(`<< 'TAG'`), 파라미터 확장(`${var#prefix}`, `${var%%.*}`), 산술 연산(`$(( ))`), 서브셸 명령치환(`$(...)`) 등 SH-01 ~ SH-06에서 다룬 문법이 실제 운영 스크립트에서 어떻게 조합되는지 보여주는 대표 예시다.
+**정리**: `set -euo pipefail`, 함수 분리, 배열(`declare -a`), `case`, `for`/`while` 반복문, heredoc(`<< 'TAG'`), 파라미터 확장(`${var#prefix}`, `${var%%.*}`), 산술 연산(`$(( ))`), 서브셸 명령치환(`$(...)`) 등 SH-01 ~ SH-06에서 다룬 문법이 실제 운영 스크립트에서 어떻게 조합되는지 보여주는 대표 예시다. 맨 끝의 `--source-only` 가드 덕분에 아래 `guest_setup.sh`처럼 다른 스크립트가 이 파일을 `source`로 불러와 개별 함수만 재사용할 수 있다.
 
-## vimrc_setup.sh — .vimrc + 안전 alias 배포
+## vimrc_setup.sh — .vimrc + 안전 alias 배포 (최종본)
 
-`rl9_setup.sh`의 `.vimrc`/alias 배포 로직만 분리한 경량 버전이다. `set -euo pipefail`, 함수 인자 처리(`local path=$1 owner=${2:-}`), `awk`를 이용한 `/etc/passwd` 파싱, `while read` 반복문으로 root + 모든 일반 계정에 `.vimrc`와 안전 alias를 배포하고 `/etc/skel`에도 동일하게 적용한다.
+`rl9_setup.sh`의 `.vimrc`/alias 배포 로직만 분리한 경량 버전이다. `set -euo pipefail`, `EUID` 체크 후 `exec sudo bash "$0" "$@"`로 자기 자신을 재실행하는 패턴, 함수 인자 처리(`local path=$1 owner=${2:-}`), `awk`를 이용한 `/etc/passwd` 파싱, `while read` 반복문으로 root + 모든 일반 계정에 `.vimrc`와 안전 alias를 배포하고 `/etc/skel`에도 동일하게 적용한다. 최종본에서는 `/usr/bin/vi`가 vim-minimal인 환경에서 `alternatives`로 vim-enhanced로 교체하는 로직이 추가되어, `alias vi='vim'`이 통하지 않는 `sudo vi` 직접 실행 시에도 문법강조가 적용된다.
 
 ```bash
 #!/usr/bin/env bash
 # =============================================================================
-# .vimrc + 안전 alias 배포 스크립트
+# .vimrc + 안전 alias 배포 스크립트 (최종본)
 # 대상: root + 모든 일반 계정(UID>=1000) + /etc/skel(신규 계정)
+# 추가: /usr/bin/vi가 vim-minimal(Small version)인 경우 vim-enhanced(Huge)로 교체
+#       -> sudo vi 로 직접 열 때도(alias를 거치지 않는 경우) 문법강조 적용됨
 # 권한: sudo 필요
 # =============================================================================
-
 set -euo pipefail
-
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; RESET='\033[0m'
 
+if [[ $EUID -ne 0 ]]; then          # root가 아니면
+    if ! sudo -n true 2>/dev/null; then   # sudo 캐시가 없으면 여기서 인증
+        sudo true || exit 1
+    fi
+    exec sudo bash "$0" "$@"        # 스크립트 자신을 root 권한으로 재실행하고 현재 프로세스는 대체됨
+fi
+
+echo
+echo "  vi/vim 전역 설정 배포 시작"
+echo "  ────────────────────────────────────"
+
+# -----------------------------------------------------------------------------
+# 0. vim-enhanced 설치 확인
+# -----------------------------------------------------------------------------
+if ! rpm -q vim-enhanced &>/dev/null; then
+    echo -e "  ${CYAN}설치${RESET}  vim-enhanced"
+    dnf install -y vim-enhanced
+else
+    echo -e "  ${CYAN}확인${RESET}  vim-enhanced 이미 설치됨"
+fi
+
+# -----------------------------------------------------------------------------
+# 1. /usr/bin/vi 를 vim-enhanced(Huge)로 교체
+#    (RHEL 계열은 /usr/bin/vi가 vim-minimal(Small, -syntax -eval)인 경우가 많음.
+#     alias vi='vim'은 대화형 셸에서만 동작하므로 sudo vi 직접 실행 시엔 안 먹힘.
+#     alternatives로 바이너리 자체를 교체해야 근본 해결됨)
+# -----------------------------------------------------------------------------
+if [[ -L /usr/bin/vi ]] && [[ "$(readlink -f /usr/bin/vi)" == "$(readlink -f /usr/bin/vim)" ]]; then
+    echo -e "  ${CYAN}확인${RESET}  /usr/bin/vi 이미 vim-enhanced 연결됨"    # 이미 심볼릭 링크가 vim을 가리키면 건너뜀
+else
+    if [[ -f /usr/bin/vi && ! -L /usr/bin/vi ]]; then
+        [[ -f /usr/bin/vi.small.bak ]] || mv /usr/bin/vi /usr/bin/vi.small.bak   # 기존 vim-minimal 바이너리 백업
+        echo -e "  ${CYAN}백업${RESET}  /usr/bin/vi.small.bak (기존 vim-minimal)"
+    fi
+    alternatives --install /usr/bin/vi vi /usr/bin/vim 100   # /usr/bin/vi를 alternatives 그룹에 등록
+    alternatives --set vi /usr/bin/vim                       # /usr/bin/vi가 vim-enhanced를 가리키도록 지정
+    echo -e "  ${GREEN}교체${RESET}  /usr/bin/vi -> vim-enhanced"
+fi
+
+# -----------------------------------------------------------------------------
+# 2. .vimrc 내용
+# -----------------------------------------------------------------------------
 VIMRC_CONTENT='set nu
 set autoindent
-set paste
 set nohlsearch
 set background=dark
-
-" 구문 강조 — termguicolors로 24비트 RGB 사용 (터미널 팔레트 영향 없음)
+" 구문 강조 — 256색 팔레트 사용 (SSH 클라이언트 truecolor 미지원 대응)
 " darkblue는 vim 기본 포함. silent!로 부재 시에도 에러 없음
 syntax on
-set termguicolors
+set t_Co=256
 silent! colorscheme darkblue'
+# set paste는 넣지 않음: 상시 켜두면 autoindent/자동완성/매핑이 전부 무력화되어
+# 오히려 일반 편집이 불편해짐. 붙여넣기 시엔 :set paste 를 그때그때 사용.
 
 ALIAS_BLOCK="
 # >>> vimrc_setup: safe aliases <<<
@@ -1097,54 +1145,45 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 alias vi='vim'
-
 # 에디터 — alias는 셸에서만 동작하므로 외부 도구용으로 환경변수 지정
 # (kubectl edit, crontab -e, git commit 등)
 export EDITOR='vim'
 export KUBE_EDITOR='vim'
-
-export LS_COLORS='di=36'
+if command -v dircolors >/dev/null 2>&1; then
+    eval \"\$(dircolors)\"
+fi
+export LS_COLORS=\"\${LS_COLORS:-}:di=36\"
 # <<< vimrc_setup: safe aliases >>>"
 
-# 인자: 대상 경로  소유자(생략 시 chown 안 함)
+# -----------------------------------------------------------------------------
+# 3. 배포 함수
+# -----------------------------------------------------------------------------
 deploy_vimrc() {
     local path=$1 owner=${2:-}          # owner 생략 시 빈 문자열 → 아래 chown 건너뜀
-
     if [[ -f "$path" ]]; then
         cp -a "$path" "${path}.bak.$(date +%F)"   # 기존 .vimrc를 날짜 붙여 백업 (덮어쓰기 전 안전장치)
         echo -e "  ${CYAN}백업${RESET}  ${path}.bak.$(date +%F)"
     fi
-
     printf '%s\n' "$VIMRC_CONTENT" > "$path"        # 위에서 정의한 VIMRC_CONTENT로 파일을 새로 씀 (덮어쓰기)
     [[ -n "$owner" ]] && chown "${owner}:${owner}" "$path"   # owner가 지정된 경우에만 소유자 변경
     echo -e "  ${GREEN}배포${RESET}  $path"
 }
 
-# 인자: .bashrc 경로  소유자(생략 시 chown 안 함)
 deploy_alias() {
     local path=$1 owner=${2:-}
-
     [[ -f "$path" ]] || touch "$path"   # .bashrc가 아예 없으면 빈 파일로 생성
-
     if grep -qF "# >>> vimrc_setup: safe aliases <<<" "$path" 2>/dev/null; then
         echo -e "  ${CYAN}건너뜀${RESET}  ${path} — alias 이미 존재"
         return 0    # 마커 주석이 이미 있으면 중복 추가하지 않고 종료
     fi
-
     printf '%s\n' "$ALIAS_BLOCK" >> "$path"   # 파일 끝에 alias 블록 append (덮어쓰기 아님)
     [[ -n "$owner" ]] && chown "${owner}:${owner}" "$path"
     echo -e "  ${GREEN}배포${RESET}  $path (alias)"
 }
 
-if ! sudo -n true 2>/dev/null; then   # -n : 비밀번호 프롬프트 없이 sudo 캐시만 확인
-    sudo true || exit 1               # 캐시가 없으면 여기서 한 번 인증받고, 실패 시 스크립트 종료
-fi
-
-echo
-echo "  .vimrc + alias 배포 시작"
-echo "  ────────────────────────────────────"
-
-# root + 일반 계정(UID>=1000) 중 로그인 가능한 계정
+# -----------------------------------------------------------------------------
+# 4. root + 일반 계정(UID>=1000) + /etc/skel 에 배포
+# -----------------------------------------------------------------------------
 awk -F: '
     $7 ~ /(nologin|false|sync|shutdown|halt)$/ { next }
     ($3 == 0 || $3 >= 1000) && $6 != "" { print $1, $6 }
@@ -1157,15 +1196,42 @@ awk -F: '
     fi
 done
 
-# 신규 계정용 — /etc/skel에 넣어두면 이후 useradd로 생성되는 계정에 자동 복사됨
+# 신규 계정용
 deploy_vimrc /etc/skel/.vimrc
 deploy_alias /etc/skel/.bashrc
 
 echo "  ────────────────────────────────────"
 echo -e "  ${GREEN}완료${RESET}"
-echo -e "  vim  : 새로 실행하면 적용"
-echo -e "  alias: ${CYAN}source ~/.bashrc${RESET} 또는 ${CYAN}exec bash${RESET}"
+echo -e "  vi/vim : 새로 실행하면 바로 적용 (sudo vi 포함)"
+echo -e "  alias  : ${CYAN}source ~/.bashrc${RESET} 또는 ${CYAN}exec bash${RESET}"
 echo
 ```
 
-**정리**: `rl9_setup.sh`의 `write_vimrc`/`configure_vimrc` 로직을 단독 스크립트로 분리한 형태로, 함수 인자 기본값 처리(`${2:-}`), `awk` 필드 파싱, 파이프(`|`)로 연결된 `while read` 반복문 등 Shell Script 챕터의 핵심 문법이 짧은 스크립트 안에 응축되어 있다.
+**정리**: `rl9_setup.sh`의 `write_vimrc`/`configure_vimrc` 로직을 단독 스크립트로 분리한 형태로, `EUID` 체크와 `exec sudo bash "$0" "$@"` 자기 재실행 패턴, `alternatives`를 이용한 시스템 바이너리 교체, 함수 인자 기본값 처리(`${2:-}`), `awk` 필드 파싱, 파이프(`|`)로 연결된 `while read` 반복문 등 Shell Script 챕터의 핵심 문법이 짧은 스크립트 안에 응축되어 있다.
+
+## guest_setup.sh — guest 계정 dotfile 배포 재실행
+
+`rl9_setup.sh`가 이미 시스템 전체에 배포된 뒤, guest 계정 하나에만 Oh My Bash/starship/`.bashrc` 설정을 재적용하고 싶을 때 쓰는 짧은 래퍼 스크립트다. `sudo -u guest bash -c '...'`로 guest 계정 컨텍스트에서 명령을 실행하고, `rl9_setup.sh`를 `--source-only`로 `source`하여 `main()`은 실행하지 않고 `install_ohmybash`/`configure_ohmybash`/`configure_starship`/`configure_bashrc` 함수만 재사용한다.
+
+```bash
+#!/usr/bin/env bash
+# =============================================================================
+# 목적: guest 계정 컨텍스트에서 dotfile 배포 재실행
+# sudo: 필요(su 전환용) | 위험도: 중 | 영향: guest 계정 .bashrc/.config
+# =============================================================================
+set -euo pipefail
+
+# 사전 백업
+sudo -u guest bash -c 'cp -a ~/.bashrc ~/.bashrc.bak.$(date +%F) 2>/dev/null'   # guest 홈의 ~는 guest 계정 기준으로 해석됨
+
+# 스크립트에서 함수만 분리 실행 (source 후 함수 호출)
+sudo -u guest bash -c '
+source /path/to/rl9_setup.sh --source-only  # main() 실행 없이 함수 정의만 로드
+install_ohmybash   "guest" "$HOME"          # guest 계정에 Oh My Bash 설치
+configure_ohmybash "guest" "$HOME"          # OSH_THEME 비활성화, SRE 플러그인 적용
+configure_starship "guest" "$HOME"          # ~/.config/starship.toml 배포
+configure_bashrc   "guest" "$HOME"          # 안전 alias, lsd, fzf, zoxide, starship init 추가
+'
+```
+
+**정리**: 별도 셸에서 실행되는 `sudo -u guest bash -c '...'` 안의 `$HOME`/`$(date +%F)`는 작은따옴표로 감싸 바깥 스크립트가 아닌 guest 계정의 서브셸에서 평가되도록 한 점이 핵심이다. `rl9_setup.sh`에 추가된 `--source-only` 가드(SH-07의 rl9_setup.sh 마지막 부분 참고)가 있어야만 이 스크립트가 정상 동작한다.

@@ -382,6 +382,54 @@ NAME                         READY   STATUS    RESTARTS   AGE     IP           N
 sol-deploy-956c888c6-c9hng   1/1     Running   0          8m54s   10.244.1.4   k8s-worker1   <none>           <none>
 ```
 
+### YAML 파일로 Deployment 생성
+
+위의 `kubectl create deployment` 명령형(imperative) 방식과 동일한 결과를 선언형(declarative) YAML 매니페스트로도 만들 수 있다. 실무에서는 버전 관리(Git)와 재사용성 때문에 YAML 파일 방식을 더 많이 사용한다.
+
+```yaml
+# sol-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sol-deploy
+  labels:
+    app: sol-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sol-deploy
+  template:
+    metadata:
+      labels:
+        app: sol-deploy
+    spec:
+      containers:
+      - name: sol-deploy
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+```
+
+```bash
+[root@k8s-master ~]# kubectl apply -f sol-deploy.yaml
+deployment.apps/sol-deploy created
+
+[root@k8s-master ~]# kubectl get deployments
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+sol-deploy   3/3     3            3           8s
+
+[root@k8s-master ~]# kubectl get pods
+NAME                          READY   STATUS    RESTARTS   AGE
+sol-deploy-956c888c6-c9hng    1/1     Running   0          8s
+sol-deploy-956c888c6-flnf6    1/1     Running   0          8s
+sol-deploy-956c888c6-kcv2w    1/1     Running   0          8s
+```
+
+- `spec.replicas` : 유지할 Pod 개수 (`--replicas` 옵션과 동일)
+- `spec.selector.matchLabels` : Deployment가 관리할 Pod를 찾는 라벨 (`spec.template.metadata.labels`와 반드시 일치해야 함)
+- `spec.template` : 실제 생성될 Pod의 스펙 (컨테이너 이미지, 포트 등)
+
 ### Pod 하나 삭제 → 자동 재생성 확인
 
 Deployment가 관리하는 Pod 중 하나를 삭제했을 때 자동으로 새 Pod가 생성되어 replicas 수가 유지되는지 확인한다.

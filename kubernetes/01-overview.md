@@ -4,6 +4,8 @@
 
 ## 가상머신 vs 도커 컨테이너
 
+![가상머신 vs 도커 컨테이너 구조](images/k8s-01/vm-vs-container.jpeg)
+
 | 구분 | 가상머신 (VM) | 도커 컨테이너 |
 |------|------------|------------|
 | OS | Guest OS 별도 설치 | Host OS 커널 공유 |
@@ -33,6 +35,8 @@ Container 1, 2, 3...    ← App + 필요한 라이브러리만 포함
 ## 멀티호스트 도커 플랫폼
 
 서버가 여러 대일 때 Docker 컨테이너를 분산하여 운영하는 구조다.
+
+![멀티호스트 도커 네트워크 (Overlay Network · GRE tunnel)](images/k8s-01/multihost-docker-network.jpeg)
 
 ### 왜 필요한가
 

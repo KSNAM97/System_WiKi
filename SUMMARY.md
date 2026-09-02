@@ -75,6 +75,7 @@
 * 이론
   * [클라우드 기초 개념](aws/03-cloud-basics.md)
   * [EC2 배포](aws/04-ec2-deployment.md)
+  * [VPC](aws/09-vpc.md)
 * 가이드
   * [AWS 가입하기](aws/01-signup.md)
   * [IAM MFA 설정](aws/02-iam-mfa.md)

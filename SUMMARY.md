@@ -73,3 +73,4 @@
 ## ☁️ AWS
 
 * [클라우드 기초 개념](aws/01-cloud-basics.md)
+* [EC2 배포](aws/02-ec2-deployment.md)

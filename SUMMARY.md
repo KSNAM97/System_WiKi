@@ -69,3 +69,7 @@
 * [Storage (Volume · PV/PVC · StorageClass · NFS · Dynamic Provisioning)](kubernetes/11-storage.md)
 * [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 * [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
+
+## ☁️ AWS
+
+* [클라우드 기초 개념](aws/01-cloud-basics.md)

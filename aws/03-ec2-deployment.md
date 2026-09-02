@@ -77,7 +77,7 @@
 
 EC2 인스턴스 저장에는 크게 **EBS(Elastic Block Store)**와 **인스턴스 스토어(Instance Store)** 두 가지 방식이 있다.
 
-![EBS와 인스턴스 스토어 아이콘 비교](images/aws-02/ebs-vs-instance-store.jpeg)
+![EBS와 인스턴스 스토어 아이콘 비교](images/aws-03/ebs-vs-instance-store.jpeg)
 
 **기본 개념 비교**
 
@@ -182,7 +182,7 @@ Amazon EC2 프로비전(t3.micro, 프리티어) → AMI 선택(Amazon Linux) →
 
 ### 전용 인스턴스 (Dedicated Instance)
 
-![전용 인스턴스 vCPU 구조](images/aws-02/dedicated-instance-vcpu.jpeg)
+![전용 인스턴스 vCPU 구조](images/aws-03/dedicated-instance-vcpu.jpeg)
 
 - AWS가 제공하는 물리적 서버를 다른 고객과 공유하지 않고 특정 고객 전용으로 할당하여 EC2 인스턴스를 실행하는 방식
 - 인스턴스/호스트 단위로 격리된 환경 제공. 물리적 하드웨어는 단일 고객 전용이지만, 그 위에서 여러 개의 가상 CPU(vCPU) 인스턴스를 실행 가능
@@ -205,7 +205,7 @@ Amazon EC2 프로비전(t3.micro, 프리티어) → AMI 선택(Amazon Linux) →
 - 하나의 인스턴스에 하나 이상의 보안 그룹을 설정 가능하여, 복합적인 보안 규칙 적용 가능
 - 인스턴스에 여러 보안 그룹이 적용될 경우 모든 보안 그룹의 허용 규칙이 합산되어 적용됨 (가장 개방적인 규칙이 우선)
 
-![보안 그룹 포트별 트래픽 허용 예시](images/aws-02/security-group-port-flow.jpeg)
+![보안 그룹 포트별 트래픽 허용 예시](images/aws-03/security-group-port-flow.jpeg)
 
 ## 8. EC2 접속 방법
 
@@ -287,7 +287,7 @@ EC2로 접속하는 방법은 여러 가지가 있지만 가장 대표적인 방
 
 ## 9. EC2 생명주기
 
-![EC2 인스턴스 상태 전이 다이어그램](images/aws-02/ec2-lifecycle-states.jpeg)
+![EC2 인스턴스 상태 전이 다이어그램](images/aws-03/ec2-lifecycle-states.jpeg)
 
 ### 중지(Stop)
 - **요금 청구**: 중지 상태에서는 인스턴스 사용 요금은 부과되지 않음. 단, EBS 요금과 Elastic IP 등 다른 리소스 요금은 계속 부과됨 (예: EBS 스토리지 용량, 연결된 Elastic IP 미사용 시에도 비용 발생)
@@ -338,7 +338,7 @@ EC2로 접속하는 방법은 여러 가지가 있지만 가장 대표적인 방
 - **User Data**: 인스턴스에게 "처음 실행할 작업"을 전달
 - **Meta Data**: 인스턴스가 "자기 자신의 정보"를 조회
 
-![EC2 인스턴스 프로비저닝 구성 요소 개요 (AMI · EBS · 네트워크 · 유저데이터 · 메타데이터 · IAM 역할)](images/aws-02/instance-provisioning-overview.jpeg)
+![EC2 인스턴스 프로비저닝 구성 요소 개요 (AMI · EBS · 네트워크 · 유저데이터 · 메타데이터 · IAM 역할)](images/aws-03/instance-provisioning-overview.jpeg)
 
 ### 유저 데이터 (User Data)
 - EC2 인스턴스를 생성할 때 자동으로 실행할 스크립트나 설정 정보를 전달하는 기능
@@ -430,19 +430,19 @@ curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-da
 
 ### 1) IAM 자격 증명을 등록
 
-![EC2에서 IAM 자격증명으로 다른 AWS 서비스에 접근하는 구조 (S3 · DynamoDB · SageMaker)](images/aws-02/iam-credential-architecture.jpeg)
+![EC2에서 IAM 자격증명으로 다른 AWS 서비스에 접근하는 구조 (S3 · DynamoDB · SageMaker)](images/aws-03/iam-credential-architecture.jpeg)
 
 - IAM 사용자를 생성하고, 해당 사용자에 대한 IAM 자격 증명을 발급받아 EC2 인스턴스에 직접 등록
 - AWS CLI의 `aws configure` 명령어를 통해 자격 증명을 `~/.aws/credentials` 파일에 저장
 - **단점**: 관리가 어렵고, 변경이 번거로움
 
-![EC2 100대에 등록된 자격 증명을 일일이 교체해야 하는 상황](images/aws-02/credential-rotation-manual.jpeg)
+![EC2 100대에 등록된 자격 증명을 일일이 교체해야 하는 상황](images/aws-03/credential-rotation-manual.jpeg)
 
 예: EC2 100대에 등록된 자격 증명을 모두 교체해야 하는 상황이라면, 각 인스턴스마다 수동으로 변경해야 함
 
 ### 2) IAM 역할을 부여
 
-![IAM Role을 통해 여러 EC2에 권한을 한 번에 부여하는 구조](images/aws-02/credential-rotation-role.jpeg)
+![IAM Role을 통해 여러 EC2에 권한을 한 번에 부여하는 구조](images/aws-03/credential-rotation-role.jpeg)
 
 - 필요한 권한이 포함된 IAM 역할(Role)을 생성하고 이를 EC2 인스턴스에 부여
 - **장점**: 관리와 교체가 간편함
@@ -452,7 +452,7 @@ curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-da
 
 ### 역할(Role)
 
-![IAM 사용자 + 권한(IAM Role) = 최종 권한 개념도](images/aws-02/iam-role-concept.jpeg)
+![IAM 사용자 + 권한(IAM Role) = 최종 권한 개념도](images/aws-03/iam-role-concept.jpeg)
 
 - IAM 역할(Role)은 AWS 리소스에 임시로 권한을 부여하기 위한 AWS의 보안 주체(Security Principal)
 - 사용자(User)와 비슷하게 권한을 가질 수 있지만, 장기 자격 증명(Access Key, Secret Key)을 사용하지 않고, 필요할 때만 임시 자격 증명을 발급받아 사용한다.
@@ -486,7 +486,7 @@ curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-da
 
 ### 수직 확장 (Vertical Scale, Scale Up)
 
-![수직 확장: CPU x1 → CPU x16, 성능 16배·비용 30배](images/aws-02/vertical-scaling.jpeg)
+![수직 확장: CPU x1 → CPU x16, 성능 16배·비용 30배](images/aws-03/vertical-scaling.jpeg)
 
 - 하나의 서버(인스턴스)의 성능을 높이는 방식으로 시스템 용량을 확장하는 방법
 - 즉, 서버 자체의 CPU, 메모리, 디스크 속도 등을 업그레이드해서 처리 능력을 높이는 것을 의미
@@ -506,7 +506,7 @@ curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-da
 
 ### 수평 확장 (Horizontal Scale, Scale Out)
 
-![수평 확장: CPU x1 서버 1대 → 동일 사양 16대, 성능 16배·비용 16배](images/aws-02/horizontal-scaling.jpeg)
+![수평 확장: CPU x1 서버 1대 → 동일 사양 16대, 성능 16배·비용 16배](images/aws-03/horizontal-scaling.jpeg)
 
 - 서버(혹은 인스턴스)의 개수를 늘려서 전체 시스템 성능과 처리량을 향상시키는 방식
 - 즉, 한 대의 서버를 업그레이드하는 대신 여러 대의 서버를 병렬로 운영해 부하를 분산하는 구조
@@ -590,7 +590,7 @@ EC2를 잘 활용하려면 언제나 인스턴스가 떨어질 수 있다는 전
 
 ### ELB를 사용하지 않은 경우
 
-![ELB 없이 사용자가 각 EC2 인스턴스에 직접 개별 접속하는 구조](images/aws-02/without-elb.jpeg)
+![ELB 없이 사용자가 각 EC2 인스턴스에 직접 개별 접속하는 구조](images/aws-03/without-elb.jpeg)
 
 - 사용자(User)는 직접 Auto Scaling Group 내부의 EC2 인스턴스들에 개별 접속하게 된다.
 - 각 인스턴스는 고유한 퍼블릭 IP를 가지며, 클라이언트가 어떤 서버에 접속할지는 사용자가 직접 선택해야 한다.
@@ -599,7 +599,7 @@ EC2를 잘 활용하려면 언제나 인스턴스가 떨어질 수 있다는 전
 
 ### ELB를 사용한 경우
 
-![ELB를 통해 여러 EC2 인스턴스로 트래픽이 자동 분산되는 구조](images/aws-02/with-elb.jpeg)
+![ELB를 통해 여러 EC2 인스턴스로 트래픽이 자동 분산되는 구조](images/aws-03/with-elb.jpeg)
 
 - 사용자(User)는 개별 EC2 인스턴스의 IP로 접속하지 않고, 로드 밸런서의 도메인 주소로 접속
 - 로드 밸런서(ELB)는 들어오는 요청을 Auto Scaling Group 내의 모든 EC2 인스턴스에 자동으로 분산한다.
@@ -637,7 +637,7 @@ EC2를 잘 활용하려면 언제나 인스턴스가 떨어질 수 있다는 전
 
 ### ELB + Auto Scaling
 
-![ELB와 Auto Scaling이 연동되어 트래픽 분산과 인스턴스 확장이 동시에 이루어지는 구조](images/aws-02/elb-autoscaling.jpeg)
+![ELB와 Auto Scaling이 연동되어 트래픽 분산과 인스턴스 확장이 동시에 이루어지는 구조](images/aws-03/elb-autoscaling.jpeg)
 
 - Auto Scaling을 통해 EC2 인스턴스의 개수를 자동으로 조정하고, ELB를 사용해 각 인스턴스로 트래픽을 고르게 분산 처리한다.
 - Auto Scaling으로 인스턴스가 증가하거나 감소하면, 해당 인스턴스가 자동으로 ELB에 등록되거나 해제되어 무중단 서비스 운영이 가능하다.
@@ -673,7 +673,7 @@ EC2를 잘 활용하려면 언제나 인스턴스가 떨어질 수 있다는 전
 
 **대상 그룹 라우팅 예시**
 
-![도메인 기반 대상 그룹 라우팅 예시 (웹서버·이미지서버·대시보드·람다)](images/aws-02/target-group-routing.jpeg)
+![도메인 기반 대상 그룹 라우팅 예시 (웹서버·이미지서버·대시보드·람다)](images/aws-03/target-group-routing.jpeg)
 
 ### 리스너(Listener)란?
 - **정의**: ALB(Application Load Balancer)로 들어오는 요청을 처리하는 주체로, 트래픽의 프로토콜 + 포트 단위로 구성됨
@@ -702,7 +702,7 @@ EC2를 잘 활용하려면 언제나 인스턴스가 떨어질 수 있다는 전
 
 **리스너 규칙 예시**
 
-![포트별 리스너 규칙과 대상 그룹 라우팅 예시](images/aws-02/listener-rules.jpeg)
+![포트별 리스너 규칙과 대상 그룹 라우팅 예시](images/aws-03/listener-rules.jpeg)
 
 ## 17. 실습: 웹 서버 배포 · 메타데이터 조회 · IAM 자격증명
 

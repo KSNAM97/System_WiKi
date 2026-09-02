@@ -72,9 +72,10 @@
 
 ## ☁️ AWS
 
-* [클라우드 기초 개념](aws/01-cloud-basics.md)
-* [EC2 배포](aws/02-ec2-deployment.md)
-* [EC2 설정](aws/03-ec2-setup.md)
-* [EC2 접속하기](aws/04-ec2-connect.md)
-* [탄력적 IP](aws/05-elastic-ip.md)
-* [로드 밸런서·HTTPS](aws/06-load-balancer-https.md)
+* [AWS 가입하기](aws/01-signup.md)
+* [클라우드 기초 개념](aws/02-cloud-basics.md)
+* [EC2 배포](aws/03-ec2-deployment.md)
+* [EC2 설정](aws/04-ec2-setup.md)
+* [EC2 접속하기](aws/05-ec2-connect.md)
+* [탄력적 IP](aws/06-elastic-ip.md)
+* [로드 밸런서·HTTPS](aws/07-load-balancer-https.md)

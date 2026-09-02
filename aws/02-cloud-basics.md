@@ -29,7 +29,7 @@ Amazon Web Services(AWS)는 전 세계적으로 분포한 데이터 센터에서
 
 **AWS 핵심 서비스 티어**
 
-![AWS 서비스 티어 (필수/매우 중요/중요)](images/aws-01/service-tier.jpeg)
+![AWS 서비스 티어 (필수/매우 중요/중요)](images/aws-02/service-tier.jpeg)
 
 | 티어 | 서비스 | 관련 서비스 |
 |------|--------|-------------|
@@ -264,7 +264,7 @@ AWS의 보안 및 관리를 담당하는 글로벌 서비스다.
 
 이 방식에서 가장 중요한 기준은 **최대 피크 사용량**이다. 서비스를 운영하다 보면 시간에 따라 사용량이 계속 변한다. 어떤 시간에는 트래픽이 몰리고, 어떤 시간에는 거의 사용자가 없다. 하지만 온프레미스 환경에서는 가장 바쁜 순간에 서비스가 멈추지 않도록 항상 최대 피크 기준으로 인프라를 미리 준비해야 한다.
 
-![온프레미스: 서버 용량이 항상 최대 피크 선에 고정](images/aws-01/onpremise-usage-graph.jpeg)
+![온프레미스: 서버 용량이 항상 최대 피크 선에 고정](images/aws-02/onpremise-usage-graph.jpeg)
 
 사용량이 적은 대부분의 시간에도 서버는 풀로 켜져 있고, 전기·공간·유지비는 계속 들어간다. 이게 온프레미스의 구조적 한계다.
 
@@ -288,7 +288,7 @@ AWS의 보안 및 관리를 담당하는 글로벌 서비스다.
 - 예측이 틀리면 두 가지 문제가 생긴다: 적게 사면 장애, 많이 사면 낭비.
 - 클라우드에서는 이 고민 자체가 줄어든다. 사용량이 늘면 서버를 늘리고, 줄면 서버를 줄일 수 있기 때문이다 — 이게 바로 **오토 스케일링(Auto Scaling)** 개념이다.
 
-![EC2 (클라우드): 서버 용량이 사용량 그래프를 따라 함께 움직인다](images/aws-01/ec2-elastic-usage-graph.jpeg)
+![EC2 (클라우드): 서버 용량이 사용량 그래프를 따라 함께 움직인다](images/aws-02/ec2-elastic-usage-graph.jpeg)
 
 노란 영역은 필요 이상으로 유지되는 고정 자원이 아니라, 필요할 때 잠깐 늘었다가 사라지는 유연한 자원이다. 그래서 클라우드에서는 자원 낭비가 줄어들고, 비용도 함께 절감된다.
 
@@ -303,7 +303,7 @@ AWS의 보안 및 관리를 담당하는 글로벌 서비스다.
 
 클라우드 이야기를 할 때 가장 먼저 등장하는 개념이 IaaS, PaaS, SaaS다. 클라우드 서비스는 어디까지를 클라우드가 대신 해주고, 어디부터를 사용자가 직접 해야 하는지에 따라 나뉜다.
 
-![On-Premises vs IaaS vs PaaS vs SaaS 관리 범위](images/aws-01/iaas-paas-saas.jpeg)
+![On-Premises vs IaaS vs PaaS vs SaaS 관리 범위](images/aws-02/iaas-paas-saas.jpeg)
 
 **IaaS (Infrastructure as a Service)**
 
@@ -426,9 +426,9 @@ AWS의 보안 및 관리를 담당하는 글로벌 서비스다.
 
 ## AWS의 구조 (리전 · 가용 영역)
 
-![AWS 글로벌 리전 지도](images/aws-01/regions-map.jpeg)
+![AWS 글로벌 리전 지도](images/aws-02/regions-map.jpeg)
 
-![AWS Cloud - 리전별 가용 영역 구조](images/aws-01/region-az-structure.jpeg)
+![AWS Cloud - 리전별 가용 영역 구조](images/aws-02/region-az-structure.jpeg)
 
 **AWS 리전(AWS Region)**
 
@@ -602,12 +602,12 @@ IAM 사용자는 이런 경우 사용됨: 사람 사용자(예: AWS 관리 콘�
 
 **역할(Role)**
 
-![AWS IAM 사용자·역할·리소스 접근 흐름](images/aws-01/iam-structure.jpeg)
+![AWS IAM 사용자·역할·리소스 접근 흐름](images/aws-02/iam-structure.jpeg)
 
 - AWS의 권한의 집합
 - 역할에 맞는 다양한 권한의 집합을 만들고 IAM 사용자, AWS 서비스, 어플리케이션 등이 부여받아 활동
 
-![역할(Role) 부여 예시 — 경영지원팀 Role · 개발자 Role](images/aws-01/iam-role.jpeg)
+![역할(Role) 부여 예시 — 경영지원팀 Role · 개발자 Role](images/aws-02/iam-role.jpeg)
 
 **정책(Policy)**
 

@@ -12,7 +12,7 @@ EC2 인스턴스를 생성하면 고유의 퍼블릭 IP를 할당받는다. 하�
 
 인스턴스를 선택하여 퍼블릭 IP 주소를 확인한다. 오른쪽 상단의 [인스턴스 상태]에서 [인스턴스 중지]를 선택한다.
 
-![인스턴스 중지](images/aws-05/instance-stop.png)
+![인스턴스 중지](images/aws-06/instance-stop.png)
 
 중지된 인스턴스를 다시 시작하면 퍼블릭 IP 주소가 변경된 것을 볼 수 있다. 이제 탄력적 IP를 사용하여 해당 인스턴스의 IP 주소를 고정한다.
 
@@ -20,24 +20,24 @@ EC2 인스턴스를 생성하면 고유의 퍼블릭 IP를 할당받는다. 하�
 
 탄력적 IP 페이지로 이동하여 [탄력적 IP 주소 할당] 버튼을 클릭한다. 기본 설정은 그대로 두고 [할당]을 클릭하면 IP 주소를 할당받게 된다.
 
-![탄력적 IP 할당 완료](images/aws-05/eip-allocated.png)
+![탄력적 IP 할당 완료](images/aws-06/eip-allocated.png)
 
 생성한 탄력적 IP의 이름을 변경한다 (예: `aws-ip`).
 
-![탄력적 IP 이름 변경](images/aws-05/eip-rename.png)
+![탄력적 IP 이름 변경](images/aws-06/eip-rename.png)
 
 ### 2.3 EC2 인스턴스와 탄력적 IP 연결
 
 오른쪽 상단의 [작업]에서 [탄력적 IP 주소 연결]을 선택한다.
 
-![작업 메뉴 - 탄력적 IP 주소 연결](images/aws-05/eip-associate-menu.png)
+![작업 메뉴 - 탄력적 IP 주소 연결](images/aws-06/eip-associate-menu.png)
 
 인스턴스에서 EC2에 생성한 인스턴스를 선택하고, 오른쪽 하단의 [연결]을 클릭하면 연결이 완료된다.
 
-![탄력적 IP 주소 연결 - 인스턴스 선택](images/aws-05/eip-associate-instance.png)
+![탄력적 IP 주소 연결 - 인스턴스 선택](images/aws-06/eip-associate-instance.png)
 
 ### 2.4 결과 확인
 
 EC2 인스턴스로 이동하면 탄력적 IP에서 할당받은 주소로 퍼블릭 IP 주소가 변경된 것을 볼 수 있다. 이제 인스턴스를 중지하고 다시 시작해도 퍼블릭 IP 주소는 고정된다.
 
-![인스턴스 퍼블릭 IPv4 주소가 탄력적 IP로 고정됨](images/aws-05/instance-public-ip-fixed.png)
+![인스턴스 퍼블릭 IPv4 주소가 탄력적 IP로 고정됨](images/aws-06/instance-public-ip-fixed.png)

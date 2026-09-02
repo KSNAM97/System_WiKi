@@ -76,3 +76,4 @@
 * [EC2 배포](aws/02-ec2-deployment.md)
 * [로드 밸런서·HTTPS](aws/03-load-balancer-https.md)
 * [탄력적 IP](aws/04-elastic-ip.md)
+* [EC2 접속하기](aws/05-ec2-connect.md)

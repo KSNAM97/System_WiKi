@@ -2,7 +2,7 @@
 
 > Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 54개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 55개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -84,7 +84,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (4)
+### ☁️ AWS (5)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -92,5 +92,6 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [EC2 배포](aws/02-ec2-deployment.md) — 인스턴스·EBS·AMI·요금 모델, 보안 그룹, 접속 방법, 생명주기, User Data/Meta Data, IAM 역할, 수직/수평 확장, Auto Scaling, ELB·대상 그룹·리스너
 - [로드 밸런서·HTTPS](aws/03-load-balancer-https.md) — ALB 생성 실습, 대상 그룹·헬스 체크, Route 53 도메인 연결, ACM 인증서 발급, HTTPS 리스너, HTTP→HTTPS 리다이렉트
 - [탄력적 IP](aws/04-elastic-ip.md) — Elastic IP 개념, 퍼블릭 IP 고정 문제, 탄력적 IP 할당·연결 실습
+- [EC2 접속하기](aws/05-ec2-connect.md) — AWS 콘솔(EC2 Instance Connect) 접속, 터미널 SSH 접속, 키 페어 권한(chmod) 오류 해결
 
 왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

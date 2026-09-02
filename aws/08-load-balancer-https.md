@@ -65,7 +65,7 @@ EC2 콘솔의 [로드밸런서] 메뉴 → 오른쪽 상단의 [로드 밸런서
 
 ELB의 부가 기능으로 **상태 검사(Health Check)**가 있다. 특정 인스턴스의 서버가 예상치 못한 오류가 발생했을 때, ELB 입장에서는 해당 서버에 요청(트래픽)을 보내는 것이 비효율적이다. 이러한 상황을 방지하기 위해 ELB는 주기적으로 대상 그룹에 속해 있는 인스턴스에게 요청을 보낸다. 그 요청 상태가 200으로 전달되면 서버에 문제가 없다고 판단하며, 응답이 오지 않는다면 ELB는 해당 인스턴스에 요청을 보내지 않는다.
 
-인스턴스에 상태 검사용 `/health` API가 필요하다. [AWS-04-EC2-Deployment.md](AWS-04-EC2-Deployment)의 [17. 실습](AWS-04-EC2-Deployment#17-실습-웹-서버-배포--메타데이터-조회--iam-자격증명)에서 사용한 **`demo-aws-credential`** Node.js 프로젝트를 그대로 확장해서 순수 Node.js(`http` 모듈)로 헬스 체크 API를 추가한다.
+인스턴스에 상태 검사용 `/health` API가 필요하다. [EC2 배포](04-ec2-deployment.md)의 [17. 실습: 웹 서버 배포 · 메타데이터 조회 · IAM 자격증명](04-ec2-deployment.md#17-실습-웹-서버-배포-메타데이터-조회-iam-자격증명)에서 사용한 **`demo-aws-credential`** Node.js 프로젝트를 그대로 확장해서 순수 Node.js(`http` 모듈)로 헬스 체크 API를 추가한다.
 
 ```js
 // demo-aws-credential/src/health.js

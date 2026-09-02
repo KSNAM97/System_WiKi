@@ -72,11 +72,13 @@
 
 ## ☁️ AWS
 
-* [AWS 가입하기](aws/01-signup.md)
-* [IAM MFA 설정](aws/02-iam-mfa.md)
-* [클라우드 기초 개념](aws/03-cloud-basics.md)
-* [EC2 배포](aws/04-ec2-deployment.md)
-* [EC2 설정](aws/05-ec2-setup.md)
-* [EC2 접속하기](aws/06-ec2-connect.md)
-* [탄력적 IP](aws/07-elastic-ip.md)
-* [로드 밸런서·HTTPS](aws/08-load-balancer-https.md)
+* 이론
+  * [클라우드 기초 개념](aws/03-cloud-basics.md)
+  * [EC2 배포](aws/04-ec2-deployment.md)
+* 가이드
+  * [AWS 가입하기](aws/01-signup.md)
+  * [IAM MFA 설정](aws/02-iam-mfa.md)
+  * [EC2 설정](aws/05-ec2-setup.md)
+  * [EC2 접속하기](aws/06-ec2-connect.md)
+  * [탄력적 IP](aws/07-elastic-ip.md)
+  * [로드 밸런서·HTTPS](aws/08-load-balancer-https.md)

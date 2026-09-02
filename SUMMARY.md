@@ -74,6 +74,6 @@
 
 * [클라우드 기초 개념](aws/01-cloud-basics.md)
 * [EC2 배포](aws/02-ec2-deployment.md)
-* [로드 밸런서·HTTPS](aws/03-load-balancer-https.md)
+* [EC2 접속하기](aws/03-ec2-connect.md)
 * [탄력적 IP](aws/04-elastic-ip.md)
-* [EC2 접속하기](aws/05-ec2-connect.md)
+* [로드 밸런서·HTTPS](aws/05-load-balancer-https.md)

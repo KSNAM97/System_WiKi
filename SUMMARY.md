@@ -82,4 +82,4 @@
   * [EC2 설정](aws/g03-ec2-setup.md)
   * [EC2 접속하기](aws/g04-ec2-connect.md)
   * [탄력적 IP](aws/g05-elastic-ip.md)
-  * [로드 밸런서·HTTPS](aws/g06-load-balancer-https.md)
+  * [로드 밸런서·오토스케일링·보안 그룹](aws/g06-load-balancer-https.md)

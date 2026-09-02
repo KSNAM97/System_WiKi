@@ -136,6 +136,8 @@ pm2 reload demo-aws-credential
 
 Auto Scaling 그룹을 만들면 대상 그룹에 연결된 EC2 인스턴스를 지정한 정책에 따라 자동으로 늘리고 줄일 수 있다. 콘솔 절차는 [Creating an Auto Scaling group using a launch template(AWS 공식 문서)](https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg.html)를 참고한다.
 
+전체 흐름은 다음과 같다. ① 시작 템플릿을 기반으로 ASG가 EC2 인스턴스를 생성하고, ② 각 인스턴스가 대상 그룹의 헬스 체크(`GET /health`)를 통과하면 자동으로 대상 그룹에 등록되어 트래픽을 받기 시작한다. ③ CloudWatch가 인스턴스들의 평균 CPU 사용률을 지속적으로 감시하고, ④ 이 값이 스케일링 정책의 목표치를 초과하거나 미달하면 ASG가 인스턴스 수를 자동으로 늘리거나(Scale Out) 줄인다(Scale In). 아직 헬스 체크를 통과하지 못했거나 Scale In 대상으로 지정된 인스턴스는 대상 그룹에서 제외되어 트래픽을 받지 않는다.
+
 ![Auto Scaling 동작 흐름: Launch Template → ASG → CloudWatch 기반 Scale In/Out](images/aws-08/asg-scaling-flow.png)
 
 ### 4.1 시작 템플릿(Launch Template) 생성

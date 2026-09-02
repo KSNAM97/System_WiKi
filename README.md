@@ -84,23 +84,23 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (8)
+### ☁️ AWS (9)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
 **이론**
 
-- [클라우드 기초 개념](aws/03-cloud-basics.md) — EC2·IAM·VPC·S3·Route 53·RDS, IaaS/PaaS/SaaS, 고가용성, 리전·가용 영역
-- [EC2 배포](aws/04-ec2-deployment.md) — 인스턴스·EBS·AMI·요금 모델, 보안 그룹, 접속 방법, 생명주기, User Data/Meta Data, IAM 역할, 수직/수평 확장, Auto Scaling, ELB·대상 그룹·리스너, EC2 모니터링(CloudWatch), Auto Scaling 정책·기타 기능, EFS, T 타입, EC2 사이즈 변경
-- [VPC](aws/09-vpc.md) — 사설망·NAT, CIDR·서브넷, VPC·라우트 테이블, 퍼블릭/프라이빗 서브넷·인터넷 게이트웨이, 기본/커스텀 VPC, Bastion Host·NAT Gateway, 보안 그룹·Stateful·Source·Prefix List
+- [클라우드 기초 개념](aws/t01-cloud-basics.md) — EC2·IAM·VPC·S3·Route 53·RDS, IaaS/PaaS/SaaS, 고가용성, 리전·가용 영역
+- [EC2 배포](aws/t02-ec2-deployment.md) — 인스턴스·EBS·AMI·요금 모델, 보안 그룹, 접속 방법, 생명주기, User Data/Meta Data, IAM 역할, 수직/수평 확장, Auto Scaling, ELB·대상 그룹·리스너, EC2 모니터링(CloudWatch), Auto Scaling 정책·기타 기능, EFS, T 타입, EC2 사이즈 변경
+- [VPC](aws/t03-vpc.md) — 사설망·NAT, CIDR·서브넷, VPC·라우트 테이블, 퍼블릭/프라이빗 서브넷·인터넷 게이트웨이, 기본/커스텀 VPC, Bastion Host·NAT Gateway, 보안 그룹·Stateful·Source·Prefix List
 
 **가이드**
 
-- [AWS 가입하기](aws/01-signup.md) — 계정 가입 실습, 프리 티어 정책(무료/유료 플랜), 가입 절차, 가입 후 체크리스트(IAM·예산 알림·MFA·리전)
-- [IAM MFA 설정](aws/02-iam-mfa.md) — IAM 개념·기능, IAM 사용자 추가하기(세부 정보·권한·검토·암호 확인), 가상 MFA 디바이스 할당(QR·Google OTP), MFA 로그인 강제 IAM 정책(JSON), 사용자 그룹 연결, MFA 적용 IAM 사용자 생성
-- [EC2 설정](aws/05-ec2-setup.md) — 리전, 보안 그룹 생성, IP·Port 개념, 인스턴스 시작(AMI·유형·키 페어·스토리지), 인스턴스 세부 내용, 인스턴스 종료
-- [EC2 접속하기](aws/06-ec2-connect.md) — AWS 콘솔(EC2 Instance Connect) 접속, 터미널 SSH 접속, 키 페어 권한(chmod) 오류 해결
-- [탄력적 IP](aws/07-elastic-ip.md) — Elastic IP 개념, 퍼블릭 IP 고정 문제, 탄력적 IP 할당·연결 실습
-- [로드 밸런서·HTTPS](aws/08-load-balancer-https.md) — ALB 생성 실습, 대상 그룹·헬스 체크, Route 53 도메인 연결, ACM 인증서 발급, HTTPS 리스너, HTTP→HTTPS 리다이렉트
+- [AWS 가입하기](aws/g01-signup.md) — 계정 가입 실습, 프리 티어 정책(무료/유료 플랜), 가입 절차, 가입 후 체크리스트(IAM·예산 알림·MFA·리전)
+- [IAM MFA 설정](aws/g02-iam-mfa.md) — IAM 개념·기능, IAM 사용자 추가하기(세부 정보·권한·검토·암호 확인), 가상 MFA 디바이스 할당(QR·Google OTP), MFA 로그인 강제 IAM 정책(JSON), 사용자 그룹 연결, MFA 적용 IAM 사용자 생성
+- [EC2 설정](aws/g03-ec2-setup.md) — 리전, 보안 그룹 생성, IP·Port 개념, 인스턴스 시작(AMI·유형·키 페어·스토리지), 인스턴스 세부 내용, 인스턴스 종료
+- [EC2 접속하기](aws/g04-ec2-connect.md) — AWS 콘솔(EC2 Instance Connect) 접속, 터미널 SSH 접속, 키 페어 권한(chmod) 오류 해결
+- [탄력적 IP](aws/g05-elastic-ip.md) — Elastic IP 개념, 퍼블릭 IP 고정 문제, 탄력적 IP 할당·연결 실습
+- [로드 밸런서·HTTPS](aws/g06-load-balancer-https.md) — ALB 생성 실습, 대상 그룹·헬스 체크, Route 53 도메인 연결, ACM 인증서 발급, HTTPS 리스너, HTTP→HTTPS 리다이렉트
 
 왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

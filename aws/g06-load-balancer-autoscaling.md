@@ -1,4 +1,4 @@
-# AWS 로드 밸런서 · 오토스케일링 · 보안 그룹 구성
+# AWS 로드 밸런서·오토스케일링·보안 그룹
 
 ## 1. ELB (Elastic Load Balancer) 소개
 
@@ -71,23 +71,29 @@ Source를 `sg-web`으로 지정하면, `sg-web`을 사용하는 EC2에서 오는
 
 ## 3. 로드 밸런서 생성
 
+콘솔 절차는 [Create an Application Load Balancer(AWS 공식 문서)](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-application-load-balancer.html)를 참고한다.
+
 ### 3.1 로드 밸런서 생성 시작
 
-EC2 콘솔의 [로드밸런서] 메뉴 → 오른쪽 상단의 [로드 밸런서 생성] 클릭 (리전이 서울로 설정되어 있는지 확인). 로드 밸런서 유형은 **Application Load Balancer**를 선택한다.
+EC2 콘솔의 [로드 밸런서(Load Balancers)] 메뉴 → [로드 밸런서 생성] 클릭 (리전이 서울로 설정되어 있는지 확인) → **Application Load Balancer** 유형에서 [생성] 클릭.
 
-기본 구성에서 로드 밸런서 이름을 자유롭게 작성한다.
+**기본 구성(Basic configuration)**
+
+- **로드 밸런서 이름**: 자유롭게 작성 (영숫자와 하이픈만 허용, 생성 후 변경 불가)
+- **체계(Scheme)**: 인터넷을 통해 트래픽을 받을 것이므로 **Internet-facing** 선택
+- **로드 밸런서 IP 주소 유형**: 기본값 **IPv4** 유지
 
 ### 3.2 네트워크 매핑
 
-네트워크 매핑은 사용할 VPC와 가용 영역(AZ)별 서브넷을 선택하는 단계이다. 고가용성을 위해 전부 체크한다.
+**네트워크 매핑(Network mapping)** 단계에서 사용할 VPC를 선택한다. Internet-facing 로드 밸런서는 인터넷 게이트웨이가 연결된 VPC만 선택할 수 있다. **가용 영역 및 서브넷(Availability Zones and subnets)**에서는 최소 2개 이상의 가용 영역(AZ)에 속한 서브넷을 선택한다 — 고가용성을 위해 전부 체크한다.
 
 ### 3.3 보안 그룹
 
-보안 그룹에서는 앞서 생성한 `sg-alb`를 선택한다.
+**보안 그룹(Security groups)** 단계에서는 VPC의 기본 보안 그룹이 자동으로 선택되어 있다. 이를 제거하고 앞서 생성한 `sg-alb`를 선택한다.
 
 ### 3.4 리스너 및 라우팅 - 대상 그룹 생성
 
-리스너 및 라우팅은 ELB로 들어온 요청을 어떤 EC2에 전달할지 지정하는 항목이다. EC2 연결을 위해 [대상 그룹 생성]을 클릭한다.
+**리스너 및 라우팅(Listeners and routing)**은 ELB로 들어온 요청을 어떤 대상 그룹으로 전달할지 지정하는 항목이다. 기본 리스너는 `HTTP : 80`이며 그대로 사용한다. **기본 작업(Default action)**에서 대상 그룹을 선택해야 하는데, 아직 없으므로 [대상 그룹 생성(Create target group)]을 클릭한다.
 
 **대상 그룹 세부 정보**: 고객이 로드 밸런서에 접속 시 EC2의 특정 인스턴스에 전달해야 하므로 대상 유형은 **인스턴스**로 지정한다. 대상 그룹 이름은 자유롭게 작성하고, 프로토콜:포트는 `HTTP : 80`으로 둔다.
 
@@ -128,7 +134,7 @@ pm2 reload demo-aws-credential
 
 ### 3.6 대상 등록과 생성 완료
 
-이 시점에는 아직 Auto Scaling 그룹이 없으므로, 대상 등록 단계는 건너뛰고 [대상 그룹 생성]으로 완료한다. 이어서 리스너 및 라우팅에서 새로 고침을 한 다음 방금 만든 대상 그룹을 선택하고 [로드 밸런서 생성]을 클릭한다.
+이 시점에는 아직 Auto Scaling 그룹이 없으므로, 대상 등록 단계는 건너뛰고 [대상 그룹 생성]으로 완료한다. 리스너 및 라우팅 화면으로 돌아와 새로 고침한 다음 방금 만든 대상 그룹을 기본 작업으로 선택한다. 이어지는 **요약(Summary)** 단계에서 설정을 확인하고 [로드 밸런서 생성]을 클릭한다.
 
 로드 밸런서 상태가 "프로비저닝 중"에서 "활성"으로 바뀌면 상세 페이지에서 DNS 이름을 확인할 수 있다. 대상 그룹에 실제 EC2 인스턴스가 등록되는 것은 다음 단계의 Auto Scaling 그룹 생성 과정에서 자동으로 이루어진다.
 
@@ -150,13 +156,13 @@ EC2 콘솔의 [시작 템플릿] 메뉴에서 [시작 템플릿 생성]을 클�
 
 ### 4.2 Auto Scaling 그룹 생성
 
-EC2 콘솔의 [Auto Scaling 그룹] 메뉴에서 [Auto Scaling 그룹 생성]을 클릭한다.
+EC2 콘솔의 [Auto Scaling 그룹] 메뉴에서 [Auto Scaling 그룹 생성]을 클릭한다. 콘솔 절차는 [Create an Auto Scaling group using a launch template(AWS 공식 문서)](https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg.html)를 참고한다.
 
-1. **시작 템플릿 선택**: 앞서 만든 시작 템플릿 선택
-2. **네트워크**: VPC와 서브넷(가용 영역 여러 개) 선택
-3. **로드밸런싱**: [기존 로드 밸런서에 연결]을 선택하고, 앞서 만든 대상 그룹을 선택 — 이 설정으로 Auto Scaling이 생성하는 인스턴스가 자동으로 대상 그룹에 등록된다
-4. **그룹 크기**: Desired capacity, Minimum capacity, Maximum capacity 입력 (예: Min 2 / Desired 2 / Max 4)
-5. **스케일링 정책**: 대상 추적 정책(Target Tracking Policy) 선택 후 지표를 `평균 CPU 사용률`로 지정, 목표 값을 입력(예: 50%) — CPU 사용률이 목표치를 넘으면 자동으로 인스턴스를 추가(Scale Out)하고, 낮아지면 축소(Scale In)한다
+1. **시작 템플릿 또는 구성 선택(Choose launch template or configuration)**: Auto Scaling 그룹 이름을 입력하고, 앞서 만든 시작 템플릿과 버전(기본값은 **Latest**)을 선택
+2. **인스턴스 시작 옵션 선택(Choose instance launch options)**: 시작 템플릿에 인스턴스 유형이 지정돼 있다면 기본값 그대로 두고, **네트워크(Network)**에서 VPC와 가용 영역별 서브넷(2개 이상)을 선택
+3. **다른 서비스와 통합(Integrate with other services)**: **로드 밸런싱(Load balancing)**에서 [기존 로드 밸런서에 연결]을 선택하고 앞서 만든 대상 그룹을 지정 — 이 설정으로 Auto Scaling이 생성하는 인스턴스가 자동으로 대상 그룹에 등록된다. **상태 검사(Health checks)**에서 상태 검사 유예 기간(Health check grace period)을 애플리케이션 부팅 시간에 맞게 설정(예: 90초)
+4. **그룹 크기 및 조정 구성(Configure group size and scaling)**: **그룹 크기(Group size)**에서 Desired capacity를 입력하고, **조정 한도(Scaling limits)**에서 Min/Max desired capacity를 입력(예: Min 2 / Desired 2 / Max 4). **자동 조정(Automatic scaling)**에서 대상 추적 조정 정책(Target tracking scaling policy)을 선택 후 지표를 `평균 CPU 사용률`로 지정, 목표 값을 입력(예: 50%) — CPU 사용률이 목표치를 넘으면 자동으로 인스턴스를 추가(Scale Out)하고, 낮아지면 축소(Scale In)한다
+5. **알림 추가·태그 추가**: 필요 없다면 건너뛰고 **검토(Review)** 단계에서 설정을 확인 후 [Auto Scaling 그룹 생성] 클릭
 
 ### 4.3 생성 확인
 

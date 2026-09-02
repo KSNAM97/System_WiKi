@@ -29,10 +29,10 @@ ssh -i [pem 파일 경로]/aws-prod.pem ubuntu@x.xx.xxx.xx
 
 이대로 실행하면 해당 키 페어로는 접근이 안 된다는 경고가 나온다 (`UNPROTECTED PRIVATE KEY FILE`).
 
-`chmod` 명령어를 사용하여 키 페어의 권한을 변경해야 한다. `700`은 읽기·쓰기·실행 모든 권한을 (소유자에게만) 부여한다.
+`chmod` 명령어를 사용하여 키 페어의 권한을 변경해야 한다. SSH는 프라이빗 키 파일의 권한이 소유자 외에게 노출되어 있으면 접속을 거부하므로, 소유자에게 읽기 권한만 부여하는 `400`으로 설정한다.
 
 ```bash
-chmod 700 [pem 파일 경로]/aws-prod.pem
+chmod 400 [pem 파일 경로]/aws-prod.pem
 ssh -i [pem 파일 경로]/aws-prod.pem ubuntu@x.xx.xxx.xx
 ```
 

@@ -432,7 +432,7 @@ curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-da
 
 ![EC2에서 IAM 자격증명으로 다른 AWS 서비스에 접근하는 구조 (S3 · DynamoDB · SageMaker)](images/aws-04/iam-credential-architecture.jpeg)
 
-- IAM 사용자를 생성하고, 해당 사용자에 대한 IAM 자격 증명을 발급받아 EC2 인스턴스에 직접 등록
+- IAM 사용자를 생성하고, 해당 사용자에 대한 IAM 자격 증명을 발급받아 EC2 인스턴스에 직접 등록 (IAM 사용자를 콘솔에서 직접 추가하는 절차는 [클라우드 기초 개념 문서의 IAM 사용자 추가하기](03-cloud-basics.md#iam-심화-사용자그룹정책역할) 참고)
 - AWS CLI의 `aws configure` 명령어를 통해 자격 증명을 `~/.aws/credentials` 파일에 저장
 - **단점**: 관리가 어렵고, 변경이 번거로움
 

@@ -8,7 +8,7 @@ EC2는 Elastic Compute Cloud의 약자로, AWS에서 대여받은 컴퓨터를 �
 
 리전은 지역별로 인프라를 배포한 각각의 데이터 센터를 의미한다. EC2로 빌릴 수 있는 컴퓨터는 다양한 위치에 분포되어 있으며, 이렇게 분포된 컴퓨터의 위치를 리전이라고 한다. 선택된 리전에 있는 컴퓨터와 서비스를 이용하려는 사용자의 위치가 멀수록 접속 속도가 느려진다. 그래서 서비스의 주 사용자와 가장 가까운 위치에 있는 리전을 선택하는 것이 좋다. 예를 들어 한국 사용자를 대상으로 하는 서비스라면 리전을 아시아 태평양(서울)로 선택한다.
 
-![AWS 리전 세계 지도](images/aws-04/aws-regions-map.png)
+![AWS 리전 세계 지도](images/aws-05/aws-regions-map.png)
 
 리전은 AWS 로그인 후 오른쪽 상단의 메뉴에서 선택 가능하다.
 
@@ -21,7 +21,7 @@ EC2는 Elastic Compute Cloud의 약자로, AWS에서 대여받은 컴퓨터를 �
 
 EC2에 접속하여 왼쪽의 [보안 그룹]으로 이동한다. 이미 기본 보안 그룹은 생성되어 있는 상태이며, 새로운 보안 그룹을 생성한다. 오른쪽 상단의 [보안 그룹 생성] 버튼을 클릭한다.
 
-![EC2 콘솔 - 보안 그룹 메뉴 (default 보안 그룹만 존재)](images/aws-04/security-group-menu.png)
+![EC2 콘솔 - 보안 그룹 메뉴 (default 보안 그룹만 존재)](images/aws-05/security-group-menu.png)
 
 보안 그룹 이름·설명은 자유롭게 작성하고, VPC는 기본값으로 세팅한다. 인바운드 규칙은 다음과 같이 작성한다.
 
@@ -31,11 +31,11 @@ EC2에 접속하여 왼쪽의 [보안 그룹]으로 이동한다. 이미 기본 
 - **PostgreSQL 5432**: PostgreSQL 접속을 위한 5432번 포트를 허용한다 (추후 DB를 설정할 때 사용된다).
 - **SSH 22**: 서버 SSH 접속을 위한 22번 포트를 허용한다. 보안을 위해서는 Anywhere보다 작업할 사무실·집 등의 IP만 허용하는 것을 추천하지만, 여기서는 Anywhere로 설정한다.
 
-![보안 그룹 생성 - 인바운드 규칙(3000·443·80·5432·22)](images/aws-04/security-group-create-form.png)
+![보안 그룹 생성 - 인바운드 규칙(3000·443·80·5432·22)](images/aws-05/security-group-create-form.png)
 
 보안 그룹의 규칙은 언제든 자유롭게 편집이 가능하다. 아웃바운드 규칙은 작성할 필요가 없다. 바로 보안 그룹을 생성하면 목록에 추가된 보안 그룹을 확인할 수 있다.
 
-![보안 그룹 목록에 aws-sg 추가됨](images/aws-04/security-group-list-created.png)
+![보안 그룹 목록에 aws-sg 추가됨](images/aws-05/security-group-list-created.png)
 
 보안 그룹의 규칙을 지정할 때는 **IP**와 **Port**를 설정할 수 있다.
 
@@ -67,7 +67,7 @@ EC2에서 컴퓨터를 대여받는 과정을 진행한다. 이때 대여받는 
 
 대여받은 컴퓨터의 OS, 성능, 저장 용량 등을 설정한다. 이름 및 태그에서는 사용할 컴퓨터의 이름을 입력한다(`aws-prod`). 애플리케이션 및 OS 이미지는 **Ubuntu**를 선택한다. 머신 이미지는 무료 버전인 **프리 티어**를 선택한다.
 
-![인스턴스 시작 - 이름 및 태그, Ubuntu AMI 선택](images/aws-04/launch-instance-name-ami.png)
+![인스턴스 시작 - 이름 및 태그, Ubuntu AMI 선택](images/aws-05/launch-instance-name-ami.png)
 
 **인스턴스 유형**은 일종의 하드웨어 성능이라고 보면 된다. 프리 티어에서 사용 가능한 `t2.micro`를 선택한다. 인스턴스 유형은 언제든 자유롭게 변경 가능하다.
 
@@ -75,13 +75,13 @@ EC2에서 컴퓨터를 대여받는 과정을 진행한다. 이때 대여받는 
 
 네트워크 설정에서는 앞에서 생성한 기존 보안 그룹(`aws-sg`)을 선택한다.
 
-![네트워크 설정 - 기존 보안 그룹(aws-sg) 선택](images/aws-04/launch-instance-network-settings.png)
+![네트워크 설정 - 기존 보안 그룹(aws-sg) 선택](images/aws-05/launch-instance-network-settings.png)
 
 스토리지 구성에서는 컴퓨터의 저장 공간을 설정한다. 이 저장 공간을 보통 **EBS(Elastic Block Storage)**라고 부른다. EBS는 컴퓨터의 하드 디스크에 해당하며, EBS와 같은 저장 공간을 포괄적인 용어로 스토리지 또는 볼륨이라고 부른다. 용량은 `30GiB`로 입력한다. 참고로 스토리지는 30GiB까지 무료로 이용 가능하다.
 
 이제 [인스턴스 시작]을 클릭하여 인스턴스를 생성하면 나만의 클라우드 컴퓨터가 생성된다.
 
-![생성된 인스턴스(aws-prod)가 실행 중 상태](images/aws-04/instance-running.png)
+![생성된 인스턴스(aws-prod)가 실행 중 상태](images/aws-05/instance-running.png)
 
 ## 6. 인스턴스 세부 내용
 
@@ -90,26 +90,26 @@ EC2에서 컴퓨터를 대여받는 과정을 진행한다. 이때 대여받는 
 - **퍼블릭 IPv4 주소**: EC2 인스턴스가 생성되면서 부여받은 IP 주소이다. 해당 인스턴스에 접근하려면 이 IP 주소를 입력하면 된다.
 - **인스턴스 상태**: 인스턴스의 실행 상태를 말한다.
 
-![인스턴스 세부 정보 요약 - 퍼블릭 IPv4 주소·인스턴스 상태](images/aws-04/instance-summary-detail.png)
+![인스턴스 세부 정보 요약 - 퍼블릭 IPv4 주소·인스턴스 상태](images/aws-05/instance-summary-detail.png)
 
 아래 **보안** 탭에서는 해당 인스턴스의 보안 그룹과 인바운드/아웃바운드 규칙이 표기되어 있다.
 
-![보안 탭 - 인바운드/아웃바운드 규칙](images/aws-04/instance-security-tab.png)
+![보안 탭 - 인바운드/아웃바운드 규칙](images/aws-05/instance-security-tab.png)
 
 **스토리지** 탭에서는 볼륨 크기를 확인할 수 있다.
 
-![스토리지 탭 - 루트 볼륨 30GiB](images/aws-04/instance-storage-tab.png)
+![스토리지 탭 - 루트 볼륨 30GiB](images/aws-05/instance-storage-tab.png)
 
 ## 7. 인스턴스 종료
 
 생성된 인스턴스를 삭제하려면 [인스턴스 상태] 메뉴에서 [인스턴스 종료]를 선택한다.
 
-![인스턴스 상태 메뉴 - 인스턴스 종료](images/aws-04/instance-terminate-menu.png)
+![인스턴스 상태 메뉴 - 인스턴스 종료](images/aws-05/instance-terminate-menu.png)
 
 종료 확인 대화상자가 뜬다. EBS가 지원하는 인스턴스의 경우, 인스턴스가 종료될 때 기본적으로 루트 EBS 볼륨이 삭제되며 로컬 드라이브의 스토리지는 모두 손실된다. 인스턴스 종료는 실행 취소할 수 없다.
 
-![종료 인스턴스 확인 대화상자](images/aws-04/instance-terminate-confirm.png)
+![종료 인스턴스 확인 대화상자](images/aws-05/instance-terminate-confirm.png)
 
 시간이 지나면 인스턴스 상태가 "종료됨"으로 변경된다. 그럼 인스턴스 삭제가 완료된 상황이며, 시간이 지나면 목록에서 제거된다.
 
-![인스턴스 상태 - 종료됨](images/aws-04/instance-terminated-state.png)
+![인스턴스 상태 - 종료됨](images/aws-05/instance-terminated-state.png)

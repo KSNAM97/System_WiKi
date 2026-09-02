@@ -35,19 +35,19 @@ EC2 콘솔의 [로드밸런서] 메뉴 → 오른쪽 상단의 [로드 밸런서
 
 기본 구성에서 로드 밸런서 이름을 자유롭게 작성한다.
 
-![Application Load Balancer 생성 - 기본 구성](images/aws-07/alb-basic-config.png)
+![Application Load Balancer 생성 - 기본 구성](images/aws-08/alb-basic-config.png)
 
 ### 4.2 네트워크 매핑
 
 네트워크 매핑은 사용할 VPC와 가용 영역(AZ)별 서브넷을 선택하는 단계이다. 고가용성을 위해 전부 체크한다.
 
-![네트워크 매핑 - VPC 및 가용 영역별 서브넷 선택](images/aws-07/alb-network-mapping.png)
+![네트워크 매핑 - VPC 및 가용 영역별 서브넷 선택](images/aws-08/alb-network-mapping.png)
 
 ### 4.3 보안 그룹
 
 보안 그룹에서는 이전에 생성한 보안 그룹을 선택한다.
 
-![보안 그룹 선택](images/aws-07/alb-security-group.png)
+![보안 그룹 선택](images/aws-08/alb-security-group.png)
 
 ### 4.4 리스너 및 라우팅 - 대상 그룹 생성
 
@@ -55,17 +55,17 @@ EC2 콘솔의 [로드밸런서] 메뉴 → 오른쪽 상단의 [로드 밸런서
 
 **대상 그룹 세부 정보**: 고객이 로드 밸런서에 접속 시 EC2의 특정 인스턴스에 전달해야 하므로 대상 유형은 **인스턴스**로 지정한다. 대상 그룹 이름은 자유롭게 작성하고, 프로토콜:포트는 `HTTP : 80`으로 둔다.
 
-![대상 그룹 세부 정보 지정 - 대상 유형·프로토콜:포트](images/aws-07/target-group-basic-config.png)
+![대상 그룹 세부 정보 지정 - 대상 유형·프로토콜:포트](images/aws-08/target-group-basic-config.png)
 
 나머지 IP 주소 유형·프로토콜 버전 등은 기본값(IPv4, HTTP1)으로 둔다. 이 항목들은 ELB가 사용자로부터 트래픽을 받아 대상 그룹에게 어떤 방식으로 전달할지 설정하는 부분이다.
 
-![대상 그룹 - IP 주소 유형·프로토콜 버전](images/aws-07/target-group-ip-protocol.png)
+![대상 그룹 - IP 주소 유형·프로토콜 버전](images/aws-08/target-group-ip-protocol.png)
 
 ### 4.5 상태 검사(Health Check)와 헬스 체크 API
 
 ELB의 부가 기능으로 **상태 검사(Health Check)**가 있다. 특정 인스턴스의 서버가 예상치 못한 오류가 발생했을 때, ELB 입장에서는 해당 서버에 요청(트래픽)을 보내는 것이 비효율적이다. 이러한 상황을 방지하기 위해 ELB는 주기적으로 대상 그룹에 속해 있는 인스턴스에게 요청을 보낸다. 그 요청 상태가 200으로 전달되면 서버에 문제가 없다고 판단하며, 응답이 오지 않는다면 ELB는 해당 인스턴스에 요청을 보내지 않는다.
 
-인스턴스에 상태 검사용 `/health` API가 필요하다. [AWS-03-EC2-Deployment.md](AWS-03-EC2-Deployment)의 [17. 실습](AWS-03-EC2-Deployment#17-실습-웹-서버-배포--메타데이터-조회--iam-자격증명)에서 사용한 **`demo-aws-credential`** Node.js 프로젝트를 그대로 확장해서 순수 Node.js(`http` 모듈)로 헬스 체크 API를 추가한다.
+인스턴스에 상태 검사용 `/health` API가 필요하다. [AWS-04-EC2-Deployment.md](AWS-04-EC2-Deployment)의 [17. 실습](AWS-04-EC2-Deployment#17-실습-웹-서버-배포--메타데이터-조회--iam-자격증명)에서 사용한 **`demo-aws-credential`** Node.js 프로젝트를 그대로 확장해서 순수 Node.js(`http` 모듈)로 헬스 체크 API를 추가한다.
 
 ```js
 // demo-aws-credential/src/health.js
@@ -98,25 +98,25 @@ pm2 reload demo-aws-credential
 
 생성된 EC2를 선택하고 [아래에 보류 중인 것으로 포함]을 클릭한다. 그럼 대상 보기에 해당 인스턴스가 추가되며, [대상 그룹 생성]을 선택하여 완료한다.
 
-![대상 등록 - EC2 인스턴스를 대상 그룹에 추가](images/aws-07/target-group-register-targets.png)
+![대상 등록 - EC2 인스턴스를 대상 그룹에 추가](images/aws-08/target-group-register-targets.png)
 
 ### 4.7 로드 밸런서 생성 완료
 
 다시 리스너 및 라우팅에서 새로 고침을 한 다음 앞에서 만든 대상 그룹을 선택한다.
 
-![리스너 및 라우팅 - 생성한 대상 그룹 연결](images/aws-07/listener-target-group-linked.png)
+![리스너 및 라우팅 - 생성한 대상 그룹 연결](images/aws-08/listener-target-group-linked.png)
 
 [로드 밸런서 생성]을 클릭하면 목록에 로드 밸런서가 추가된다. 현재 상태는 "프로비저닝 중"으로 나오는데, 이는 생성 중이라는 의미이다.
 
-![로드 밸런서 목록 - 프로비저닝 중](images/aws-07/elb-provisioning.png)
+![로드 밸런서 목록 - 프로비저닝 중](images/aws-08/elb-provisioning.png)
 
 로드 밸런서 상태가 활성으로 변경되었다면 상세 페이지로 이동한다. 여기에서 DNS 이름을 확인할 수 있는데, 해당 주소로도 사이트에 접속할 수 있다.
 
-![로드 밸런서 상세 페이지 - 활성 상태](images/aws-07/elb-active-detail.png)
+![로드 밸런서 상세 페이지 - 활성 상태](images/aws-08/elb-active-detail.png)
 
 DNS 이름으로 접속해 정상 응답이 오면, ELB와 EC2 인스턴스가 정상적으로 연결되었다는 의미이다.
 
-![ELB DNS 이름으로 접속 확인](images/aws-07/elb-dns-access-check.png)
+![ELB DNS 이름으로 접속 확인](images/aws-08/elb-dns-access-check.png)
 
 ## 5. ELB에 도메인 연결
 
@@ -125,51 +125,51 @@ Route 53에 ELB의 DNS를 연결한다. 이전에 생성한 레코드를 편집�
 - 레코드 유형: `A`
 - 트래픽 라우팅 대상: `Application/Classic Load Balancer`, 아시아 태평양, 생성된 ELB 선택
 
-![Route 53 레코드 편집 - ELB에 대한 별칭 연결](images/aws-07/route53-alias-record.png)
+![Route 53 레코드 편집 - ELB에 대한 별칭 연결](images/aws-08/route53-alias-record.png)
 
 이제 도메인 주소에 접속하면 이전과 동일한 결과가 출력되는 것을 확인할 수 있다.
 
-![도메인 주소로 ELB 경유 접속 확인](images/aws-07/domain-access-via-elb.png)
+![도메인 주소로 ELB 경유 접속 확인](images/aws-08/domain-access-via-elb.png)
 
 ## 6. HTTPS 적용하기
 
 AWS에서 [Certificate Manager] 페이지로 이동하여 [인증서 요청]을 클릭한다. 퍼블릭 인증서 요청을 선택하고 [다음]을 클릭한다. 구입한 도메인 이름을 입력하고, 나머지 항목은 기본값(DNS 검증, RSA 2048)으로 두고 [요청]을 클릭한다.
 
-![퍼블릭 인증서 요청 - 도메인 이름·검증 방법](images/aws-07/acm-request-certificate.png)
+![퍼블릭 인증서 요청 - 도메인 이름·검증 방법](images/aws-08/acm-request-certificate.png)
 
 요청 직후에는 "검증 대기 중" 상태로 표시된다.
 
-![인증서 상태 - 검증 대기 중](images/aws-07/acm-pending-validation.png)
+![인증서 상태 - 검증 대기 중](images/aws-08/acm-pending-validation.png)
 
 인증서 상세에 들어가서 CNAME을 확인하고 [Route 53에서 레코드 생성]을 클릭한다.
 
-![인증서 상세 - CNAME 확인](images/aws-07/acm-cname-detail.png)
+![인증서 상세 - CNAME 확인](images/aws-08/acm-cname-detail.png)
 
 [레코드 생성]을 클릭한다.
 
-![Route 53에서 DNS 레코드 생성](images/aws-07/route53-create-cname-record.png)
+![Route 53에서 DNS 레코드 생성](images/aws-08/route53-create-cname-record.png)
 
 Route 53에 접속하면 CNAME 레코드가 추가된 것을 볼 수 있다.
 
-![Route 53에 CNAME 레코드 추가됨](images/aws-07/route53-cname-added.png)
+![Route 53에 CNAME 레코드 추가됨](images/aws-08/route53-cname-added.png)
 
 다시 Certificate Manager 페이지로 이동해서 일정 시간이 지나면 인증서 상태가 "발급됨"으로 변경된다.
 
-![인증서 상태 - 발급됨](images/aws-07/acm-certificate-issued.png)
+![인증서 상태 - 발급됨](images/aws-08/acm-certificate-issued.png)
 
 ## 7. ALB에 HTTPS 리스너 등록
 
 생성한 로드 밸런서의 상세 페이지로 이동해서 리스너 및 규칙 항목에 있는 [리스너 추가]를 클릭한다.
 
-![로드 밸런서 상세 페이지 - 리스너 추가 전](images/aws-07/elb-detail-before-https-listener.png)
+![로드 밸런서 상세 페이지 - 리스너 추가 전](images/aws-08/elb-detail-before-https-listener.png)
 
 프로토콜은 `HTTPS`로 변경하고, 앞에서 생성한 대상 그룹을 선택한다. 보안 리스너 설정에서도 앞에서 발급받은 인증서를 선택하고 [추가]를 클릭한다.
 
-![보안 리스너 설정 - ACM 인증서 선택](images/aws-07/https-listener-security-settings.png)
+![보안 리스너 설정 - ACM 인증서 선택](images/aws-08/https-listener-security-settings.png)
 
 이제 도메인에 `https://`를 붙여서 접속하면 경고 문구가 사라지고 "이 연결은 안전합니다"로 표시된다.
 
-![HTTPS 접속 - 연결 안전 확인](images/aws-07/https-connection-secure.png)
+![HTTPS 접속 - 연결 안전 확인](images/aws-08/https-connection-secure.png)
 
 ## 8. HTTP 접속시 HTTPS로 전환
 
@@ -177,11 +177,11 @@ Route 53에 접속하면 CNAME 레코드가 추가된 것을 볼 수 있다.
 
 생성한 로드 밸런서 상세 페이지로 이동해서 리스너 및 규칙에서 `HTTP:80`을 삭제하고 [리스너 추가]를 클릭한다.
 
-![HTTP:80 리스너 삭제](images/aws-07/http-listener-delete.png)
+![HTTP:80 리스너 삭제](images/aws-08/http-listener-delete.png)
 
 리스너 세부 정보에서 프로토콜 `HTTP : 80`으로 URL 리디렉션을 설정하여 HTTPS로 전달하도록 지정하고 [추가]를 클릭하면 리디렉션 대상 항목이 추가된다.
 
-![최종 리스너 목록 - HTTPS:443 + HTTP:80 → 301 리다이렉트](images/aws-07/http-to-https-redirect-final.png)
+![최종 리스너 목록 - HTTPS:443 + HTTP:80 → 301 리다이렉트](images/aws-08/http-to-https-redirect-final.png)
 
 - `HTTPS:443` → 대상 그룹으로 전달
 - `HTTP:80` → 리디렉션 대상 `HTTPS://#{host}:443/#{path}?#{query}`, 상태 코드 `HTTP_301`

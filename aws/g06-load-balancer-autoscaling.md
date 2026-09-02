@@ -1,4 +1,4 @@
-# AWS 로드 밸런서·오토스케일링·보안 그룹
+# AWS ALB · Auto Scaling
 
 ## 1. ELB (Elastic Load Balancer) 소개
 

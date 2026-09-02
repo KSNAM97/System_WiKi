@@ -37,11 +37,7 @@ AWS 계정을 최초로 생성할 때 모든 AWS 서비스 및 리소스에 대�
 
 IAM 대시보드에서 [액세스 관리] > [사용자]를 선택하면 지금까지 생성한 IAM 사용자 목록을 볼 수 있다. 새로운 사용자를 생성하려면 [사용자 추가] 버튼을 클릭한다.
 
-![IAM 사용자 목록 - 사용자 추가 버튼](images/aws-02/useradd-basic-user-list.png)
-
 사용자 추가 절차는 다음 4단계로 진행된다.
-
-![사용자 추가 단계 - 세부 정보 지정, 권한 설정, 검토 및 생성, 암호 검색](images/aws-02/useradd-basic-steps-overview.png)
 
 ### 2) 사용자 세부 정보 지정
 
@@ -52,15 +48,11 @@ IAM 대시보드에서 [액세스 관리] > [사용자]를 선택하면 지금�
 - **Identity Center에서 사용자 지정 (권장)**: Identity Center를 이용해 AWS 계정 및 클라우드 애플리케이션에 대한 사용자 액세스를 중앙에서 관리한다.
 - **IAM 사용자를 생성하고 싶음**: 액세스 키, AWS CodeCommit이나 Amazon Keyspaces에 대한 서비스별 보안 인증 정보 또는 비상 계정 액세스를 위한 백업 보안 인증 정보를 통해 프로그래밍 방식 액세스를 활성화해야 하는 경우에만 권장된다.
 
-![사용자 세부 정보 지정 - 사용자 이름, 콘솔 액세스 권한 옵션](images/aws-02/useradd-basic-user-details.png)
-
 [IAM 사용자를 생성하고 싶음]을 선택하면 콘솔 암호를 설정하는 화면이 이어진다.
 
 - **자동 생성된 암호**: 사용자를 생성한 후 암호를 확인할 수 있다.
 - **사용자 지정 암호**: 직접 암호를 입력한다.
 - **사용자는 다음 로그인 시 새 암호를 생성해야 합니다(권장)**: 체크하면 `IAMUserChangePassword` 정책이 자동으로 부여되어 사용자가 최초 로그인 시 암호를 변경하도록 허용된다.
-
-![콘솔 암호 옵션 - 자동 생성/사용자 지정, 다음 로그인 시 암호 재설정](images/aws-02/useradd-basic-console-password.png)
 
 ### 3) 권한 설정
 
@@ -72,33 +64,21 @@ IAM 대시보드에서 [액세스 관리] > [사용자]를 선택하면 지금�
 
 사용자 그룹은 그룹 단위로 정책(policy)이나 역할(role)을 부여할 수 있기 때문에, 해당 사용자에게 필요한 권한이나 역할을 고려하여 그룹을 선택하거나 새로 생성해야 한다. 한 명의 사용자가 여러 정책이나 역할을 부여받을 수 있으며, 두세 개의 사용자 그룹에 동시에 속할 수도 있다.
 
-![권한 설정 - 그룹에 사용자 추가, 사용자 그룹 목록](images/aws-02/useradd-basic-permissions-group.png)
-
 또한 사용자 단독으로도 정책을 부여할 수 있기 때문에, 개인 단위로 권한을 부여하려면 [직접 정책 연결]을 선택하면 된다. 이 경우 사용자 그룹 대신 AWS에서 관리하는 수많은 권한 정책 목록이 표시되며, 필요한 정책이 없다면 [정책 생성] 버튼으로 정책을 직접 만들 수도 있다.
-
-![권한 정책 목록 - 직접 정책 연결 시 표시되는 관리형 정책](images/aws-02/useradd-basic-permissions-policy-list.png)
 
 ### 4) 검토 및 생성
 
 마지막 단계는 검토 단계이다. 여태까지 설정한 사용자 세부 정보와 권한이 표시된다. 예를 들어 EC2 리소스를 다룰 사용자라면, EC2 관련 정책이 연결된 `EC2`와 같은 사용자 그룹에 포함시킨다. 모든 내용을 확인했다면 [사용자 생성] 버튼을 클릭하여 사용자를 생성한다.
 
-![검토 및 생성 - 사용자 세부 정보, 권한 요약, 사용자 생성 버튼](images/aws-02/useradd-basic-review-and-create.png)
-
 ### 5) 생성된 암호 확인 및 다운로드
 
 IAM 사용자를 생성하면 해당 콘솔에 로그인할 수 있는 URL이 표시된다. 이 화면은 암호를 확인·다운로드할 수 있는 유일한 시점이므로, [.csv 파일 다운로드]를 클릭하여 반드시 저장해 둔다. 이 CSV 파일에는 콘솔 로그인 URL, 사용자 이름, 콘솔 암호가 포함되어 있다.
-
-![암호 검색 - 콘솔 로그인 URL, 콘솔 암호, .csv 파일 다운로드](images/aws-02/useradd-basic-retrieve-password.png)
 
 ### 6) 생성된 IAM 사용자로 로그인해 보기
 
 콘솔 로그인 URL로 접속하면 [IAM 사용자로 로그인] 화면이 뜨고, 계정 ID(12자리) 또는 계정 별칭이 표시된다. 생성한 사용자 이름과 발급받은 암호를 입력하여 로그인한다.
 
-![IAM 사용자로 로그인 - 계정 ID/별칭, 사용자 이름, 암호 입력](images/aws-02/useradd-basic-login-page.png)
-
 처음 발급받은 암호로 로그인하면 새 암호를 설정하는 화면이 표시된다. 이전 비밀번호를 입력하고 새 비밀번호를 설정하면, 이후부터는 루트 계정이 아닌 `IAM사용자이름@루트계정별칭` 형태의 계정으로 접속하게 된다.
-
-![비밀번호 변경 - 이전 비밀번호, 새 비밀번호 입력](images/aws-02/useradd-basic-change-password.png)
 
 ## 3. 멀티 팩터 인증(MFA) 디바이스 할당
 
@@ -106,13 +86,9 @@ IAM 사용자를 생성하면 해당 콘솔에 로그인할 수 있는 URL이 �
 
 AWS Management Console에 로그인한다. 우측 상단의 계정을 클릭한 후 [보안 자격 증명]을 클릭한다.
 
-![콘솔 계정 메뉴에서 보안 자격 증명 진입](images/aws-02/console-security-credentials-menu.png)
-
 ### 2) MFA 디바이스 할당
 
 본문 내용 중 **멀티 팩터 인증(MFA)** 섹션의 [MFA 디바이스 할당] 메뉴를 선택한다.
-
-![내 보안 자격 증명 페이지 - MFA 디바이스 할당 버튼](images/aws-02/mfa-assign-device-button.png)
 
 ### 3) MFA 디바이스 옵션 선택
 
@@ -121,28 +97,20 @@ MFA 디바이스는 3가지 옵션이 있다: 패스키 또는 보안 키, 인�
 - **디바이스 이름**: 각 사용자는 MFA 디바이스를 최대 8개까지 할당할 수 있다. 디바이스를 구분하기 위해 식별 가능한 이름을 입력한다.
 - **디바이스 옵션**: 모바일 MFA 앱을 사용하기 위해 [인증 관리자 앱]을 선택한 후 [다음] 버튼을 클릭한다.
 
-![MFA 디바이스 선택 - 디바이스 이름 입력, 인증 관리자 앱 선택](images/aws-02/mfa-device-select-authenticator-app.png)
-
 사용 중인 스마트폰 기기의 OS 유형에 따라 Google Play Store 또는 Apple App Store에서 Google OTP(Google Authenticator) 애플리케이션을 설치한다. 다른 OTP 애플리케이션도 사용 가능하다.
 
 ### 4) QR 코드 스캔 및 MFA 코드 입력
 
 [QR 코드 표시]를 클릭한다.
 
-![가상 MFA 디바이스 설정 - QR 코드 표시 버튼](images/aws-02/mfa-device-setup-qr-blank.png)
-
 Google OTP 애플리케이션의 [QR 코드 스캔] 메뉴로 PC 화면에 표시된 QR 코드를 스캔하면 MFA 코드가 생성된다. Google OTP 애플리케이션에 표시되는 연속된 MFA 코드 2개를 PC 화면의 MFA 코드 1, MFA 코드 2 입력란에 각각 입력한 후 하단의 [MFA 할당]을 클릭하면 설정이 완료된다.
 
 - **MFA 코드 1**: 현재 확인되는 MFA 코드 6자리 입력
 - **MFA 코드 2**: MFA 코드 1을 입력한 후 갱신되어 표시되는 새 MFA 코드 6자리 입력
 
-![QR 코드 스캔 후 MFA 코드 1·2 입력](images/aws-02/mfa-device-setup-qr-code-entry.png)
-
 ### 5) 설정 완료 확인
 
-설정 완료 후 AWS 콘솔 로그인 시, 기존 계정 정보로 1차 인증을 완료하면 아래와 같이 2차 인증(MFA 코드 입력) 과정이 추가되는 것을 확인할 수 있다.
-
-![로그인 시 추가되는 MFA 코드 입력 화면](images/aws-02/mfa-login-code-prompt.png)
+설정 완료 후 AWS 콘솔 로그인 시, 기존 계정 정보로 1차 인증을 완료하면 인증 관리자 앱에 표시되는 MFA 코드를 입력하는 2차 인증 과정이 추가되는 것을 확인할 수 있다.
 
 ## 4. MFA 로그인을 강제할 정책 생성
 
@@ -152,15 +120,9 @@ MFA를 사용하여 로그인하는 경우에만 AWS 서비스에 접근할 수 
 2. IAM 콘솔(`https://console.aws.amazon.com/iam/`)을 연다.
 3. 탐색 창에서 [정책]을 클릭한다.
 
-![IAM 대시보드에서 정책 메뉴 선택](images/aws-02/iam-dashboard-policy-menu.jpeg)
-
 4. [정책 생성] 버튼을 클릭한다.
 
-![정책 목록 - 정책 생성 버튼](images/aws-02/policy-list-create-button.jpeg)
-
 5. JSON 탭을 선택하고 텍스트 상자에 입력되어 있는 내용을 모두 삭제한다. 아래의 JSON 정책 텍스트를 복사하여 텍스트 상자에 붙여 넣고 [다음: 태그] 버튼을 클릭한다.
-
-![정책 생성 - JSON 탭에 정책 붙여넣기](images/aws-02/policy-create-json-tab.jpeg)
 
 ```json
 {
@@ -288,11 +250,7 @@ This policy allows users to manage their own passwords and MFA devices but nothi
 
 정책 요약을 검토하여 정책이 부여한 권한을 확인한다. [정책 생성] 버튼을 선택하여 작업을 저장한다.
 
-![정책 검토 - 이름(Force_MFA)·설명 입력](images/aws-02/policy-review-name-description.jpeg)
-
 8. 새로운 정책이 관리형 정책 목록에 나타나며 연결 준비가 완료된다.
-
-![정책 목록에 Force_MFA 정책 생성됨](images/aws-02/policy-list-force-mfa-created.jpeg)
 
 ## 5. 사용자 그룹에 정책 연결
 
@@ -300,23 +258,13 @@ MFA 보호 권한을 부여하는 데 사용할 테스트 IAM 사용자 그룹�
 
 1. 탐색 창에서 [사용자 그룹]을 클릭한다.
 
-![IAM 대시보드에서 사용자 그룹 메뉴 선택](images/aws-02/iam-dashboard-user-group-menu.jpeg)
-
 2. [그룹 생성] 버튼을 클릭한다.
-
-![사용자 그룹 목록 - 그룹 생성 버튼](images/aws-02/user-group-list-create-button.jpeg)
 
 3. 사용자 그룹 생성 화면에서 그룹 이름 지정에 적절한 이름(예: `EC2MFA`)을 입력한다.
 
-![사용자 그룹 생성 - 그룹 이름 입력](images/aws-02/user-group-create-name.jpeg)
-
 4. 권한 정책 연결 페이지의 검색 상자에 `EC2Full`을 입력한다. 목록에서 `AmazonEC2FullAccess`의 왼쪽에 있는 체크박스를 선택한다.
 
-![권한 정책 연결 - AmazonEC2FullAccess 선택](images/aws-02/policy-attach-ec2fullaccess.jpeg)
-
 5. 검색 상자에 `Force`를 입력한 다음, 목록에서 `Force_MFA`의 왼쪽에 있는 체크박스를 선택한다.
-
-![권한 정책 연결 - Force_MFA 선택](images/aws-02/policy-attach-force-mfa.jpeg)
 
 6. [그룹 생성] 버튼을 클릭한다.
 
@@ -324,19 +272,11 @@ MFA 보호 권한을 부여하는 데 사용할 테스트 IAM 사용자 그룹�
 
 1. 탐색 창에서 [사용자]를 클릭한다.
 
-![IAM 대시보드에서 사용자 메뉴 선택](images/aws-02/iam-dashboard-user-menu.jpeg)
-
 2. [사용자 추가] 버튼을 클릭한다.
-
-![사용자 목록 - 사용자 추가 버튼](images/aws-02/user-list-add-button.jpeg)
 
 3. 적절한 사용자 이름과 액세스 유형을 선택한다.
 
-![사용자 세부 정보 설정 - 사용자 이름(MFAUser), 콘솔 액세스](images/aws-02/user-add-details.jpeg)
-
 4. 권한 설정에서 [그룹에 사용자 추가] 아래의 목록을 확인한다. `EC2MFA` 왼쪽의 체크박스를 선택하고 [다음: 태그] 버튼을 클릭한다.
-
-![권한 설정 - EC2MFA 그룹에 사용자 추가](images/aws-02/user-add-to-group.jpeg)
 
 5. (선택 사항) 태그 추가 페이지에서 태그 키-값을 추가하고, 다음을 클릭한다.
 6. 검토 페이지에서 입력했던 내용을 확인한 다음 [사용자 만들기]를 클릭한다.

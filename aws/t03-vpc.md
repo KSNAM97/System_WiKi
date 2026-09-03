@@ -303,9 +303,7 @@
 
 ![보안그룹의 Stateful 동작: 인바운드 허용 시 응답 트래픽 자동 허용](images/aws-09/security-group-stateful.png)
 
-- **Stateless와의 차이**: Stateless(상태 비저장형)는 요청과 응답을 구분하지 않고, 들어오는 방향과 나가는 방향을 각각 별도로 허용해야 한다. AWS의 네트워크 ACL(NACL)은 Stateless 특성을 가지므로, 인바운드와 아웃바운드 규칙을 모두 지정해야 한다.
-
-![NACL의 Stateless 동작: 인바운드·아웃바운드 규칙을 각각 명시해야 하는 구조](images/aws-09/nacl-stateless.png)
+- **Stateless와의 차이**: Stateless(상태 비저장형)는 요청과 응답을 구분하지 않고, 들어오는 방향과 나가는 방향을 각각 별도로 허용해야 한다. AWS의 네트워크 ACL(NACL)은 Stateless 특성을 가지므로, 인바운드와 아웃바운드 규칙을 모두 지정해야 한다 (자세한 내용은 [10. NACL(Network ACL)](#10-naclnetwork-acl) 참고).
 
 ## 9. 보안 그룹의 Source
 

@@ -1320,7 +1320,7 @@ Default output format [None]:
 
 > ⚠️ Access Key ID·Secret Access Key는 절대 코드나 문서에 평문으로 남기지 않는다. 실습 시 발급받은 자격 증명은 실습 종료 후 즉시 폐기(Deactivate/Delete)하고, 가능하면 [IAM 역할](#12-ec2-권한-부여) 방식으로 대체한다.
 
-### 간단한 EC2 재부팅 자동 초기화 스크립트
+### 간단한 EC2 최초 부팅 자동 초기화(User Data) 스크립트
 
 ```bash
 #!/bin/bash
@@ -1332,3 +1332,5 @@ TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-meta
 INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
 echo "<h1>$INSTANCE_ID</h1>" >> /var/www/html/index.html
 ```
+
+이 스크립트는 User Data로 등록하며, User Data는 인스턴스가 **최초로 부팅될 때 한 번만** 실행되고 이후 재부팅 시에는 다시 실행되지 않는다. `chkconfig httpd on`(또는 `systemctl enable httpd`)이 httpd 서비스를 OS 부팅 프로세스에 등록해 두므로, 재부팅 후에도 httpd 자체는 자동으로 다시 켜지지만, 스크립트 안의 `INSTANCE_ID` 조회·`index.html` 갱신 로직은 최초 부팅 때만 실행된다. 재부팅마다 다시 실행하려면 User Data 대신 `cloud-init-per`나 `#cloud-boothook`, 또는 별도의 systemd 서비스로 등록해야 한다.

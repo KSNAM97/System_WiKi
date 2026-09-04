@@ -84,7 +84,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (9)
+### ☁️ AWS (10)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -102,5 +102,6 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [EC2 접속하기](aws/g04-ec2-connect.md) — AWS 콘솔(EC2 Instance Connect) 접속, 터미널 SSH 접속, 키 페어 권한(chmod) 오류 해결
 - [탄력적 IP](aws/g05-elastic-ip.md) — Elastic IP 개념, 퍼블릭 IP 고정 문제, 탄력적 IP 할당·연결 실습
 - [ALB · Auto Scaling](aws/g06-load-balancer-autoscaling.md) — VPC 3-tier 보안 그룹(sg-alb·sg-web·sg-rds) 구성, ALB 생성·대상 그룹·헬스 체크, Auto Scaling(시작 템플릿·대상 추적 정책) 그룹 생성
+- [EC2와 S3 연동](aws/g07-ec2-s3.md) — S3 버킷 생성, S3 접근 권한 IAM 역할 생성·EC2 연결, AWS CLI(cp·sync)로 파일 주고받기, User Data로 S3 콘텐츠 자동 배포
 
 왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

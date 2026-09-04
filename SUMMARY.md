@@ -83,3 +83,4 @@
   * [EC2 접속하기](aws/g04-ec2-connect.md)
   * [탄력적 IP](aws/g05-elastic-ip.md)
   * [ALB · Auto Scaling](aws/g06-load-balancer-autoscaling.md)
+  * [EC2와 S3 연동](aws/g07-ec2-s3.md)

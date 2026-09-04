@@ -1049,6 +1049,69 @@ EC2를 잘 활용하려면 언제나 인스턴스가 떨어질 수 있다는 전
 
 **주요 활용 사례**: 로그인 세션 저장소, 파일 업로드 저장 공간, 로그 파일 저장, 공용 설정 파일 관리, 컨테이너 볼륨 공유
 
+### EFS 마운트 실습 (User Data)
+
+EC2 인스턴스를 생성할 때 User Data(cloud-config 형식)로 EFS를 자동 마운트하고 웹 서버 문서 루트로 사용하도록 구성할 수 있다.
+
+```yaml
+#cloud-config
+package_upgrade: true
+
+packages:
+  - nfs-utils
+  - httpd
+
+runcmd:
+  - |
+      set -e
+
+      # EFS ID 설정 (반드시 수정)
+      EFS_ID="fs-0fcf72f6c96570aa7"
+
+      # 기존 웹루트 백업 (있으면 보관)
+      if [ -d /var/www/html ]; then
+        mkdir -p /var/www/html.bak
+        cp -a /var/www/html/.   /var/www/html.bak/ || true
+      fi
+
+      # EFS를 마운트할 웹루트 디렉터리 준비
+      mkdir -p /var/www/html
+
+      # fstab 등록: EFS를 /var/www/html로 마운트
+      echo "${EFS_ID}.efs.ap-northeast-2.amazonaws.com:/ /var/www/html nfs4 defaults,_netdev 0 0" >> /etc/fstab
+
+      # 마운트 실행
+      mount -a
+
+      # 테스트용 index.html 생성 (EFS에 저장됨)
+      echo "<h1>Hello world from EFS</h1>" > /var/www/html/index.html
+
+      # Apache 시작 및 부팅 자동시작
+      systemctl enable --now httpd
+
+      # 샘플 디렉터리 (EFS 공유)
+      mkdir -p /var/www/html/sampledir
+      chown -R ec2-user:ec2-user /var/www/html/sampledir
+      chmod -R o+rx /var/www/html/sampledir
+```
+
+- `EFS_ID`는 실제 생성한 EFS 파일 시스템 ID로 반드시 교체해야 한다.
+- `/etc/fstab`에 EFS 마운트 정보를 등록해 두면, 인스턴스가 재부팅되어도 `mount -a`(부팅 시 자동 실행)로 EFS가 다시 마운트된다 — User Data 자체는 최초 부팅 시 1회만 실행되지만, fstab 등록 덕분에 마운트만큼은 재부팅 후에도 유지된다.
+- `/var/www/html`을 EFS 마운트 지점으로 사용하면, 이 디렉터리에 저장하는 모든 파일(웹 콘텐츠, 업로드 파일 등)이 EFS에 저장되어 여러 EC2 인스턴스가 동일한 콘텐츠를 공유하게 된다.
+
+마운트가 완료된 후에는 일반 디렉터리처럼 직접 파일을 수정할 수 있다.
+
+```bash
+vi /var/www/html/index.html
+```
+```html
+<h1>Hello world from EFS</h1>
+<h2>Hello world from EFS</h2>
+<h3>Hello world from EFS</h3>
+```
+
+다른 EC2 인스턴스도 같은 EFS를 마운트하고 있다면, 이 수정 내용이 즉시(Read After Write 일관성) 모든 인스턴스에 동일하게 보인다.
+
 ## 21. EC2 인스턴스 T 타입의 활용
 
 ### T 인스턴스란?

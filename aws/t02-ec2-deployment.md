@@ -483,41 +483,9 @@ curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-da
 | 보안성 | 키 유출 시 위험 | 유출 위험 낮음 (임시 발급) |
 | 관리 | 직접 키 관리 필요 | AWS에서 자동 관리 |
 
-### S3 연동 실습 (AWS CLI)
+### S3 연동
 
-EC2에 S3 접근 권한이 포함된 IAM 역할을 부여하면, Access Key 없이 `aws s3` 명령으로 S3 버킷과 파일을 주고받을 수 있다.
-
-```bash
-# 버킷 내 객체 목록 조회 (폴더별)
-aws s3 ls s3://my-bucket-name/image/
-aws s3 ls s3://my-bucket-name/file/
-
-# 버킷 전체를 재귀적으로 조회
-aws s3 ls s3://my-bucket-name --recursive
-
-# S3 -> EC2 파일 다운로드
-aws s3 cp s3://my-bucket-name/index.html .
-
-# S3 <- EC2 파일 업로드
-aws s3 cp newFile.txt s3://my-bucket-name/
-
-# S3 <-> EC2 동기화 (로컬에 없는 파일만 다운로드)
-aws s3 sync s3://my-bucket-name .
-```
-
-- `cp`는 지정한 파일 하나만 복사하고, `sync`는 두 위치를 비교해서 달라진 파일만 전송한다 — 대량의 파일을 반복 배포할 때는 `sync`가 더 효율적이다.
-- User Data에 `aws s3 cp` 명령을 넣으면, 인스턴스가 최초 부팅될 때 S3에 미리 올려둔 웹 콘텐츠를 자동으로 가져와 배포할 수 있다.
-
-```bash
-#!/bin/bash
-sudo -s
-dnf install httpd -y
-service httpd start
-chkconfig httpd on
-aws s3 cp s3://my-bucket-name/index.html /var/www/html --region ap-northeast-2
-```
-
-이 방식은 AMI를 다시 굽지 않고도 S3에 새 버전의 정적 파일만 올려두면, 이후 생성되는 인스턴스가 항상 최신 콘텐츠로 배포되는 장점이 있다.
+EC2에 S3 접근 권한이 포함된 IAM 역할을 부여하면, Access Key 없이 `aws s3` 명령으로 S3 버킷과 파일을 주고받을 수 있다. IAM 역할 생성부터 `aws s3 cp`/`sync` 실습, User Data를 이용한 S3 콘텐츠 자동 배포까지의 절차는 [EC2와 S3 연동하기](g07-ec2-s3.md)를 참고한다.
 
 ## 13. 클라우드 환경의 EC2 활용 (확장 전략)
 

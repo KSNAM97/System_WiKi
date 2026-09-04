@@ -419,3 +419,135 @@
 - 보안 그룹만으로는 **특정 IP·대역을 명시적으로 차단(Deny)**할 수 없다. 예를 들어 특정 악성 IP 대역만 콕 집어 차단하고 싶다면 NACL에 Deny 규칙을 추가해야 한다.
 - 서브넷 단위로 일괄 정책(예: 특정 서브넷 전체에 대해 특정 포트를 차단)을 적용하고 싶을 때도 NACL이 적합하다.
 - 실무에서는 보안 그룹(세밀한 인스턴스 단위 허용 제어)과 NACL(서브넷 단위의 광범위한 차단/거부)을 함께 사용해 이중 방어선을 구성하는 것이 일반적이다.
+
+## 11. VPC Endpoint
+
+- **VPC Endpoint**는 VPC 안의 리소스가 인터넷 게이트웨이(IGW)나 NAT 게이트웨이 없이도 AWS 서비스(S3, DynamoDB 등)에 직접 연결할 수 있게 해주는 기능이다.
+- VPC 내부에서 특정 AWS 서비스로 사설 네트워크(Private Network)를 통해 접속할 수 있도록 해주는 엔드포인트로, 트래픽이 인터넷으로 나가지 않고 AWS 내부망을 통해 서비스에 도달한다. 이를 통해 **보안 강화**와 **비용 절감**을 동시에 얻을 수 있다.
+
+### 1) Interface Endpoint (PrivateLink 기반)
+
+- 대상 서비스: 대부분의 AWS 서비스(SNS, SQS, KMS, CloudWatch, Secrets Manager 등)
+- 선택한 서브넷에 **ENI(Elastic Network Interface)**를 생성해서 서비스에 연결하는 방식이며, VPC 내부 IP 주소를 통해 서비스에 접근한다.
+- 서비스 제공자와 소비자 간 프라이빗 연결(SaaS 연동)도 지원한다.
+
+![VPC 내부 EC2가 Interface Endpoint(ENI 기반)를 통해 AWS 서비스에 연결되는 구조](images/aws-09/vpc-interface-endpoint.png)
+
+### 2) Gateway Endpoint
+
+- 대상 서비스: **S3, DynamoDB 두 가지만 지원**한다.
+- 라우팅 테이블(Route Table)에서 경로의 대상으로 엔드포인트를 추가하는 방식(라우팅 기반 접근)이며, 퍼블릭 인터넷 없이도 S3/DynamoDB에 접근할 수 있다.
+- 예: 프라이빗 서브넷의 EC2가 NAT 게이트웨이 없이 S3에 파일을 업로드하는 경우.
+
+![라우트 테이블에 Gateway Endpoint를 등록해 NAT 없이 S3·DynamoDB에 접근하는 구조](images/aws-09/vpc-gateway-endpoint.png)
+
+### 사용 이유와 사용 사례
+
+- **보안 강화**: 인터넷으로 나가지 않고 AWS 내부망에서만 통신하므로, 기업 환경의 보안 규정 준수에 필수적이다.
+- **비용 절감**: NAT Gateway를 경유하는 아웃바운드 트래픽 요금을 절감할 수 있다.
+- **단순화**: IGW, NAT 구성 없이도 S3, DynamoDB 등에 접근할 수 있다.
+- **사용 사례**: 프라이빗 서브넷의 EC2 인스턴스가 NAT 없이 S3에 데이터를 백업하는 경우, 보안상 인터넷을 전혀 열 수 없는 환경에서 AWS 서비스를 이용해야 하는 경우.
+
+## 12. EC2 Instance Connect Endpoint(EICE)
+
+- **EICE(EC2 Instance Connect Endpoint)**는 퍼블릭 IP나 Bastion 서버 없이도 프라이빗 서브넷에 있는 EC2 인스턴스에 SSH로 안전하게 접속할 수 있도록 해주는 AWS 관리형 서비스이다. AWS가 대신 중간 접속 통로(Bastion 역할)를 제공해 주는 방식이다.
+
+| 구분 | 내용 |
+|---|---|
+| 연결 방법 | SSH(Linux) / RDP(Windows) |
+| 동작 방식 | Endpoint를 통해 EC2로 터널 생성 후 접속 |
+| 연결 인증 방식 | IAM 사용자/Role 기반 인증 |
+| 감사 방법 | CloudTrail로 접속 기록 확인 |
+| 연결 요구사항 | Endpoint 생성, 보안 그룹 설정, 지원 인스턴스 사용 |
+| 주요 기능 | Private EC2에 Bastion 없이 접속 |
+| 비용 | 무료 (계정당 최대 5개, VPC당 1개, Subnet당 1개) |
+
+**기존 Bastion 방식과의 비교**
+
+- 기존 방식: `PC → Bastion → Private EC2` (Bastion 서버를 직접 운영해야 함)
+- EICE 방식: `PC → AWS 인증 → Connect Endpoint → Private EC2` (Bastion 서버 없이 AWS가 접속을 중계)
+
+**인증 방식(IAM 기반)**
+
+- EICE는 키 파일이 아닌 **IAM 권한**으로 인증한다. 접속 권한이 있는 사용자만 EC2에 접속할 수 있다.
+- 네트워크 요구사항: EC2 Instance Connect Endpoint 생성, Endpoint가 위치한 서브넷 설정, 보안 그룹 설정, VPC DNS 활성화.
+
+![EICE를 통해 사용자가 IAM 인증 후 프라이빗 서브넷의 EC2에 접속하는 구조](images/aws-09/eice-architecture.png)
+
+**지원 환경 제한사항**: 일부 GPU 인스턴스(G1 등) 미지원, 구형 AMI 제한, 커스텀 OS 제한 가능, Windows 일부 버전 제한 — 사용 전 공식 문서 확인을 권장한다.
+
+**장점**
+
+1. **Bastion 서버 불필요**: 별도 EC2 운영이 필요 없어 비용 절감 및 관리 포인트 감소
+2. **보안 강화**: 퍼블릭 IP 불필요, 포트 최소 개방, IAM 기반 통제, 로그 기록 자동 저장
+3. **운영 편의성**: 키 파일 관리 불필요, 콘솔에서 바로 접속 가능, 사용자별 권한 제어가 쉬움
+
+## 13. VPC Peering
+
+- AWS에서 하나의 VPC는 하나의 독립된 가상 네트워크 공간이다. 기본적으로 서로 다른 VPC는 연결되어 있지 않기 때문에, 각 VPC 내부의 리소스는 다른 VPC의 리소스와 바로 통신할 수 없다.
+- **VPC Peering**은 두 개의 VPC를 서로 연결하여 Private IP 주소를 이용해 직접 통신할 수 있도록 해주는 기능이다. VPC Peering을 설정하면 두 VPC 사이의 트래픽은 인터넷을 거치지 않고 AWS 네트워크를 통해 전달되므로, Public IP 없이도 서로 다른 VPC의 EC2, DB 등 리소스가 통신할 수 있다.
+
+![WEB/Logic 계정과 DB 계정의 서로 다른 VPC가 VPC Peering으로 연결되어 Private IP로 통신하는 구조](images/aws-09/vpc-peering-structure.png)
+
+- VPC Peering Connection만 생성했다고 바로 통신되는 것은 아니며, 다음 설정이 함께 되어 있어야 실제 통신이 가능하다.
+  1. Peering 연결 생성 및 승인
+  2. VPC의 라우트 테이블에 상대방 VPC CIDR로 향하는 경로 추가
+  3. Security Group 및 필요 시 NACL 허용
+
+### VPC Peering의 주요 특징
+
+1. **프라이빗 IP 통신이 가능**: 퍼블릭 IP를 사용할 필요가 없어 외부 노출 위험이 줄어든다.
+2. **별도 장비 불필요**: NAT Gateway, VPN, Internet Gateway 같은 장치를 추가로 설치하지 않아도 된다.
+3. **다른 계정·다른 리전과도 연결 가능**: 회사 내부 여러 AWS 계정을 하나의 네트워크처럼 운영할 수 있다.
+4. **성능이 뛰어남**: AWS 내부망을 사용하기 때문에 트래픽 속도가 빠르고 안정적이다.
+
+### 제한 사항
+
+- **트랜짓 라우팅 불가**: VPC Peering의 가장 큰 한계는 중계 기능이 없다는 것이다. VPC A와 VPC B가 연결되어 있고 VPC B와 VPC C도 연결되어 있더라도, A와 C는 직접 연결되어 있지 않으면 A에서 C로 통신할 수 없다(B가 중간에서 전달해 주지 않음). VPC가 많아질수록 Peering 방식은 관리가 매우 복잡해진다.
+
+![VPC A-B, B-C가 Peering되어 있어도 A-C는 직접 통신할 수 없는 트랜짓 라우팅 불가 구조](images/aws-09/vpc-peering-transit-limitation.png)
+
+- **CIDR 대역 중복 불가**: 두 VPC의 IP 주소 대역이 겹치면 Peering 연결 자체가 불가능하다. 예를 들어 VPC A와 VPC B가 모두 `10.0.0.0/16` 대역을 사용하고 있다면 연결할 수 없다.
+- **라우팅 설정 필수**: Peering 연결만 만들고 라우팅 테이블을 수정하지 않으면 서버끼리 서로를 찾지 못한다. 반드시 상대 VPC로 가는 경로를 라우팅 테이블에 등록해야 한다.
+
+**활용 예시**: 동일 조직 내 여러 VPC 환경을 연결하여 애플리케이션 모듈 분리 후 내부 통신, 별도 계정으로 분리된 개발 환경과 운영 환경의 안전한 연결, 멀티 리전 환경에서 데이터 복제·백업·장애조치(Failover) 지원.
+
+## 14. Transit Gateway
+
+- **Transit Gateway**는 여러 개의 VPC(가상 네트워크)와 온프레미스(회사 내부망)를 한 곳에 모아서 연결해 주는 중앙 허브다. 버스 터미널이 여러 노선을 한 곳에 모아 연결해 주는 것과 같은 역할을 한다.
+- VPC Peering(1:1 연결)만 사용하면 VPC가 많아질수록 연결선이 거미줄처럼 복잡해진다. Transit Gateway는 중앙 허브처럼 동작해서, 모든 VPC를 여기에 연결하기만 하면 서로 통신이 가능해진다.
+
+![여러 VPC가 각각 1:1로 Peering하는 대신 Transit Gateway 하나에 연결되는 허브 구조](images/aws-09/transit-gateway-hub.png)
+
+**장점**
+
+- **간단한 연결**: 각 VPC가 Transit Gateway 하나만 연결하면 된다.
+- **확장성**: 수천 개의 VPC까지 연결 가능하다.
+- **트랜짓 라우팅 지원**: A↔B, B↔Transit Gateway 연결 시 A↔C도 자동으로 연결된다 — VPC Peering의 트랜짓 라우팅 불가 한계를 해소한다.
+- **안정성**: AWS가 관리하는 서비스라 고가용성이 보장된다.
+- **정책 관리 용이**: 중앙에서 어떤 VPC끼리 통신 가능한지 설정할 수 있다.
+
+**단점**
+
+- 무료가 아니며 연결 수와 전송량에 따라 요금이 발생한다. 작은 규모라면 VPC Peering이 더 경제적일 수 있다.
+
+**선택 기준**: 소규모 네트워크는 VPC Peering으로 충분하며, 대규모 네트워크에서는 Transit Gateway가 꼭 필요하다.
+
+## 15. AWS Direct Connect
+
+- **AWS Direct Connect**는 기업의 온프레미스 데이터센터(사무실, IDC 센터 등)와 AWS 클라우드를 전용 회선으로 직접 연결하는 서비스이다. 보통은 인터넷을 거쳐 AWS에 접속하지만, Direct Connect는 인터넷을 거치지 않고 전용망으로 AWS에 바로 연결한다.
+
+**장점**
+
+- 인터넷망 대신 전용 회선을 사용하기 때문에 지연(latency)과 끊김이 적고 대역폭이 보장된다.
+- 인터넷을 거치지 않고 폐쇄망을 통해 AWS로 접속하므로 보안이 강화된다(데이터 유출 위험 감소).
+- 대량의 데이터를 AWS로 자주 올리거나 내릴 때 인터넷 전송 대비 더 저렴할 수 있다.
+- 온프레미스와 AWS를 하나의 네트워크처럼 묶어서 운영할 수 있다.
+
+**동작 방식**
+
+- `기업 IDC ↔ AWS Direct Connect Location ↔ AWS VPC` 구조로 연결된다.
+- 전용선은 보통 1Gbps, 10Gbps 속도를 제공하며, 필요 시 여러 회선을 묶어서 확장할 수 있다.
+- VPC 안에서는 **Virtual Private Gateway(VGW)**와 연결되며, 라우팅 테이블 설정을 통해 온프레미스 ↔ 클라우드 간 통신을 제어한다.
+
+**활용 사례**: 금융·공공기관처럼 보안과 지연 시간이 중요한 곳, 온프레미스 데이터를 AWS로 이전하는 대규모 데이터 마이그레이션, 일부는 온프레미스·일부는 AWS에서 운영하는 하이브리드 아키텍처.

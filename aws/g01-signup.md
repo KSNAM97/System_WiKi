@@ -30,6 +30,8 @@ AWS를 사용하려면 먼저 AWS 계정을 생성해야 한다. 이 문서는 `
 
 ## 4. 가입 절차
 
+절차 전반은 [Getting started with an AWS account(AWS 공식 문서)](https://docs.aws.amazon.com/accounts/latest/reference/getting-started.html)를 참고한다.
+
 ### 1) 이메일·계정 이름 입력
 
 `aws.amazon.com/free` 접속 후 [무료 계정 생성]을 클릭하면 가입 폼으로 이동한다. AWS 계정 이메일 주소는 계정 복구에 사용되므로 실제 수신 가능한 주소를 입력하고, AWS 계정 이름은 가입 후 설정에서 변경할 수 있다.

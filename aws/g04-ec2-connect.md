@@ -9,7 +9,7 @@
 
 ## 2. AWS 콘솔에서 접속하기
 
-먼저 AWS 콘솔 내에서 접속하는 방법을 설명한다. 인스턴스 목록에서 접속할 인스턴스를 선택하고 오른쪽 상단의 [연결(Connect)] 버튼을 클릭한다. 이 방식은 퍼블릭 IPv4 또는 IPv6 주소가 있는 인스턴스에서만 사용할 수 있다(프라이빗 IP만 있는 인스턴스는 AWS CLI의 `ec2-instance-connect`를 사용해야 한다).
+콘솔 절차는 [Connect to a Linux instance using EC2 Instance Connect(AWS 공식 문서)](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html)를 참고한다. 먼저 AWS 콘솔 내에서 접속하는 방법을 설명한다. 인스턴스 목록에서 접속할 인스턴스를 선택하고 오른쪽 상단의 [연결(Connect)] 버튼을 클릭한다. 이 방식은 퍼블릭 IPv4 또는 IPv6 주소가 있는 인스턴스에서만 사용할 수 있다(프라이빗 IP만 있는 인스턴스는 AWS CLI의 `ec2-instance-connect`를 사용해야 한다).
 
 **인스턴스에 연결** 화면에서 **EC2 Instance Connect** 탭을 선택한다.
 

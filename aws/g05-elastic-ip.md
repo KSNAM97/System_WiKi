@@ -10,7 +10,7 @@ EC2 인스턴스를 생성하면 고유의 퍼블릭 IP를 할당받는다. 하�
 
 ## 2. 실습: 탄력적 IP 적용
 
-콘솔 절차는 [Elastic IP addresses(AWS 공식 문서)](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html)를 참고한다.
+콘솔 절차는 [탄력적 IP 주소(AWS 공식 문서)](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html)를 참고한다.
 
 ### 2.1 퍼블릭 IP가 인스턴스 재시작 시 바뀌는 것을 확인
 

@@ -30,7 +30,7 @@ AWS를 사용하려면 먼저 AWS 계정을 생성해야 한다. 이 문서는 `
 
 ## 4. 가입 절차
 
-절차 전반은 [Getting started with an AWS account(AWS 공식 문서)](https://docs.aws.amazon.com/accounts/latest/reference/getting-started.html)를 참고한다.
+절차 전반은 [AWS 계정 시작하기(AWS 공식 문서)](https://docs.aws.amazon.com/ko_kr/accounts/latest/reference/getting-started.html)를 참고한다.
 
 ### 1) 이메일·계정 이름 입력
 

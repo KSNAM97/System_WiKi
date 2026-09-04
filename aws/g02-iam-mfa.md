@@ -35,7 +35,7 @@ AWS 계정을 최초로 생성할 때 모든 AWS 서비스 및 리소스에 대�
 
 ### 1) IAM 대시보드
 
-콘솔 절차는 [Creating an IAM user(AWS 공식 문서)](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html)를 참고한다. IAM 대시보드에서 [액세스 관리] > [사용자]를 선택하면 지금까지 생성한 IAM 사용자 목록을 볼 수 있다. 새로운 사용자를 생성하려면 [사용자 추가] 버튼을 클릭한다.
+콘솔 절차는 [IAM 사용자 생성(AWS 공식 문서)](https://docs.aws.amazon.com/ko_kr/IAM/latest/UserGuide/id_users_create.html)를 참고한다. IAM 대시보드에서 [액세스 관리] > [사용자]를 선택하면 지금까지 생성한 IAM 사용자 목록을 볼 수 있다. 새로운 사용자를 생성하려면 [사용자 추가] 버튼을 클릭한다.
 
 사용자 추가 절차는 다음 4단계로 진행된다.
 
@@ -82,7 +82,7 @@ IAM 사용자를 생성하면 해당 콘솔에 로그인할 수 있는 URL이 �
 
 ## 3. 멀티 팩터 인증(MFA) 디바이스 할당
 
-콘솔 절차는 [Enable a virtual MFA device(AWS 공식 문서)](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable_virtual.html)를 참고한다.
+콘솔 절차는 [가상 MFA 디바이스 활성화(AWS 공식 문서)](https://docs.aws.amazon.com/ko_kr/IAM/latest/UserGuide/id_credentials_mfa_enable_virtual.html)를 참고한다.
 
 ### 1) 보안 자격 증명 페이지 이동
 

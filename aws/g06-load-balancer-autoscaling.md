@@ -16,7 +16,7 @@ ELB는 인터넷 트래픽(부하)를 여러 대의 서버(일반적으로 EC2 �
 
 ## 2. VPC 보안 그룹 구성 (3-tier)
 
-로드 밸런서와 Auto Scaling 그룹을 만들기 전에, 계층별 접근을 통제할 보안 그룹부터 구성한다. `sg-alb`(외부 → ALB) → `sg-web`(ALB → EC2) → `sg-rds`(EC2 → DB) 순으로 이어지는 3-tier 패턴을 사용한다. 보안 그룹 생성과 인바운드 규칙 추가 절차는 [Amazon EC2 보안 그룹(AWS 공식 문서)](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html)을 참고한다.
+로드 밸런서와 Auto Scaling 그룹을 만들기 전에, 계층별 접근을 통제할 보안 그룹부터 구성한다. `sg-alb`(외부 → ALB) → `sg-web`(ALB → EC2) → `sg-rds`(EC2 → DB) 순으로 이어지는 3-tier 패턴을 사용한다. 보안 그룹 생성과 인바운드 규칙 추가 절차는 [Amazon EC2 보안 그룹(AWS 공식 문서)](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/ec2-security-groups.html)을 참고한다.
 
 ### 1) sg-alb — 외부 사용자 요청 수신
 
@@ -71,7 +71,7 @@ Source를 `sg-web`으로 지정하면, `sg-web`을 사용하는 EC2에서 오는
 
 ## 3. 로드 밸런서 생성
 
-콘솔 절차는 [Create an Application Load Balancer(AWS 공식 문서)](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-application-load-balancer.html)를 참고한다.
+콘솔 절차는 [Application Load Balancer 생성(AWS 공식 문서)](https://docs.aws.amazon.com/ko_kr/elasticloadbalancing/latest/application/create-application-load-balancer.html)를 참고한다.
 
 ### 3.1 로드 밸런서 생성 시작
 
@@ -140,7 +140,7 @@ pm2 reload demo-aws-credential
 
 ## 4. Auto Scaling 그룹 생성
 
-Auto Scaling 그룹을 만들면 대상 그룹에 연결된 EC2 인스턴스를 지정한 정책에 따라 자동으로 늘리고 줄일 수 있다. 콘솔 절차는 [Creating an Auto Scaling group using a launch template(AWS 공식 문서)](https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg.html)를 참고한다.
+Auto Scaling 그룹을 만들면 대상 그룹에 연결된 EC2 인스턴스를 지정한 정책에 따라 자동으로 늘리고 줄일 수 있다. 콘솔 절차는 [시작 템플릿을 사용하여 Auto Scaling 그룹 생성(AWS 공식 문서)](https://docs.aws.amazon.com/ko_kr/autoscaling/ec2/userguide/create-asg.html)를 참고한다.
 
 전체 흐름은 다음과 같다. ① 시작 템플릿을 기반으로 ASG가 EC2 인스턴스를 생성하고, ② 각 인스턴스가 대상 그룹의 헬스 체크(`GET /health`)를 통과하면 자동으로 대상 그룹에 등록되어 트래픽을 받기 시작한다. ③ CloudWatch가 인스턴스들의 평균 CPU 사용률을 지속적으로 감시하고, ④ 이 값이 스케일링 정책의 목표치를 초과하거나 미달하면 ASG가 인스턴스 수를 자동으로 늘리거나(Scale Out) 줄인다(Scale In). 아직 헬스 체크를 통과하지 못했거나 Scale In 대상으로 지정된 인스턴스는 대상 그룹에서 제외되어 트래픽을 받지 않는다.
 
@@ -156,7 +156,7 @@ EC2 콘솔의 [시작 템플릿] 메뉴에서 [시작 템플릿 생성]을 클�
 
 ### 4.2 Auto Scaling 그룹 생성
 
-EC2 콘솔의 [Auto Scaling 그룹] 메뉴에서 [Auto Scaling 그룹 생성]을 클릭한다. 콘솔 절차는 [Create an Auto Scaling group using a launch template(AWS 공식 문서)](https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg.html)를 참고한다.
+EC2 콘솔의 [Auto Scaling 그룹] 메뉴에서 [Auto Scaling 그룹 생성]을 클릭한다. 콘솔 절차는 [시작 템플릿을 사용하여 Auto Scaling 그룹 생성(AWS 공식 문서)](https://docs.aws.amazon.com/ko_kr/autoscaling/ec2/userguide/create-asg.html)를 참고한다.
 
 1. **시작 템플릿 또는 구성 선택(Choose launch template or configuration)**: Auto Scaling 그룹 이름을 입력하고, 앞서 만든 시작 템플릿과 버전(기본값은 **Latest**)을 선택
 2. **인스턴스 시작 옵션 선택(Choose instance launch options)**: 시작 템플릿에 인스턴스 유형이 지정돼 있다면 기본값 그대로 두고, **네트워크(Network)**에서 VPC와 가용 영역별 서브넷(2개 이상)을 선택

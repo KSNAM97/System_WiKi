@@ -76,6 +76,7 @@
   * [클라우드 기초 개념](aws/t01-cloud-basics.md)
   * [EC2 배포](aws/t02-ec2-deployment.md)
   * [VPC](aws/t03-vpc.md)
+  * [S3](aws/t04-s3.md)
 * 가이드
   * [AWS 가입하기](aws/g01-signup.md)
   * [IAM MFA 설정](aws/g02-iam-mfa.md)

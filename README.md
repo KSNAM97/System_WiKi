@@ -84,7 +84,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (10)
+### ☁️ AWS (11)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -93,6 +93,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [클라우드 기초 개념](aws/t01-cloud-basics.md) — EC2·IAM·VPC·S3·Route 53·RDS, IaaS/PaaS/SaaS, 고가용성, 리전·가용 영역
 - [EC2 배포](aws/t02-ec2-deployment.md) — 인스턴스·EBS·AMI·요금 모델, 보안 그룹, 접속 방법, 생명주기, User Data/Meta Data, IAM 역할, 수직/수평 확장, Auto Scaling, ELB·대상 그룹·리스너, EC2 모니터링(CloudWatch), Auto Scaling 정책·기타 기능, EFS, T 타입, EC2 사이즈 변경
 - [VPC](aws/t03-vpc.md) — 사설망·NAT, CIDR·서브넷, VPC·라우트 테이블, 퍼블릭/프라이빗 서브넷·인터넷 게이트웨이, 기본/커스텀 VPC, Bastion Host·NAT Gateway, 보안 그룹·Stateful·Source·Prefix List, NACL(Stateless·규칙 번호·Deny), VPC Endpoint(Interface·Gateway), EICE, VPC Peering, Transit Gateway, Direct Connect
+- [S3](aws/t04-s3.md) — 객체 스토리지 개념, 버킷·객체 구성 요소, S3 비용·스토리지 클래스(Standard·IA·Glacier), S3 권한(IAM·버킷 정책·ACL), 버전 관리·객체 잠금(WORM), 수명주기(Lifecycle), 정적 웹 호스팅, 액세스 로깅·이벤트 알림(Lambda 이미지 리사이징)
 
 **가이드**
 

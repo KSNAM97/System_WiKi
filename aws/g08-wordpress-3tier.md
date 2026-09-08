@@ -282,6 +282,10 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 - **상태 확인**: Elastic Load Balancer 상태 확인 켜기 (ALB 헬스 체크 결과로 비정상 인스턴스를 자동 교체)
 - 그룹 크기(예: 원하는 용량 2 / 최소 0 / 최대 2) 지정
 
+ASG 이름을 입력하고, 앞서 만들어 둔 시작 템플릿과 그 버전(Default)을 선택하면 해당 템플릿에 저장된 AMI ID·인스턴스 유형·키 페어 등 세부 정보가 화면 하단에 요약으로 표시되어, 어떤 설정으로 인스턴스가 생성될지 시작 전에 확인할 수 있다.
+
+![Auto Scaling 그룹 이름과 시작 템플릿·버전을 선택하는 화면, 하단에 AMI ID 등 템플릿 세부 정보가 요약 표시된다](images/aws-12/asg-launch-template-select.png)
+
 ![ASG가 사용할 가용 영역과 서브넷을 선택하는 화면 (퍼블릭·프라이빗 서브넷 모두 선택)](images/aws-12/asg-network-az.png)
 
 ![원하는 용량 · 최소 · 최대 크기를 지정하는 화면](images/aws-12/asg-group-size.png)

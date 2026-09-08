@@ -372,11 +372,25 @@ UPDATE wp_options SET option_value='http://<ALB DNS 주소>/wordpress' WHERE opt
 
 ### 3) 적용
 
-1. **첫 EC2 인스턴스**의 보안 그룹을 위에서 만든 EC2용 보안 그룹으로 교체하고, 기존 `default`는 제거한다.
-2. **시작 템플릿**을 새 버전으로 수정해 EC2용 보안 그룹을 반영하고, **Auto Scaling Group**이 이 최신 버전을 사용하도록 설정한다 — 이후 스케일 아웃으로 생성되는 인스턴스부터 새 보안 그룹이 자동 적용된다.
-3. **ALB**에는 ALB용 보안 그룹을 적용하고 기존 `default`는 제거한다.
+1. **첫 EC2 인스턴스**의 보안 그룹을 위에서 만든 EC2용 보안 그룹으로 교체하고, 기존 `default`는 제거한다. EC2 콘솔 → 인스턴스 선택 → **작업 → 보안 → 보안 그룹 변경**에서 네트워크 인터페이스에 연결된 보안 그룹 목록에 `test-ec2-sg`를 추가하고 `default`는 **제거** 버튼으로 뺀 뒤 저장한다.
 
-적용 후에는 EC2의 퍼블릭 DNS로 직접 접속을 시도하면 연결이 거부되고, 반드시 ALB DNS를 통해서만 사이트에 접속할 수 있게 된다.
+![EC2 인스턴스의 보안 그룹 변경 화면 — default를 제거하고 test-ec2-sg로 교체](images/aws-12/ec2-security-group-change-final.png)
+
+2. **시작 템플릿**을 새 버전으로 수정해 EC2용 보안 그룹을 반영한다. EC2 콘솔 → **시작 템플릿** 목록에서 대상 템플릿을 선택하고 **작업 → 템플릿 수정(새 버전 생성)**을 눌러 인스턴스 세부 정보의 보안 그룹을 `test-ec2-sg`로 바꾼 새 버전을 만든다.
+
+![시작 템플릿 목록과 "템플릿 수정(새 버전 생성)" 메뉴](images/aws-12/launch-template-list.png)
+
+   이어서 **Auto Scaling Group**의 시작 템플릿 버전을 방금 만든 최신 버전(`Latest`)으로 지정한다 — 이후 스케일 아웃으로 생성되는 인스턴스부터 새 보안 그룹이 자동 적용된다.
+
+![Auto Scaling Group에서 시작 템플릿 버전을 Latest로 선택하는 화면](images/aws-12/asg-launch-template-version-select.png)
+
+3. **ALB**에는 ALB용 보안 그룹을 적용하고 기존 `default`는 제거한다. ALB 콘솔 → 로드 밸런서 선택 → **보안** 탭 → **편집**에서 보안 그룹을 `test-alb-wordpress-sg`로 교체한다.
+
+![ALB 상세 화면의 보안 탭에서 보안 그룹을 편집하는 화면](images/aws-12/alb-security-group-edit.png)
+
+적용 후에는 EC2의 퍼블릭 DNS로 직접 접속을 시도하면 연결이 거부되고, 반드시 ALB DNS를 통해서만 사이트에 접속할 수 있게 된다. 실제로 ALB DNS로 접속해 새 글(`new title` / `new content`)이 정상적으로 보이는지 확인해 마무리한다.
+
+![보안 그룹 적용 후 ALB DNS로 접속한 워드프레스 블로그 — 새 글이 정상 노출됨](images/aws-12/wordpress-blog-after-sg-hardening.png)
 
 ## 13. 리소스 삭제 체크리스트
 

@@ -77,6 +77,7 @@
   * [EC2 배포](aws/t02-ec2-deployment.md)
   * [VPC](aws/t03-vpc.md)
   * [S3](aws/t04-s3.md)
+  * [RDS](aws/t05-rds.md)
 * 가이드
   * [AWS 가입하기](aws/g01-signup.md)
   * [IAM MFA 설정](aws/g02-iam-mfa.md)
@@ -85,3 +86,4 @@
   * [탄력적 IP](aws/g05-elastic-ip.md)
   * [ALB · Auto Scaling](aws/g06-load-balancer-autoscaling.md)
   * [EC2와 S3 연동](aws/g07-ec2-s3.md)
+  * [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md)

@@ -261,6 +261,8 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 
 ![시작 템플릿 작성 시 "내 AMI → 내 소유"에서 방금 만든 AMI를 선택하는 화면](images/aws-12/ami-select-my-ami.png)
 
+![AMI 선택 드롭다운에서 실제로 선택된 AMI(test-3-tier-wordpress)와 AMI ID가 표시된 상세 화면](images/aws-12/ami-select-dropdown-detail.png)
+
 ### 3) 대상 그룹(Target Group) 생성
 
 - **대상 유형**: 인스턴스
@@ -349,6 +351,16 @@ UPDATE wp_options SET option_value='http://<ALB DNS 주소>/wordpress' WHERE opt
 ```
 
 > **예방하는 방법**: 애초에 AMI를 만들기 **전에** 사이트 주소를 ALB DNS로 먼저 맞춰두거나, AMI 생성 전 마지막 단계로 이 설정을 확인하는 습관을 들이면 이 문제 자체를 피할 수 있다.
+
+### 수정 후 확인
+
+`WordPress Address (URL)` / `Site Address (URL)`를 ALB DNS 주소로 수정한 뒤, 브라우저 개발자 도구(F12) 콘솔을 열어 CORS 에러가 더 이상 발생하지 않는지 확인한다.
+
+![ALB DNS 주소로 접속, 개발자 도구 콘솔을 열어도 CORS 에러 등 에러가 전혀 표시되지 않음을 확인](images/aws-12/alb-fixed-devtools-no-errors.png)
+
+콘솔뿐 아니라 실제 화면도 CSS·이미지 등 정적 리소스가 모두 정상적으로 로드되어 깨짐 없이 표시되는지 최종 확인한다.
+
+![ALB DNS 주소로 최종 정상 접속을 확인 — 정적 리소스 깨짐 없이 정상 렌더링](images/aws-12/alb-fixed-final-verification.png)
 
 ## 12. 보안 그룹 강화: EC2 직접 접근 차단
 

@@ -64,6 +64,10 @@ VPC 콘솔의 [VPC 생성] 마법사에서 **"VPC 등"**(VPC와 서브넷·라�
 
 생성이 끝나면 각 AZ에 퍼블릭 서브넷 1개, 프라이빗 서브넷 1개씩 총 4개의 서브넷이 만들어진다 — RDS는 이 중 **프라이빗 서브넷 2개**를 사용한다.
 
+생성이 끝나면 VPC 목록에서 방금 만든 VPC(예: `test-3-tier-vpc`)가 `Available` 상태로 표시되고, 상세 정보 탭에서 VPC ID·CIDR·DNS 확인/호스트 이름 활성화 여부 등을 확인할 수 있다.
+
+![VPC 생성 완료 후 VPC 목록과 세부 정보 화면](images/aws-12/vpc-list-created.png)
+
 ## 5. RDS 서브넷 그룹과 데이터베이스 생성
 
 ### DB 서브넷 그룹
@@ -103,6 +107,10 @@ RDS 콘솔 → 데이터베이스 → [데이터베이스 생성]
 EFS 콘솔 → 파일시스템 → [파일시스템 생성] → **VPC**에 앞서 생성한 VPC 선택.
 
 ![EFS 파일시스템 생성 화면 (이름·VPC 선택)](images/aws-12/efs-create-form.png)
+
+생성된 EFS의 **네트워크** 탭에서는 두 AZ 각각에 마운트 대상(마운트 타깃)이 자동으로 생성된 것을 확인할 수 있다 — 서브넷·IPv4 주소·보안 그룹이 AZ별로 하나씩 배정되며, 이 마운트 대상을 통해 각 AZ의 EC2가 EFS에 접근한다.
+
+![EFS 네트워크 탭에서 AZ별 마운트 대상·서브넷·보안 그룹을 확인하는 화면](images/aws-12/efs-arn-network-tab.png)
 
 ### S3 버킷 생성
 
@@ -229,17 +237,29 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 
 > ⚠️ **이 설치 시점에 접속한 주소가 워드프레스 DB에 "사이트 주소"로 그대로 저장된다.** 지금은 EC2의 퍼블릭 IP로 접속했으므로, 이 값도 EC2 IP로 저장된다 — 이 점이 [11장](#11-트러블슈팅-alb-환경에서-정적-리소스가-깨지는-문제)에서 다룰 문제의 원인이 된다.
 
+설치가 정상적으로 끝나면 워드프레스 기본 블로그 화면("Hello world!" 샘플 글)이 뜬다. 이 화면이 보이면 Apache·PHP·RDS 연결·EFS 마운트가 모두 정상 동작한다는 뜻이다.
+
+![워드프레스 설치 완료 후 뜨는 기본 블로그 화면 (Hello world!)](images/aws-12/wordpress-install-success-hello-world.png)
+
 ## 10. AMI · 시작 템플릿 · Auto Scaling Group · ALB 구성
 
 ### 1) AMI 생성
 
 인스턴스 → 대상 EC2 선택 → 작업 → 이미지 및 템플릿 → [이미지 생성]. 지금 인스턴스의 디스크 상태(OS + 설정 + 패키지 + 워드프레스 소스)를 스냅샷 떠서 이미지(AMI)로 만든다.
 
+이미지 생성 화면에서는 대상 인스턴스 ID가 자동으로 채워지고, **이미지 이름**만 지정하면 된다(예: `test-3-tier-wordpress`). "인스턴스 재부팅 안 함" 옵션은 기본 체크 해제 상태(재부팅 수행)를 유지하는 것이 데이터 일관성 측면에서 안전하다. 볼륨 크기·유형은 기본값 그대로 두어도 무방하다.
+
+![이미지 생성 화면에서 이미지 이름을 지정하고 스토리지 옵션을 확인하는 화면](images/aws-12/ami-create-form.png)
+
 > **주의**: IP·보안 그룹·서브넷·인스턴스 ID, 그리고 EFS 같은 외부 스토리지의 데이터는 AMI에 포함되지 않는다.
 
 ### 2) 시작 템플릿(Launch Template) 작성
 
 방금 만든 AMI를 참조해 인스턴스 타입, 보안 그룹, 서브넷 등 실행 파라미터를 저장한다. 버전 관리(v1, v2 …)가 가능해서, 나중에 설정을 바꿀 때는 새 버전을 만들어 교체할 수 있다.
+
+시작 템플릿의 **애플리케이션 및 OS 이미지** 항목에서 **내 AMI → 내 소유** 탭을 선택하면 방금 만든 AMI가 목록에 나타난다. 이 AMI를 선택해 이후 생성되는 모든 인스턴스가 동일한 OS·패키지·워드프레스 소스 상태로 부팅되도록 한다.
+
+![시작 템플릿 작성 시 "내 AMI → 내 소유"에서 방금 만든 AMI를 선택하는 화면](images/aws-12/ami-select-my-ami.png)
 
 ### 3) 대상 그룹(Target Group) 생성
 
@@ -248,6 +268,10 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 - **고급 상태 검사 설정 → 성공 코드**: `301` (워드프레스가 `/wordpress`로 접속 시 리다이렉트를 내려주는 경우가 있어, 기본값 `200` 대신 `301`도 성공으로 인식하도록 설정)
 
 ![대상 그룹 생성 시 대상 유형으로 인스턴스를 선택하는 화면](images/aws-12/target-group-type.png)
+
+대상 그룹 생성 마법사의 마지막 단계인 **대상 등록**에서는 사용 가능한 인스턴스 목록 중 원본 EC2를 선택하고, 트래픽을 라우팅할 포트(80)를 지정한 뒤 "보류 중인 것으로 포함"으로 추가한다. Auto Scaling Group을 아직 만들지 않은 시점이라면 이 단계에서 인스턴스를 등록하지 않고 그대로 대상 그룹만 생성해도 되며, 이후 ASG가 대상 그룹에 자동으로 인스턴스를 등록해준다.
+
+![대상 등록 화면에서 사용 가능한 인스턴스와 포트를 지정하는 화면](images/aws-12/target-group-register-targets.png)
 
 ### 4) Auto Scaling Group(ASG) 생성
 
@@ -260,7 +284,19 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 
 ![원하는 용량 · 최소 · 최대 크기를 지정하는 화면](images/aws-12/asg-group-size.png)
 
+생성이 끝나면 ASG 상세 화면의 **인스턴스 관리** 탭에서 지정한 용량만큼(예: 2개) 인스턴스가 각기 다른 AZ에서 `InService` / `Healthy` 상태로 뜨는 것을 확인할 수 있다 — 이 인스턴스들은 모두 같은 시작 템플릿(같은 AMI)에서 만들어졌으므로 동일한 워드프레스 환경을 갖는다.
+
+![ASG 인스턴스 관리 탭에서 두 AZ에 걸쳐 생성된 인스턴스가 Healthy 상태인 화면](images/aws-12/asg-details-arn.png)
+
+시작 템플릿 → AMI → EFS → Auto Scaling Group → Load Balancer로 이어지는 전체 흐름을 그림으로 정리하면 다음과 같다. 웹 서버(AMI)가 시작 템플릿에 등록되고, ASG가 이 템플릿으로 여러 인스턴스를 띄우며, 모든 인스턴스는 EFS를 공유하고 로드 밸런서 뒤에서 사용자 트래픽을 나눠 받는다.
+
+![시작 템플릿 · AMI · EFS · ASG · 로드밸런서로 이어지는 전체 배포 흐름도](images/aws-12/asg-efs-lb-flow.png)
+
 ### 5) ALB(Application Load Balancer) 생성
+
+로드 밸런서 유형은 ALB, NLB, GWLB 세 가지 중 선택할 수 있는데, 이 실습에서는 HTTP 트래픽을 마이크로서비스/컨테이너까지 유연하게 라우팅할 수 있는 **Application Load Balancer**를 사용한다(NLB는 TCP/UDP/TLS 기반 초고성능·고정 IP가 필요할 때, GWLB는 서드파티 가상 어플라이언스를 경유시킬 때 사용한다).
+
+![ALB · NLB · GWLB 로드 밸런서 유형 비교 화면](images/aws-12/alb-nlb-gwlb-comparison.png)
 
 - **네트워크 매핑**: 두 AZ의 **퍼블릭 서브넷** 선택
 - **리스너**: HTTP 80, 기본 작업으로 위에서 만든 대상 그룹 지정
@@ -322,6 +358,10 @@ UPDATE wp_options SET option_value='http://<ALB DNS 주소>/wordpress' WHERE opt
 
 - **인바운드**: 없음 (또는 필요한 경우만 추가)
 - **아웃바운드**: HTTP, `0.0.0.0/0`
+
+보안 그룹 생성 화면에서 이름(예: `test-alb-wordpress-sg`)과 VPC를 지정하고, 인바운드 규칙은 비워둔 채 아웃바운드 규칙에만 HTTP · `0.0.0.0/0`을 추가한다.
+
+![ALB용 보안 그룹 생성 화면 — 인바운드 없음, 아웃바운드 HTTP 0.0.0.0/0](images/aws-12/alb-security-group-create.png)
 
 ### 2) EC2용 보안 그룹
 

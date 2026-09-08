@@ -49,6 +49,10 @@ EC2가 S3에서 `wp-config.php`를 가져올 수 있도록 역할을 먼저 만�
 3. 권한 정책에서 `s3full` 검색 후 `AmazonS3FullAccess` 선택 (특정 버킷만 허용하려면 커스텀 정책으로 범위를 좁히는 것을 권장)
 4. 역할 이름 지정 (예: `wordpress-ec2-role`)
 
+![신뢰할 수 있는 엔터티 유형에서 AWS 서비스 · EC2를 선택하는 화면](images/aws-12/iam-role-trusted-entity.png)
+
+![역할 이름을 지정하는 화면](images/aws-12/iam-role-name.png)
+
 ### VPC 생성
 
 VPC 콘솔의 [VPC 생성] 마법사에서 **"VPC 등"**(VPC와 서브넷·라우팅을 한 번에 생성하는 옵션)을 선택한다.
@@ -72,6 +76,8 @@ RDS 콘솔 → 서브넷 그룹 → [DB 서브넷 그룹 생성]
 - **가용 영역**: 2개 AZ 모두 선택
 - **서브넷**: 두 AZ의 **프라이빗 서브넷**을 선택 — RDS는 중요한 데이터를 다루므로 외부 인터넷과 직접 연결되면 위험하기 때문에 프라이빗 서브넷에 두고, EC2나 Bastion Host 같은 안전한 경유지에서만 접근하도록 설계한다.
 
+![DB 서브넷 그룹에 두 가용 영역의 프라이빗 서브넷을 추가하는 화면](images/aws-12/rds-subnet-group-subnets.png)
+
 ### 데이터베이스 생성
 
 RDS 콘솔 → 데이터베이스 → [데이터베이스 생성]
@@ -84,6 +90,10 @@ RDS 콘솔 → 데이터베이스 → [데이터베이스 생성]
 - **VPC 보안 그룹**: 우선 기존 default 보안 그룹 선택 (실습 마지막에 [12장](#12-보안-그룹-강화-ec2-직접-접근-차단)에서 강화)
 - **추가 구성 → 초기 데이터베이스 이름**: `wordpress` (지정하지 않으면 RDS가 데이터베이스를 자동으로 만들어주지 않는다)
 
+![엔진 옵션에서 MySQL을 선택하고 마스터 사용자 이름을 지정하는 화면](images/aws-12/rds-db-create-engine.png)
+
+![VPC·DB 서브넷 그룹·퍼블릭 액세스·초기 데이터베이스 이름을 설정하는 화면](images/aws-12/rds-db-additional-config.png)
+
 ## 6. EFS와 S3 버킷 생성
 
 ### EFS(Elastic File System)
@@ -92,9 +102,13 @@ RDS 콘솔 → 데이터베이스 → [데이터베이스 생성]
 
 EFS 콘솔 → 파일시스템 → [파일시스템 생성] → **VPC**에 앞서 생성한 VPC 선택.
 
+![EFS 파일시스템 생성 화면 (이름·VPC 선택)](images/aws-12/efs-create-form.png)
+
 ### S3 버킷 생성
 
 S3 콘솔에서 `wp-config.php` 등 배포용 파일을 올려둘 버킷을 하나 생성한다 (버킷 이름은 전역적으로 고유해야 하므로 임의 문자열을 포함해 작성). 절차는 [EC2와 S3 연동하기](g07-ec2-s3.md)의 버킷 생성 단계를 참고한다.
+
+![S3 버킷 생성 화면](images/aws-12/s3-bucket-create.png)
 
 ## 7. wp-config.php 설정
 
@@ -211,6 +225,8 @@ http://<EC2 퍼블릭 IP>/wordpress/
 
 Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 
+![실행 중인 EC2 인스턴스의 퍼블릭 IPv4 주소 확인 화면](images/aws-12/ec2-instance-running.png)
+
 > ⚠️ **이 설치 시점에 접속한 주소가 워드프레스 DB에 "사이트 주소"로 그대로 저장된다.** 지금은 EC2의 퍼블릭 IP로 접속했으므로, 이 값도 EC2 IP로 저장된다 — 이 점이 [11장](#11-트러블슈팅-alb-환경에서-정적-리소스가-깨지는-문제)에서 다룰 문제의 원인이 된다.
 
 ## 10. AMI · 시작 템플릿 · Auto Scaling Group · ALB 구성
@@ -231,6 +247,8 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 - **상태 검사 경로**: `/wordpress`
 - **고급 상태 검사 설정 → 성공 코드**: `301` (워드프레스가 `/wordpress`로 접속 시 리다이렉트를 내려주는 경우가 있어, 기본값 `200` 대신 `301`도 성공으로 인식하도록 설정)
 
+![대상 그룹 생성 시 대상 유형으로 인스턴스를 선택하는 화면](images/aws-12/target-group-type.png)
+
 ### 4) Auto Scaling Group(ASG) 생성
 
 - 시작 템플릿(특정 버전)을 지정하고, VPC·가용 영역(서브넷)을 설정
@@ -238,12 +256,18 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 - **상태 확인**: Elastic Load Balancer 상태 확인 켜기 (ALB 헬스 체크 결과로 비정상 인스턴스를 자동 교체)
 - 그룹 크기(예: 원하는 용량 2 / 최소 0 / 최대 2) 지정
 
+![ASG가 사용할 가용 영역과 서브넷을 선택하는 화면 (퍼블릭·프라이빗 서브넷 모두 선택)](images/aws-12/asg-network-az.png)
+
+![원하는 용량 · 최소 · 최대 크기를 지정하는 화면](images/aws-12/asg-group-size.png)
+
 ### 5) ALB(Application Load Balancer) 생성
 
 - **네트워크 매핑**: 두 AZ의 **퍼블릭 서브넷** 선택
 - **리스너**: HTTP 80, 기본 작업으로 위에서 만든 대상 그룹 지정
 
 ALB가 활성화되면 세부 정보에서 **DNS 이름**을 확인할 수 있다. 이 주소 뒤에 `/wordpress`를 붙여 접속하면 클러스터를 통해 사이트가 열린다.
+
+![ALB DNS 주소로 접속해 워드프레스 초기 화면(Hello world!)이 정상적으로 뜨는 것을 확인](images/aws-12/alb-access-success.png)
 
 ## 11. 트러블슈팅: ALB 환경에서 정적 리소스가 깨지는 문제
 
@@ -256,6 +280,8 @@ header is present on the requested resource.
 Failed to load resource: net::ERR_FAILED
 ```
 
+![브라우저 콘솔(F12)에 표시되는 CORS 차단 에러 — HTML은 ALB에서 오지만 정적 리소스는 여전히 EC2 IP를 참조](images/aws-12/cors-console-error.png)
+
 ### 원인
 
 1. 워드프레스는 **설치가 완료되는 순간** 접속했던 주소를 "사이트 주소"(`WordPress Address` / `Site Address`, DB의 `wp_options` 테이블에 저장)로 기록하고, 이후 자동으로 바뀌지 않는다.
@@ -266,6 +292,8 @@ Failed to load resource: net::ERR_FAILED
 ### 해결
 
 워드프레스 관리자(`/wp-admin`)에 로그인해 **설정 → 일반(General Settings)**에서 `WordPress Address (URL)`과 `Site Address (URL)` 두 값을 EC2 IP에서 **ALB DNS 주소**로 수정하고 저장한다.
+
+![수정 전: WordPress Address·Site Address에 EC2 퍼블릭 IP가 그대로 저장되어 있는 화면](images/aws-12/wp-general-settings-before-fix.png)
 
 ```
 WordPress Address (URL): http://<ALB DNS 주소>/wordpress
@@ -299,6 +327,8 @@ UPDATE wp_options SET option_value='http://<ALB DNS 주소>/wordpress' WHERE opt
 
 - **인바운드**: 모든 트래픽 — Source를 **ALB 보안 그룹**으로 지정 (ALB를 거친 트래픽만 허용), SSH(22) — 관리 목적일 때만 필요한 범위로 허용
 - 이렇게 Source를 보안 그룹으로 지정하면, Auto Scaling으로 EC2가 늘어나거나 줄어도 규칙을 다시 설정할 필요가 없다.
+
+![EC2용 보안 그룹의 인바운드 규칙에서 Source를 ALB 보안 그룹으로 지정하는 화면](images/aws-12/ec2-security-group-source-alb.png)
 
 ### 3) 적용
 

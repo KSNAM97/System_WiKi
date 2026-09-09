@@ -13,6 +13,8 @@
 - 로그·지표·이벤트 같은 운영 데이터를 수집해 시각화·분석하고, 수집된 데이터를 기반으로 경보를 생성해 자동화된 대응을 실행할 수 있다.
 - AWS 대부분의 서비스와 기본적으로 연동되기 때문에 추가 설정 없이도 활용 범위가 넓다(예: EC2의 CPU 사용률, RDS의 디스크 사용률, Lambda의 실행 속도 등).
 
+![커스텀 지표 예시: 인스턴스별 mem_used_percent 지표가 각각 데이터 포인트로 쌓이는 모습](images/aws-14/cw-custom-metric-example.png)
+
 **요금 및 프리 티어(월 단위)**
 
 | 항목 | 프리 티어 |
@@ -32,6 +34,8 @@
 
 - **리전 단위 관리**, 최대 **15개월** 보관되며 이후 새 데이터가 들어오면 오래된 데이터는 자동 삭제된다(영구 보존되지 않는다).
 - **네임스페이스(Namespace)**: 지표를 논리적으로 묶는 컨테이너. AWS 기본 네임스페이스 형식은 `AWS/{서비스명}`(예: `AWS/EC2`, `AWS/RDS`)이며, 커스텀 지표는 네임스페이스를 반드시 직접 지정해야 한다(디폴트 없음).
+
+![AWS 서비스별 기본 네임스페이스 목록 예시(AWS Amplify → AWS/AmplifyHosting, Amazon API Gateway → AWS/ApiGateway 등)](images/aws-14/cw-namespace-table.png)
 - **지표 이름(Metric Name)**: 네임스페이스 안에서 지표를 구분하는 세부 이름으로 필수 항목이다.
 - **차원(Dimension)**: 지표를 구분하기 위한 Key-Value 형태의 태그. 최대 30개까지 지정 가능하며 조합도 가능하다(예: `InstanceID`로 인스턴스별 구분, `Server=prod, Domain=Seoul`처럼 여러 차원 조합).
 - **단위(Unit)**: 지표 값이 어떤 의미를 가지는지 표현하는 척도. `%`(CPU·디스크 사용률), `Bytes`(네트워크·디스크 I/O), `Seconds`(지연 시간·실행 시간), `Count`(요청 수·오류 횟수) 등이 있다.
@@ -54,6 +58,8 @@
 > 2주 이상 업데이트가 없는 지표는 콘솔에서 자동 숨김 처리되지만, CLI로는 계속 확인할 수 있다.
 
 ![CloudWatch 네임스페이스·차원·지표 이름 구조: 인스턴스별 CPUUtilization 지표가 개별 데이터 포인트로 쌓이는 예시](images/aws-14/cw-metric-dimension.png)
+
+![커스텀 지표(mem_used_percent)가 인스턴스별로 별도의 데이터 포인트 그래프로 쌓이는 예시](images/aws-14/cw-custom-metric-dual.png)
 
 **기타 기능**: 여러 지표를 동시에 그래프로 비교 분석할 수 있고, **Metric Insight**로 `SELECT AVG(CPUUtilization) FROM SCHEMA("AWS/EC2", InstanceId)`처럼 SQL 형식으로 지표를 조회할 수 있다. 일부 리전에서는 "EC2 인스턴스 중 네트워크 아웃이 가장 높은 인스턴스 보여줘" 같은 자연어 쿼리도 지원한다.
 
@@ -102,6 +108,8 @@
 
 **경보(Alarm)**는 수집된 지표 값이 설정한 임계치(Threshold)에 도달하거나 초과/미달할 때 이벤트를 발생시키는 기능이다.
 
+![CPUUtilization 지표가 임계치(빨간 선)를 넘는 지점마다 Alarm이 발생해 Lambda를 실행시키는 기본 흐름](images/aws-14/cw-alarm-lambda-basic.png)
+
 **경보 상태 (3가지)**
 
 | 상태 | 의미 |
@@ -124,6 +132,8 @@
 
 - 많은 경보를 효율적으로 관리하고 전달할 수 있다.
 - **Suppressor Alarm**을 설정하면 특정 조건일 때 Composite Alarm의 알림을 일시적으로 중단할 수 있다(예: 배포 중에는 관련 알람을 억제).
+
+![개별 경보가 임계치를 넘을 때마다 Alarm이 발생해 Lambda로 이어지는 흐름 — Composite Alarm은 이런 개별 경보 여러 개를 Boolean 연산으로 묶는다](images/aws-14/cw-composite-alarm-flow.png)
 
 **활용 예시**
 

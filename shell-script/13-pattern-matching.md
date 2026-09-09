@@ -366,7 +366,7 @@ echo "삭제 후 : $(ls $target_dir)"
 a.log  b.tmp  c.bak  d.conf
 
 [root@Server-A ~]# ./script/clean_tmp.sh
-삭제 전 : a.log b.bak b.tmp d.conf
+삭제 전 : a.log b.tmp c.bak d.conf
 삭제 후 : a.log d.conf
 ```
 

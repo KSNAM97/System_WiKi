@@ -29,6 +29,11 @@
 * [배열 · 위치 매개변수](shell-script/06-arrays-parameters.md)
 * [함수 (Function)](shell-script/07-functions.md)
 * [문법 총정리 (Syntax Master)](shell-script/08-syntax-master.md)
+* [스크립트 실행 방법](shell-script/09-script-execution.md)
+* [대화형/비대화형 · 로그인/비로그인 쉘](shell-script/10-shell-types.md)
+* [종료 상태 코드 심화](shell-script/11-exit-status-advanced.md)
+* [test · [ · [[ 명령 심화](shell-script/12-test-command.md)
+* [패턴 매칭 (Globbing)](shell-script/13-pattern-matching.md)
 * [실습 문제](shell/07-example-scripts.md)
 
 ## 🗄️ Database (MariaDB)

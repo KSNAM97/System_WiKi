@@ -949,3 +949,72 @@ drwxr-xr-x 4 root root   71  7월 29 17:08 avahi
 ```
 
 **정리**: 위치 매개변수는 `$#`으로 개수를 검증하고, `[[ =~ ]]` 정규식으로 형식을 검증한 뒤, `"$@"`로 순회하며 값을 처리하는 패턴이 실무 스크립트의 기본 골격이 된다. `case`문과 결합하면 install/start/stop/restart/status 같은 서비스 제어 메뉴도 손쉽게 구현할 수 있고, `basename`/`date`와 조합하면 백업 파일명 자동 생성 같은 작업도 가능하다.
+
+---
+
+## 배열 · 위치 매개변수 슬라이싱 (Slicing)
+
+문자열에서 `${var:offset:length}`로 일부만 잘라 쓰는 것처럼, **배열과 위치 매개변수도 같은 문법으로 일부 구간만 잘라낼 수 있다.**
+
+- 기본 형식 : `${배열[@]:offset:length}` 또는 `${배열[@]:offset}`(끝까지)
+- `offset`은 몇 번째 요소부터 시작할지, `length`는 몇 개를 가져올지를 의미한다.
+
+```bash
+[root@Server-A ~]# fruits=("사과" "바나나" "체리" "포도" "수박")
+
+[root@Server-A ~]# echo "${fruits[@]:1:2}"	# 인덱스 1부터 2개
+바나나 체리
+
+[root@Server-A ~]# echo "${fruits[@]:2}"	# 인덱스 2부터 끝까지
+체리 포도 수박
+```
+
+- `offset`에 **음수**를 주면 배열의 **뒤에서부터** 센다. 이때 `-` 바로 앞에 공백을 하나 둬야 한다(붙여 쓰면 `:-`가 기본값 치환 문법으로 해석돼 오류가 난다).
+
+```bash
+[root@Server-A ~]# echo "${fruits[@]: -2}"	# 뒤에서 2개 (마지막 2개)
+포도 수박
+
+[root@Server-A ~]# echo "${fruits[@]: -3:2}"	# 뒤에서 3번째부터 2개
+체리 포도
+```
+
+- **위치 매개변수(`$@`)를 직접 슬라이싱하는 것은 지원하지 않는다.** `${@:2}`처럼 `$@`/`$*`에도 같은 문법을 바로 쓸 수 있지만, 배열처럼 자유롭게 다루려면 먼저 배열 변수로 옮겨 담는 방식이 안전하다.
+
+```bash
+[root@Server-A ~]# vi ./script/slice_args.sh
+#!/bin/bash
+
+echo "전체 인자 : $@"
+echo "두 번째 인자부터 : ${@:2}"		# $@에 바로 offset:length 사용 가능
+
+args=("$@")				# $@를 배열로 옮겨 담기
+echo "배열로 옮긴 뒤 두 번째부터 : ${args[@]:1}"	# 배열은 0번부터 시작하므로 index 1이 두 번째 인자
+
+:wq
+
+
+[root@Server-A ~]# chmod +x ./script/slice_args.sh
+
+[root@Server-A ~]# ./script/slice_args.sh  apple  banana  cherry  grape
+전체 인자 : apple banana cherry grape
+두 번째 인자부터 : banana cherry grape
+배열로 옮긴 뒤 두 번째부터 : banana cherry grape
+```
+
+- 문자열 슬라이싱도 동일한 문법을 사용하며, 음수 `length`를 주면 "끝에서부터 몇 글자를 제외"하는 의미가 된다.
+
+```bash
+[root@Server-A ~]# str="20260910_backup"
+
+[root@Server-A ~]# echo "${str:0:8}"		# 앞에서 8글자 (날짜 부분)
+20260910
+
+[root@Server-A ~]# echo "${str:9}"		# 인덱스 9부터 끝까지
+backup
+
+[root@Server-A ~]# echo "${str:0:-7}"		# 끝에서 7글자를 제외한 나머지
+20260910
+```
+
+**정리**: `${배열[@]:offset:length}`(음수 offset은 뒤에서부터)는 문자열 슬라이싱과 동일한 문법으로 배열의 일부 구간을 잘라낸다. 위치 매개변수는 `${@:offset}`처럼 바로 슬라이싱할 수도 있지만, 여러 번 다뤄야 한다면 `args=("$@")`로 배열에 옮겨 담아 사용하는 편이 안전하고 직관적이다.

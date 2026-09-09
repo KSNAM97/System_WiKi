@@ -2,7 +2,7 @@
 
 > Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 58개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 63개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -25,7 +25,7 @@ Rocky Linux 9 기반 리눅스 시스템 관리 핵심 정리
 - [Rocky Linux 9 vs Rocky Linux 10](linux/rocky9-vs-rocky10.md)
 - [실습 문제](linux/practice.md)
 
-### 💻 Shell Script (9)
+### 💻 Shell Script (14)
 
 Bash 쉘 스크립트 문법과 실전 활용
 
@@ -34,9 +34,14 @@ Bash 쉘 스크립트 문법과 실전 활용
 - [조건문 (if · case)](shell-script/03-conditions.md)
 - [반복문 (for · while)](shell-script/04-loops.md)
 - [cron · crond](shell-script/05-cron.md)
-- [배열 · 위치 매개변수](shell-script/06-arrays-parameters.md)
-- [함수 (Function)](shell-script/07-functions.md)
-- [문법 총정리 (Syntax Master)](shell-script/08-syntax-master.md)
+- [배열 · 위치 매개변수](shell-script/06-arrays-parameters.md) — 슬라이싱(offset:length) 포함
+- [함수 (Function)](shell-script/07-functions.md) — join 함수 구현 예제 포함
+- [문법 총정리 (Syntax Master)](shell-script/08-syntax-master.md) — 콜론 유무 매개변수 확장 차이 포함
+- [스크립트 실행 방법](shell-script/09-script-execution.md) — ./script.sh · bash/sh · source(.) 비교
+- [대화형/비대화형 · 로그인/비로그인 쉘](shell-script/10-shell-types.md)
+- [종료 상태 코드 심화](shell-script/11-exit-status-advanced.md) — 예약 코드, $PIPESTATUS, pipefail
+- [test · [ · [[ 명령 심화](shell-script/12-test-command.md)
+- [패턴 매칭 (Globbing)](shell-script/13-pattern-matching.md) — extglob 포함
 - [실습 문제](shell/07-example-scripts.md)
 
 ### 🗄️ Database — MariaDB (6)

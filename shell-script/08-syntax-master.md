@@ -512,4 +512,73 @@ exit "$code"
 3
 ```
 
-**정리**: 모든 명령/스크립트는 0(성공) 또는 1~255(실패)의 종료 상태 코드를 반환하며, `$?`로 직전 실행 결과를 확인한다. 스크립트 안에서 `exit 숫자`로 임의의 상태 코드를 지정해 종료할 수 있어, 다른 스크립트나 시스템(cron 등)에서 성공/실패 여부를 판단하는 근거로 활용된다.
+**정리**: 모든 명령/스크립트는 0(성공) 또는 1~255(실패)의 종료 상태 코드를 반환하며, `$?`로 직전 실행 결과를 확인한다. 스크립트 안에서 `exit 숫자`로 임의의 상태 코드를 지정해 종료할 수 있어, 다른 스크립트나 시스템(cron 등)에서 성공/실패 여부를 판단하는 근거로 활용된다. (더 다양한 예약 종료 코드와 파이프라인에서의 처리 방식은 `11-exit-status-advanced.md` 참고)
+
+## 콜론 유무에 따른 매개변수 확장 차이 (Unset vs Null)
+
+앞서 살펴본 `${var:-word}`, `${var:=word}`, `${var:+word}`, `${var:?message}`는 모두 콜론(`:`)이 붙어 있어, 변수가 **아예 선언되지 않은 경우(unset)**와 **선언은 됐지만 빈 문자열인 경우(null)**를 구분하지 않고 똑같이 취급한다. 그런데 이 콜론을 빼면 오직 "선언되지 않은 경우"만 대상으로 하고, "선언은 됐지만 비어 있는 경우"는 건드리지 않는다.
+
+| 변수 상태 | `${var-word}` | `${var:-word}` |
+|---|---|---|
+| 아예 선언 안 됨 (unset) | word 사용 | word 사용 |
+| 선언되었고 빈 문자열 (null) | `var`의 값(빈 문자열) 그대로 사용 | word 사용 |
+| 선언되었고 값 있음 | `var`의 값 사용 | `var`의 값 사용 |
+
+```bash
+[root@Server-A ~]# unset city
+[root@Server-A ~]# echo "${city-seoul}"		# city가 아예 없으므로 seoul
+seoul
+
+
+[root@Server-A ~]# city=""				# city를 빈 문자열로 선언(null)
+[root@Server-A ~]# echo "${city-seoul}"		# 선언은 되어 있으므로 word를 쓰지 않고 빈 값 그대로 출력
+(출력 없음)
+
+[root@Server-A ~]# echo "${city:-seoul}"		# :- 는 null도 포함하므로 seoul 출력
+seoul
+```
+
+- `=`(대입)와 `?`(에러)도 마찬가지로 콜론이 없으면 "선언 여부"만 검사한다.
+
+```bash
+[root@Server-A ~]# unset name
+[root@Server-A ~]# echo "${name=guest}"		# name이 없으므로 guest를 대입
+guest
+
+[root@Server-A ~]# name=""
+[root@Server-A ~]# echo "${name=guest}"		# name이 이미 선언(null)되어 있으므로 대입하지 않음
+(출력 없음)
+
+
+[root@Server-A ~]# unset token
+[root@Server-A ~]# echo "${token?token 변수가 없습니다}"	# 선언 자체가 안 됐으므로 에러
+bash: token: token 변수가 없습니다
+
+[root@Server-A ~]# token=""
+[root@Server-A ~]# echo "${token?token 변수가 없습니다}"	# 선언은 됐으므로(null이어도) 에러 아님
+(출력 없음)
+```
+
+- **위치 매개변수의 기본값**에도 같은 문법이 그대로 적용된다. 함수나 스크립트에서 인자가 전달되지 않았을 때 기본값을 주는 용도로 자주 쓰인다.
+
+```bash
+[root@Server-A ~]# vi ./script/default_arg.sh
+#!/bin/bash
+
+target="${1:-/var/log}"		# 첫 번째 인자가 없거나 빈 값이면 /var/log를 기본값으로 사용
+
+echo "점검 대상 : $target"
+
+:wq
+
+
+[root@Server-A ~]# chmod +x ./script/default_arg.sh
+
+[root@Server-A ~]# ./script/default_arg.sh
+점검 대상 : /var/log
+
+[root@Server-A ~]# ./script/default_arg.sh /home/guest
+점검 대상 : /home/guest
+```
+
+**정리**: 콜론이 있는 `:-`, `:=`, `:+`, `:?`는 "선언 안 됨(unset) + 빈 값(null)"을 모두 대상으로 하고, 콜론이 없는 `-`, `=`, `+`, `?`는 오직 "선언 안 됨(unset)"만 대상으로 한다. 빈 문자열도 기본값으로 바꾸고 싶다면 콜론이 있는 버전을, 명시적으로 빈 값을 넣어둔 상태는 그대로 유지하고 싶다면 콜론이 없는 버전을 사용한다.

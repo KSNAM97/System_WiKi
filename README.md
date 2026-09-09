@@ -91,7 +91,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (13)
+### ☁️ AWS (14)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -102,6 +102,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [VPC](aws/t03-vpc.md) — 사설망·NAT, CIDR·서브넷, VPC·라우트 테이블, 퍼블릭/프라이빗 서브넷·인터넷 게이트웨이, 기본/커스텀 VPC, Bastion Host·NAT Gateway, 보안 그룹·Stateful·Source·Prefix List, NACL(Stateless·규칙 번호·Deny), VPC Endpoint(Interface·Gateway), EICE, VPC Peering, Transit Gateway, Direct Connect
 - [S3](aws/t04-s3.md) — 객체 스토리지 개념, 버킷·객체 구성 요소, S3 비용·스토리지 클래스(Standard·IA·Glacier), S3 권한(IAM·버킷 정책·ACL), 버전 관리·객체 잠금(WORM), 수명주기(Lifecycle), 정적 웹 호스팅, 액세스 로깅·이벤트 알림(Lambda 이미지 리사이징)
 - [RDS](aws/t05-rds.md) — RDB 개념, RDS 개요·EC2 연동, Multi-AZ 고가용성·Read Replica, RDS 접속·인증(Username/Password·IAM DB 인증), Amazon Aurora(분산 스토리지·Quorum·Self-Healing·Cluster Failover), Aurora Global Database(RPO/RTO), 백업·Clone·Backtrack
+- [모니터링 (CloudWatch · CloudTrail · KMS)](aws/t06-monitoring.md) — CloudWatch 지표·로그·경보·Composite Alarm, EC2 커스텀 지표 및 404 알람 실습, CloudTrail(Trail·Management/Data/Insight Event) 및 계정 활동 추적 실습, AWS KMS 개요
 
 **가이드**
 

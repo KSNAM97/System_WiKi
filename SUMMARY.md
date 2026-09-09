@@ -85,6 +85,7 @@
   * [VPC](aws/t03-vpc.md)
   * [S3](aws/t04-s3.md)
   * [RDS](aws/t05-rds.md)
+  * [모니터링 (CloudWatch · CloudTrail · KMS)](aws/t06-monitoring.md)
 * 가이드
   * [AWS 가입하기](aws/g01-signup.md)
   * [IAM MFA 설정](aws/g02-iam-mfa.md)

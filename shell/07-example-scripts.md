@@ -2,7 +2,7 @@
 
 ## 개요
 
-앞선 SH-01 ~ SH-06 문서에서 다룬 변수, 조건문, 반복문, 함수, 배열 등의 문법을 실무 스크립트 작성에 어떻게 적용하는지 확인하는 실습 문제다. 먼저 PART 1~16 구성으로 변수·메타문자·expr/let·exit/test·조건문·반복문·배열·위치 매개변수·case·break/continue·cron/anacron·허가권/소유권·네트워크 서비스 자동화(SSH·SCP·FTP)까지 기본기를 문항별로 점검하고(각 문항은 요구사항 → 힌트 → 정답 순서로 구성), 마지막 "최종 문제" 절에서는 실제 운영 환경(Rocky Linux 9)에서 사용 중인 통합형 정답 스크립트 3개를 통해 `set -euo pipefail`, 함수 분리, 배열, `case`, 반복문, heredoc, 로그 함수, 색상 코드 등 이 챕터에서 다룬 개념이 실무 스크립트 안에서 어떻게 종합적으로 조합되는지 확인한다.
+앞선 SH-01 ~ SH-06 문서와 Shell-08 ~ Shell-14 문서에서 다룬 변수, 조건문, 반복문, 함수, 배열 등의 문법을 실무 스크립트 작성에 어떻게 적용하는지 확인하는 실습 문제다. 먼저 PART 1~16 구성으로 변수·메타문자·expr/let·exit/test·조건문·반복문·배열·위치 매개변수·case·break/continue·cron/anacron·허가권/소유권·네트워크 서비스 자동화(SSH·SCP·FTP)까지 기본기를 점검하고, 이어서 PART 17~23에서 함수(재귀·local·return), declare/예약변수/문자열 패턴치환/연관배열, 스크립트 실행 방식(`./` vs `bash`/`sh` vs `source`), 대화형/비대화형·로그인/비로그인 쉘, 종료 상태 코드 심화(`PIPESTATUS`·`pipefail`·`trap`), `test`·`[`·`[[` 명령 심화, 패턴 매칭(glob·extglob)까지 심화 문법을 문항별로 점검한다(각 문항은 요구사항 → 힌트 → 정답 순서로 구성). 마지막 "최종 문제" 절에서는 실제 운영 환경(Rocky Linux 9)에서 사용 중인 통합형 정답 스크립트 3개를 통해 `set -euo pipefail`, 함수 분리, 배열, `case`, 반복문, heredoc, 로그 함수, 색상 코드 등 이 챕터에서 다룬 개념이 실무 스크립트 안에서 어떻게 종합적으로 조합되는지 확인한다.
 
 ## 📚 문제 구성
 
@@ -24,6 +24,13 @@
 | 14 | cron · anacron | Q61~Q65 |
 | 15 | 허가권 · 소유권 · find | Q66~Q70 |
 | 16 | 네트워크 서비스 자동화 | Q71~Q73 |
+| 17 | 함수 (Function) | Q74~Q79 |
+| 18 | 문법 심화 (declare·예약변수·패턴치환·연관배열) | Q80~Q85 |
+| 19 | 스크립트 실행 방식 (./ · bash/sh · source) | Q86~Q90 |
+| 20 | 쉘의 종류 (대화형/비대화형·로그인/비로그인) | Q91~Q95 |
+| 21 | 🔴 종료 상태 코드 심화 | Q96~Q101 |
+| 22 | test · [ · [[ 명령 심화 | Q102~Q107 |
+| 23 | 패턴 매칭 (Glob · extglob) | Q108~Q113 |
 
 
 ---
@@ -3299,9 +3306,1218 @@ chmod +x deploy_ssh_key.sh
 > - [ ] 반복문 안에서 각 명령의 `$?` 를 확인하고 실패 시 `continue` 로 방어하는가
 > - [ ] 마지막에 `exit 0` / `exit 1` 로 결과를 명확히 반환하는가
 
+## PART 17. 함수 (Function)
+
+
+### 📌 핵심 개념 복습
+
+```text
+정의       : 함수이름 () { 명령 }   (정의만으로는 실행 안 됨, 호출해야 실행)
+호출       : 함수이름  인자1  인자2
+매개변수   : 함수 안의 $1 $2 $# $@ 는 "함수 호출 시 넘긴 인자" (스크립트 인자 아님)
+지역 변수  : local 변수=값   (함수 안에서만 유효, 없으면 전역 변수를 그대로 수정)
+결과 반환  : return 0~255 (성공/실패 상태값, $?로 확인) / echo + $(함수) (값 반환)
+재귀 함수  : 함수가 자기 자신을 호출, 반드시 종료 조건 필요
+```
+
+---
+
+### 🟢 기초 (Level 1)
+
+**Q74.** 인자로 서버 이름을 받아 `"[점검] 서버명 상태 확인 중"` 형식으로 출력하는 함수 `check_start`를 작성하고, `"Server-A"`를 인자로 호출하시오.
+
+> 💡 **힌트:** 함수는 `함수이름 () { ... }`로 정의하고, 함수 안에서는 `$1`로 첫 번째 인자를 받는다.
+
+```bash
+# 예제
+hello () {
+    echo "안녕, $1"
+}
+hello  world
+```
+
+### 정답
+
+```bash
+#!/bin/bash
+check_start () {
+    echo "[점검] $1 상태 확인 중"
+}
+
+check_start  "Server-A"
+# 출력: [점검] Server-A 상태 확인 중
+```
+
+
+---
+
+**Q75.** 두 정수를 인자로 받아 큰 값을 `echo`로 출력하는 함수 `get_max`를 작성하고, 결과를 변수 `result`에 저장해 출력하시오.
+
+> 💡 **힌트:** 함수가 계산한 값을 돌려받고 싶으면 `return`이 아니라 `echo`로 출력하고, 호출하는 쪽에서 `$(함수이름 인자)`로 받는다.
+
+```bash
+# 예제
+sum () {
+    echo $(( $1 + $2 ))
+}
+total=$(sum  10  20)
+echo $total
+```
+
+### 정답
+
+```bash
+#!/bin/bash
+get_max () {
+    if (( $1 >= $2 )); then
+        echo "$1"
+    else
+        echo "$2"
+    fi
+}
+
+result=$(get_max  37  52)
+echo "더 큰 값 : $result"
+# 출력: 더 큰 값 : 52
+```
+
+
+---
+
+### 🔵 응용 (Level 2)
+
+**Q76.** 다음 조건을 만족하는 스크립트를 작성하시오.
+
+- 전역 변수 `status="정상"`을 선언한다.
+- 함수 `mark_error`는 **local**로 선언한 같은 이름의 `status` 변수를 `"오류"`로 바꾸고 출력만 한다.
+- 함수 호출 전후로 전역 `status` 값이 그대로인지 확인한다.
+
+> 💡 **힌트:** `local`을 붙이지 않으면 함수 안의 변수도 전역 변수를 그대로 덮어쓴다.
+
+### 정답
+
+```bash
+#!/bin/bash
+status="정상"
+
+mark_error () {
+    local  status="오류"
+    echo "함수 내부 status : $status"
+}
+
+echo "호출 전 status : $status"
+mark_error
+echo "호출 후 status : $status"
+# 출력:
+# 호출 전 status : 정상
+# 함수 내부 status : 오류
+# 호출 후 status : 정상
+```
+
+
+---
+
+**Q77.** 디렉터리 경로를 인자로 받아, 존재하면 `return 0`, 존재하지 않으면 `return 1`을 반환하는 함수 `check_dir`을 작성하고, 호출 결과에 따라 `"디렉터리 확인됨"` / `"디렉터리 없음"`을 출력하는 스크립트를 완성하시오.
+
+> 💡 **힌트:** `return`의 값은 함수 종료 직후 `$?`로 확인한다.
+
+### 정답
+
+```bash
+#!/bin/bash
+check_dir () {
+    if [ -d "$1" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+check_dir  "/var/log"
+
+if [ $? -eq 0 ]; then
+    echo "디렉터리 확인됨"
+else
+    echo "디렉터리 없음"
+fi
+```
+
+
+---
+
+**Q78.** 배열 `services=("sshd" "crond" "chronyd")`를 함수 `check_all`에 통째로 전달해, 각 서비스의 실행 상태를 순회하며 `"서비스명 : 실행중/중지됨"` 형식으로 출력하는 스크립트를 작성하시오.
+
+> 💡 **힌트:** 함수에 배열을 넘길 때는 `"${배열[@]}"`로 펼쳐 전달하고, 함수 안에서는 `local arr=("$@")`로 다시 배열로 묶어 받는다.
+
+### 정답
+
+```bash
+#!/bin/bash
+check_all () {
+    local  arr=("$@")
+
+    for  svc  in  "${arr[@]}"
+    do
+        if  systemctl  is-active  --quiet  "$svc"
+        then
+            echo "$svc : 실행중"
+        else
+            echo "$svc : 중지됨"
+        fi
+    done
+}
+
+services=("sshd" "crond" "chronyd")
+check_all  "${services[@]}"
+```
+
+
+---
+
+### 🔴 심화 (Level 3)
+
+**Q79. 재귀 함수로 구구단 총합 구하기**
+
+정수 `n`을 인자로 받아, `1*n + 2*n + ... + n*n`이 아니라 **1부터 n까지의 합**(`1+2+...+n`)을 재귀 함수로 계산하는 `sum_to`를 작성하시오.
+
+- 종료 조건: `n`이 1 이하이면 `n`을 그대로 반환한다.
+- 재귀 호출 결과는 `echo` + 명령 치환으로 받아야 한다.
+
+> 💡 **힌트:** 팩토리얼 재귀 예제(`n * factorial(n-1)`)와 동일한 골격이되, 곱셈 대신 덧셈을 사용한다.
+
+```bash
+# 예제 - 팩토리얼 재귀 골격
+factorial () {
+    local n=$1
+    if (( n <= 1 )); then
+        echo 1
+        return
+    fi
+    local prev=$(factorial $((n - 1)))
+    echo $(( n * prev ))
+}
+```
+
+### 정답
+
+```bash
+#!/bin/bash
+sum_to () {
+    local  n=$1
+
+    if (( n <= 1 )); then
+        echo "$n"
+        return
+    fi
+
+    local  prev=$(sum_to  $((n - 1)))
+    echo $(( n + prev ))
+}
+
+result=$(sum_to  10)
+echo "1~10 합계 : $result"
+# 출력: 1~10 합계 : 55
+```
+
+
+---
+
+## PART 18. 문법 심화 (declare · 예약변수 · 문자열 패턴치환 · 연관배열)
+
+
+### 📌 핵심 개념 복습
+
+```text
+declare -r  : 읽기 전용(readonly)         declare -i : 정수 변수(대입 시 자동 산술 연산)
+declare -a  : 인덱스 배열                 declare -A : 연관 배열 (반드시 먼저 선언)
+예약 변수   : $$(PID) $!(직전 백그라운드 PID) $?(종료상태) UID FUNCNAME
+기본값 확장 : ${var:-word} ${var:=word} ${var:+word} ${var:?message}
+잘라내기    : ${var#p}(앞 최소) ${var##p}(앞 최대) ${var%p}(뒤 최소) ${var%%p}(뒤 최대)
+read 옵션   : -p(프롬프트) -s(비표시) -a(배열) -t(제한시간)
+명령 치환   : $(명령어)  (권장, 역따옴표 대신 사용)
+```
+
+---
+
+### 🟢 기초 (Level 1)
+
+**Q80.** `declare -r`로 읽기 전용 변수 `MAX_RETRY=5`를 선언하고 값을 변경 시도한 뒤, `declare -i`로 정수 변수 `counter=0`을 선언하고 `counter="2+3"`을 대입해 결과를 확인하시오.
+
+> 💡 **힌트:** `-i` 옵션이 있으면 문자열 대입도 산술식으로 자동 계산된다.
+
+### 정답
+
+```bash
+declare -r  MAX_RETRY=5
+echo "MAX_RETRY : $MAX_RETRY"
+MAX_RETRY=10          # 읽기 전용이므로 오류 발생
+# 출력: bash: MAX_RETRY: 읽기 전용 변수입니다.
+
+declare -i  counter=0
+counter="2+3"
+echo "counter : $counter"
+# 출력: counter : 5
+```
+
+
+---
+
+**Q81.** 현재 스크립트의 PID(`$$`)와, `sleep 10 &`을 백그라운드로 실행한 직후의 PID(`$!`)를 각각 출력하는 스크립트를 작성하시오.
+
+> 💡 **힌트:** `$$`는 현재 실행 중인 프로세스(쉘) 자신의 PID, `$!`는 가장 최근 백그라운드 실행 프로세스의 PID이다.
+
+### 정답
+
+```bash
+#!/bin/bash
+echo "현재 스크립트 PID : $$"
+
+sleep 10 &
+echo "방금 백그라운드로 실행한 PID : $!"
+```
+
+
+---
+
+**Q82.** 경로 `logfile="/var/log/nginx/access.log"`에서 `${var##pattern}`, `${var%pattern}`을 이용해 파일명만, 디렉터리 경로만 각각 추출해 출력하시오.
+
+> 💡 **힌트:** `##*/`는 마지막 슬래시까지 최대 제거(파일명 추출), `%/*`는 마지막 슬래시부터 뒤를 최소 제거(경로 추출)이다.
+
+### 정답
+
+```bash
+logfile="/var/log/nginx/access.log"
+
+echo "파일명 : ${logfile##*/}"
+echo "경로   : ${logfile%/*}"
+# 출력:
+# 파일명 : access.log
+# 경로   : /var/log/nginx
+```
+
+
+---
+
+### 🔵 응용 (Level 2)
+
+**Q83.** 변수 `region`이 설정되어 있지 않으면 `"ap-northeast-2"`를 기본값으로 대입해서 사용하고, 변수 `token`이 비어 있으면 에러 메시지를 출력하고 스크립트를 종료하는 스크립트를 작성하시오.
+
+> 💡 **힌트:** 기본값 대입은 `${var:=word}`, 필수값 검증은 `${var:?message}`를 사용한다.
+
+### 정답
+
+```bash
+#!/bin/bash
+unset region
+unset token
+
+: "${region:=ap-northeast-2}"
+echo "region : $region"
+
+: "${token:?token 값이 필요합니다}"
+echo "이 줄은 token이 있어야만 출력된다"
+```
+
+> `: "${var:?msg}"` 처럼 `:`(콜론, 아무것도 하지 않는 내장 명령) 뒤에 파라미터 확장을 붙이면 변수를 다른 곳에 대입하지 않고도 존재/필수 검사만 수행할 수 있다.
+
+
+---
+
+**Q84.** `declare -A`로 연관 배열 `server`를 선언해 `ip`, `role`, `env` 세 키에 값을 저장하고, `for key in "${!server[@]}"` 패턴으로 모든 키-값을 `"키 : 값"` 형식으로 출력하시오.
+
+> 💡 **힌트:** `${!arr[@]}`는 키 목록, `${arr[$key]}`는 그 키의 값이다.
+
+### 정답
+
+```bash
+#!/bin/bash
+declare -A  server
+
+server[ip]="192.168.10.50"
+server[role]="db"
+server[env]="production"
+
+for  key  in  "${!server[@]}"
+do
+    echo "$key : ${server[$key]}"
+done
+```
+
+
+---
+
+**Q85. read + 배열 + 시간 제한을 조합한 입력 검증 스크립트**
+
+다음 조건을 만족하는 스크립트 `read_ports.sh`를 작성하시오.
+
+- `read -t 10 -p "포트 번호들을 공백으로 구분해 입력하세요: " -a ports` 로 10초 안에 배열 입력을 받는다.
+- 시간 초과(종료 코드가 0이 아님)면 `"입력 시간 초과"`를 출력하고 종료한다.
+- 정상 입력됐으면 `${#ports[@]}`로 개수를, `${ports[@]}`로 전체 값을 출력한다.
+
+> 💡 **힌트:** `read`의 종료 코드는 시간 초과 시 0이 아니다. `-a` 옵션은 입력값을 공백 기준으로 배열에 저장한다.
+
+### 정답
+
+```bash
+#!/bin/bash
+read  -t  10  -p  "포트 번호들을 공백으로 구분해 입력하세요: "  -a  ports
+
+if [ $? -ne 0 ]; then
+    echo "입력 시간 초과"
+    exit 1
+fi
+
+echo "입력된 개수 : ${#ports[@]}"
+echo "포트 목록   : ${ports[@]}"
+```
+
+
+---
+
+## PART 19. 스크립트 실행 방식 (./ vs bash/sh vs source)
+
+
+### 📌 핵심 개념 복습
+
+```text
+./script.sh      : 실행권한+Shebang 필요, 새 프로세스(서브쉘)에서 실행, 변수/cd 영향 없음
+bash script.sh   : 실행권한 불필요, Shebang 무시, 새 프로세스에서 실행
+sh   script.sh   : 위와 동일하되 sh로 강제 해석
+source script.sh : 실행권한 불필요, 현재 쉘에서 그대로 실행 → 변수/cd가 현재 쉘에 남음
+. script.sh      : source와 완전히 동일
+주의             : source되는 스크립트의 exit는 현재 쉘(터미널) 자체를 종료시킴 → return 사용 권장
+bash -x script.sh: 실행 과정을 변수 치환 결과까지 추적 출력 (디버깅)
+```
+
+---
+
+### 🟢 기초 (Level 1)
+
+**Q86.** `env_check.sh` 라는 스크립트가 `EDITOR="vim"` 이라는 변수를 만든다고 할 때, `./env_check.sh`로 실행했을 때와 `source env_check.sh`로 실행했을 때 스크립트 종료 후 현재 쉘에서 `echo $EDITOR`의 결과가 각각 어떻게 다른지 설명하고, 이를 확인하는 스크립트를 작성하시오.
+
+> 💡 **힌트:** `./script.sh`는 서브쉘에서 실행되어 변수가 사라지고, `source`는 현재 쉘에서 실행되어 변수가 남는다.
+
+### 정답
+
+```bash
+#!/bin/bash
+# env_check.sh
+EDITOR="vim"
+echo "스크립트 내부 EDITOR : $EDITOR"
+```
+
+```bash
+chmod +x env_check.sh
+
+./env_check.sh
+echo "실행 후(./) EDITOR : $EDITOR"        # 출력 없음 (서브쉘 변수라 사라짐)
+
+source env_check.sh
+echo "실행 후(source) EDITOR : $EDITOR"    # vim (현재 쉘에 그대로 남음)
+```
+
+
+---
+
+**Q87.** 실행 권한이 없는 스크립트 파일 `deploy.sh`를 `bash deploy.sh` 명령으로 문제없이 실행할 수 있는 이유를 설명하고, 동일한 파일을 `./deploy.sh`로 실행했을 때 어떤 오류가 나는지 확인하는 절차를 작성하시오.
+
+> 💡 **힌트:** `./script.sh`는 커널이 실행 권한을 검사하지만, `bash script.sh`는 bash가 파일을 읽어서 해석하는 것이라 실행 권한이 필요 없다.
+
+### 정답
+
+```bash
+chmod -x deploy.sh          # 실행 권한 제거
+
+./deploy.sh
+# 출력: bash: ./deploy.sh: 허가 거부됨
+
+bash deploy.sh
+# 정상 실행됨 (실행 권한과 무관하게 bash가 파일을 읽어서 해석)
+```
+
+
+---
+
+**Q88.** 다음 스크립트 `move_home.sh`를 세 가지 방식(`./`, `bash`, `source`)으로 각각 실행한 뒤 `pwd` 결과가 어떻게 다른지 확인하는 절차를 작성하시오.
+
+```bash
+#!/bin/bash
+cd /home
+```
+
+> 💡 **힌트:** `./`와 `bash`는 서브쉘에서 `cd`하므로 현재 쉘 위치는 그대로이고, `source`만 현재 쉘 자체를 이동시킨다.
+
+### 정답
+
+```bash
+chmod +x move_home.sh
+
+pwd                    # /root
+./move_home.sh
+pwd                    # /root (그대로)
+
+bash move_home.sh
+pwd                    # /root (그대로)
+
+source move_home.sh
+pwd                    # /home (실제로 이동됨)
+```
+
+
+---
+
+### 🔵 응용 (Level 2)
+
+**Q89.** 공용 함수 모음 스크립트 `net_utils.sh`가 `exit 1`을 사용하고 있어서, 다른 사람이 `source net_utils.sh`로 불러 쓰다가 SSH 접속이 끊기는 사고가 반복되고 있다. 이 파일의 실패 처리 부분을 안전하게 고치시오.
+
+> 💡 **힌트:** `source`되는 스크립트 안에서 `exit` 대신 `return`을 쓰거나, `return 2>/dev/null || exit` 패턴으로 두 실행 방식 모두에 대응한다.
+
+```bash
+# 원본 (문제 있음)
+#!/bin/bash
+if ! command -v curl >/dev/null 2>&1; then
+    echo "curl이 설치되어 있지 않습니다."
+    exit 1
+fi
+```
+
+### 정답
+
+```bash
+#!/bin/bash
+# net_utils.sh
+if ! command -v curl >/dev/null 2>&1; then
+    echo "curl이 설치되어 있지 않습니다."
+    return 1 2>/dev/null || exit 1    # source면 return, 직접 실행이면 exit로 안전하게 분기
+fi
+
+echo "curl 사용 가능"
+```
+
+
+---
+
+**Q90. 중첩 소싱으로 구성한 설정 스크립트 디버깅**
+
+다음 세 스크립트가 서로를 `source`하는 구조일 때, `bash -x`로 `main.sh`를 실행해 로딩 순서를 추적하는 절차를 작성하시오.
+
+```bash
+# base.sh
+#!/bin/bash
+API_HOST="api.internal"
+```
+
+```bash
+# service.sh
+#!/bin/bash
+source ./base.sh
+API_URL="https://${API_HOST}/v1"
+```
+
+```bash
+# main.sh
+#!/bin/bash
+source ./service.sh
+echo "API_URL : $API_URL"
+```
+
+> 💡 **힌트:** `bash -x`는 소싱된 스크립트 내부의 명령까지도 그대로 추적해서 보여준다.
+
+### 정답
+
+```bash
+chmod +x main.sh service.sh base.sh
+
+bash -x ./main.sh
+# + source ./service.sh
+# ++ source ./base.sh
+# +++ API_HOST=api.internal
+# ++ API_URL=https://api.internal/v1
+# + echo 'API_URL : https://api.internal/v1'
+# API_URL : https://api.internal/v1
+```
+
+
+---
+
+## PART 20. 쉘의 종류 (대화형/비대화형 · 로그인/비로그인)
+
+
+### 📌 핵심 개념 복습
+
+```text
+대화형 판별 : $- 에 i 포함 여부  →  [[ $- == *i* ]]
+로그인 판별 : $0 앞에 - 붙는지, 또는 shopt login_shell
+로그인+대화형(SSH 접속)   : /etc/profile → ~/.bash_profile(없으면 .bash_login → .profile 순 1개)
+비로그인+대화형(새 터미널): /etc/bashrc → ~/.bashrc
+비로그인+비대화형(스크립트): 기본적으로 아무것도 안 읽음 (BASH_ENV 지정 시 그 파일만)
+cron/at/SSH 원격 명령 1줄 : 비로그인 + 비대화형 → alias/PATH 등 로그인 환경 상속 안 됨
+```
+
+---
+
+### 🟢 기초 (Level 1)
+
+**Q91.** 현재 쉘이 대화형인지 아닌지를 `$-` 값으로 판별해 `"대화형 쉘"` 또는 `"비대화형 쉘"`을 출력하는 스크립트 `shell_kind.sh`를 작성하고, `./shell_kind.sh`로 실행했을 때와 `source shell_kind.sh`로 실행했을 때 결과가 다른 이유를 설명하시오.
+
+> 💡 **힌트:** `[[ $- == *i* ]]`로 `i` 플래그 포함 여부를 검사한다.
+
+### 정답
+
+```bash
+#!/bin/bash
+if [[ $- == *i* ]]; then
+    echo "대화형 쉘"
+else
+    echo "비대화형 쉘"
+fi
+```
+
+```bash
+chmod +x shell_kind.sh
+./shell_kind.sh          # 비대화형 쉘 (새 서브쉘에서 스크립트로 실행됨)
+source shell_kind.sh     # 대화형 쉘 (현재 대화형 쉘 안에서 그대로 실행됨)
+```
+
+
+---
+
+**Q92.** `$0` 값을 확인해 현재 쉘이 로그인 쉘인지 판별하는 스크립트를 작성하고, `bash`로 새 비로그인 쉘을 하나 띄운 뒤 같은 스크립트를 실행해 결과 차이를 확인하시오.
+
+> 💡 **힌트:** 로그인 쉘은 `$0` 맨 앞에 `-`가 붙는다(`-bash`).
+
+### 정답
+
+```bash
+echo $0
+# -bash  (로그인 쉘)
+
+bash                # 비로그인 쉘 새로 실행
+echo $0
+# bash   ('-' 없음, 비로그인 쉘)
+
+exit
+```
+
+
+---
+
+**Q93.** `/backup/nightly.sh`를 매일 새벽 2시 cron에 등록했더니 터미널에서는 되던 `myalias` 명령이 cron에서는 `command not found`로 실패한다. 원인을 설명하고 `crontab -e`에서 어떻게 고쳐야 하는지 작성하시오.
+
+> 💡 **힌트:** cron 작업은 비로그인+비대화형 쉘에서 실행되어 `.bashrc`의 alias나 로그인 쉘의 넉넉한 `PATH`를 물려받지 못한다.
+
+### 정답
+
+```bash
+# 문제의 crontab 등록
+0 2 * * * myalias >> /var/log/nightly.log 2>&1
+
+# 해결: PATH를 명시하거나 필요한 설정을 먼저 source
+crontab -e
+PATH=/usr/local/bin:/usr/bin:/bin
+0 2 * * * . /root/.bash_profile; /backup/nightly.sh >> /var/log/nightly.log 2>&1
+```
+
+
+---
+
+### 🔵 응용 (Level 2)
+
+**Q94.** SSH로 원격 서버에 접속만 했을 때와, `ssh server-a "systemctl status sshd"`처럼 명령을 한 줄만 넘겼을 때 각각 `$-`와 `$0` 값이 어떻게 다른지 표로 정리하고, 확인 절차를 작성하시오.
+
+> 💡 **힌트:** 인자 없이 접속하면 로그인+대화형, 명령 한 줄을 넘기면 비로그인+비대화형이다.
+
+### 정답
+
+```bash
+ssh server-a "echo \$- ; echo \$0"
+# himBHs 는 안 나오고, 예: hBc / bash   (비로그인+비대화형)
+
+ssh server-a
+[root@Server-A ~]# echo $-
+himBHs                      # i 있음, 대화형
+[root@Server-A ~]# echo $0
+-bash                       # '-' 있음, 로그인
+```
+
+| 접속 방식 | `$-`에 `i` | `$0`에 `-` | 판정 |
+| --- | --- | --- | --- |
+| `ssh server-a` (인자 없음) | 있음 | 있음 | 로그인 + 대화형 |
+| `ssh server-a "명령"` | 없음 | 없음 | 비로그인 + 비대화형 |
+
+
+---
+
+**Q95. 로그인 쉘 설정 파일 로딩 순서를 스크립트로 검증**
+
+`/etc/profile`, `~/.bash_profile`, `~/.bashrc` 세 파일 각각에 로딩 시점을 알리는 `echo` 한 줄씩을 추가한 뒤, `ssh server-a`로 새로 접속했을 때와 이미 접속된 상태에서 `bash`(비로그인 대화형)를 새로 실행했을 때 출력 순서가 어떻게 다른지 확인하는 절차를 작성하시오.
+
+> 💡 **힌트:** 로그인+대화형은 `/etc/profile` 계열, 비로그인+대화형은 `/etc/bashrc`·`~/.bashrc` 계열을 읽는다. 대부분의 `.bash_profile`은 내부에서 `.bashrc`를 다시 source한다.
+
+### 정답
+
+```bash
+echo 'echo "[/etc/profile 로딩됨]"' | sudo tee -a /etc/profile
+echo 'echo "[~/.bash_profile 로딩됨]"' >> ~/.bash_profile
+echo 'echo "[~/.bashrc 로딩됨]"' >> ~/.bashrc
+
+# 새로 SSH 접속 (로그인+대화형)
+ssh server-a
+# [/etc/profile 로딩됨]
+# [~/.bash_profile 로딩됨]
+# [~/.bashrc 로딩됨]     ← .bash_profile이 내부에서 .bashrc를 source하기 때문
+
+# 이미 접속된 상태에서 새 쉘 실행 (비로그인+대화형)
+bash
+# [~/.bashrc 로딩됨]     ← /etc/profile, .bash_profile은 읽지 않음
+```
+
+
+---
+
+## PART 21. 종료 상태 코드 심화 (Exit Status)
+
+
+### 📌 핵심 개념 복습
+
+```text
+예약 코드  : 0=성공 1=일반오류 2=문법오류 126=권한없음 127=명령없음
+           128+N=시그널종료 130=SIGINT(Ctrl+C) 137=SIGKILL 143=SIGTERM
+PIPESTATUS : ${PIPESTATUS[@]} → 파이프라인 각 단계의 종료 코드 배열
+pipefail   : set -o pipefail → 파이프라인 중 하나라도 실패하면 전체를 실패로 처리
+set -e     : 실패 명령이 나오는 즉시 스크립트 종료 (&&/||/if의 조건식은 예외)
+trap ... EXIT : 스크립트 종료 시점에 항상 실행되는 정리 함수 등록, 안에서 $?로 종료코드 확인
+exit vs return: exit=프로세스 전체 종료 / return=그 함수 호출 하나만 종료
+```
+
+---
+
+### 🟢 기초 (Level 1)
+
+**Q96.** 다음 세 명령을 실행한 뒤 각각 `$?` 값이 무엇일지 예상하고 실제로 확인하시오.
+
+```bash
+ls /etc/shadow > /dev/null 2>&1     # 권한 문제 상황을 가정
+totally_unknown_cmd
+exit_code_test.sh   # exit 300으로 종료하는 스크립트
+```
+
+> 💡 **힌트:** 실행 권한 없는 파일 직접 실행=126, 명령 없음=127, 256 이상 값은 256으로 나눈 나머지가 된다.
+
+### 정답
+
+```bash
+touch /tmp/noperm.sh; chmod 000 /tmp/noperm.sh
+/tmp/noperm.sh
+echo $?          # 126 (권한 없음)
+
+totally_unknown_cmd
+echo $?          # 127 (명령 없음)
+
+echo 'exit 300' > /tmp/exit300.sh
+chmod +x /tmp/exit300.sh
+/tmp/exit300.sh
+echo $?          # 44 (300 % 256)
+```
+
+
+---
+
+**Q97.** `grep "ERROR" /no_such_app.log | sort | uniq -c` 를 실행한 뒤, `$?`와 `${PIPESTATUS[@]}`의 값이 각각 어떻게 다른지 확인하는 스크립트를 작성하시오.
+
+> 💡 **힌트:** `$?`는 파이프라인 마지막 명령(`uniq -c`) 기준, `PIPESTATUS`는 각 단계별 종료 코드를 담은 배열이다.
+
+### 정답
+
+```bash
+#!/bin/bash
+grep "ERROR" /no_such_app.log | sort | uniq -c
+
+echo "\$? (마지막 명령 기준) : $?"
+echo "PIPESTATUS 전체 : ${PIPESTATUS[@]}"
+# 출력 예:
+# $? (마지막 명령 기준) : 0
+# PIPESTATUS 전체 : 2 0 0
+```
+
+
+---
+
+**Q98.** `sleep 60`을 백그라운드로 실행한 뒤 `kill -INT`, `kill -TERM`, `kill -9`로 각각 종료시켜 `wait`의 결과로 나오는 종료 코드를 확인하는 절차를 작성하시오.
+
+> 💡 **힌트:** 시그널에 의한 종료 코드는 `128 + 시그널 번호`이다.
+
+### 정답
+
+```bash
+sleep 60 & pid1=$!
+kill -INT $pid1; wait $pid1; echo "SIGINT -> $?"     # 130
+
+sleep 60 & pid2=$!
+kill -TERM $pid2; wait $pid2; echo "SIGTERM -> $?"   # 143
+
+sleep 60 & pid3=$!
+kill -9 $pid3; wait $pid3; echo "SIGKILL -> $?"      # 137
+```
+
+
+---
+
+### 🔵 응용 (Level 2)
+
+**Q99.** `set -euo pipefail`을 켠 상태에서, 존재하지 않는 디렉터리를 `tar`로 압축하는 명령이 파이프 중간에 실패했을 때 스크립트가 즉시 종료되는 것을 확인하는 스크립트 `strict_backup.sh`를 작성하시오.
+
+> 💡 **힌트:** `pipefail`이 없으면 파이프 마지막 명령만 보고 성공으로 착각할 수 있다.
+
+### 정답
+
+```bash
+#!/bin/bash
+set -euo pipefail
+
+tar cf - /no_such_dir 2>/dev/null | gzip > /backup/out.tar.gz
+echo "이 줄은 실행되지 않는다"
+```
+
+```bash
+chmod +x strict_backup.sh
+./strict_backup.sh
+echo $?
+# 1  (pipefail 덕분에 tar 실패가 전체 실패로 반영되어 마지막 echo가 실행되지 않음)
+```
+
+
+---
+
+**Q100.** 임시 잠금 파일(`/tmp/deploy.lock`)을 만들고 작업하는 스크립트가 정상 종료든 실패든 항상 잠금 파일을 삭제하도록 `trap ... EXIT`를 사용해 작성하시오. 인자로 `"fail"`을 받으면 `exit 2`로 강제 실패시켜 정리 로직이 그래도 실행되는지 확인하시오.
+
+> 💡 **힌트:** `trap 함수이름 EXIT`는 정상/비정상 종료 모두에서 한 번 실행되며, 핸들러 안의 `$?`로 종료 코드를 알 수 있다.
+
+### 정답
+
+```bash
+#!/bin/bash
+LOCK=/tmp/deploy.lock
+
+cleanup () {
+    local code=$?
+    rm -f "$LOCK"
+    if [ "$code" -eq 0 ]; then
+        echo "[cleanup] 정상 종료 - 잠금 해제"
+    else
+        echo "[cleanup] 실패(코드 $code) - 잠금 해제"
+    fi
+}
+trap cleanup EXIT
+
+touch "$LOCK"
+echo "배포 작업 진행 중..."
+
+if [ "${1:-}" = "fail" ]; then
+    exit 2
+fi
+
+echo "배포 완료"
+```
+
+
+---
+
+**Q101. 중첩 함수에서 return과 exit의 영향 범위 비교**
+
+`validate` 함수가 `parse` 함수를 호출하는 구조에서, `parse`가 실패했을 때 (1) `return 1`을 쓰는 버전과 (2) `exit 1`을 쓰는 버전 두 스크립트를 각각 작성해 실행 흐름 차이를 비교하시오.
+
+> 💡 **힌트:** `return`은 호출자(`validate`)에게 제어를 돌려주지만, `exit`는 몇 겹이든 무시하고 스크립트 전체를 즉시 끝낸다.
+
+### 정답
+
+```bash
+# return 버전 (parse_return.sh)
+#!/bin/bash
+parse () {
+    echo "parse 시작"
+    return 1
+}
+validate () {
+    echo "validate 시작"
+    parse
+    echo "parse 리턴코드 : $?"
+    echo "validate 계속 진행"
+}
+validate
+echo "스크립트 끝까지 도달"
+```
+
+```bash
+# exit 버전 (parse_exit.sh)
+#!/bin/bash
+parse () {
+    echo "parse 시작"
+    exit 1
+}
+validate () {
+    echo "validate 시작"
+    parse
+    echo "이 줄은 실행되지 않음"
+}
+validate
+echo "이 줄도 실행되지 않음"
+```
+
+```bash
+./parse_return.sh
+# validate 시작 / parse 시작 / parse 리턴코드 : 1 / validate 계속 진행 / 스크립트 끝까지 도달
+
+./parse_exit.sh
+# validate 시작 / parse 시작   (여기서 즉시 종료, echo $? => 1)
+```
+
+
+---
+
+## PART 22. test · [ · [[ 명령 심화
+
+
+### 📌 핵심 개념 복습
+
+```text
+test 조건 / [ 조건 ] : 둘 다 "명령어" → 변수 반드시 "$var"로 인용 필요, 글롭·단어분리 위험
+[[ 조건 ]]           : Bash "문법" → 인용 안 해도 안전, &&/||/</>를 조건식 안에서 직접 사용
+[ -t FD ]            : FD가 터미널에 연결되어 있는지 (기본 FD=1)
+[[ 문자열 =~ 정규식 ]] : 확장 정규식 매치, 결과는 BASH_REMATCH 배열
+-eq/-ne/-gt/-lt      : 숫자 비교(값으로 변환)   =/!=  : 문자열 비교(표기 그대로)
+[ ]의 -a/-o(레거시) → [ ] && [ ] 또는 [[ && ]]로 대체 권장
+test 인자개수 규칙   : 0개=항상거짓 / 1개=비어있지않으면참
+```
+
+---
+
+### 🟢 기초 (Level 1)
+
+**Q102.** 변수 `path="/data/nightly backup"`(공백 포함)을 `[ -d $path ]`(따옴표 없이)와 `[[ -d $path ]]`(따옴표 없이) 두 가지로 각각 검사해 결과 차이를 확인하시오.
+
+> 💡 **힌트:** `[ ]`는 명령어라서 인자를 단어 분리하지만, `[[ ]]`는 문법으로 처리되어 공백이 있어도 하나의 값으로 다룬다.
+
+### 정답
+
+```bash
+mkdir -p "/data/nightly backup"
+path="/data/nightly backup"
+
+[ -d $path ] && echo "디렉터리 있음"
+# 출력: bash: [: 너무 많은 인자입니다.
+
+[[ -d $path ]] && echo "디렉터리 있음"
+# 출력: 디렉터리 있음
+```
+
+
+---
+
+**Q103.** 표준출력이 터미널에 연결되어 있으면 컬러 로그를, 파이프/파일로 리다이렉션되어 있으면 무채색 로그를 출력하는 함수 `log_msg`를 작성하시오.
+
+> 💡 **힌트:** `[ -t 1 ]`로 FD 1(표준출력)이 터미널인지 검사한다.
+
+### 정답
+
+```bash
+#!/bin/bash
+log_msg () {
+    if [ -t 1 ]; then
+        echo -e "\033[0;32m[LOG]\033[0m $1"
+    else
+        echo "[LOG] $1"
+    fi
+}
+
+log_msg "배포 시작"
+```
+
+```bash
+./log_msg_test.sh          # 터미널: 초록색 [LOG] 표시
+./log_msg_test.sh | cat    # 파이프: 색 코드 없이 [LOG] 표시
+```
+
+
+---
+
+**Q104.** 사용자가 입력한 값이 `MAC 주소 형식`(`xx:xx:xx:xx:xx:xx`, x는 16진수 2자리)인지 `[[ =~ ]]` 정규식으로 검증하는 스크립트를 작성하시오.
+
+> 💡 **힌트:** 정규식 매치는 `[[ "$val" =~ 정규식 ]]`, 그룹 결과는 `BASH_REMATCH`.
+
+### 정답
+
+```bash
+#!/bin/bash
+read -p "MAC 주소를 입력하세요 : " mac
+
+if [[ "$mac" =~ ^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$ ]]; then
+    echo "형식이 올바른 MAC 주소입니다."
+else
+    echo "MAC 주소 형식이 아닙니다."
+fi
+```
+
+
+---
+
+### 🔵 응용 (Level 2)
+
+**Q105.** 재고 코드 `stock_a="007"`, `stock_b="7"`을 `=`와 `-eq`로 각각 비교해 결과가 다르게 나오는 이유를 설명하고, 확인하는 스크립트를 작성하시오.
+
+> 💡 **힌트:** `=`는 표기 그대로 문자열 비교, `-eq`는 숫자로 변환 후 비교하므로 앞의 0은 무시된다.
+
+### 정답
+
+```bash
+stock_a="007"
+stock_b="7"
+
+[ "$stock_a" = "$stock_b" ] && echo "문자열 비교 : 같음" || echo "문자열 비교 : 다름"
+[ "$stock_a" -eq "$stock_b" ] && echo "숫자 비교 : 같음" || echo "숫자 비교 : 다름"
+# 출력:
+# 문자열 비교 : 다름   ("007" != "7")
+# 숫자 비교 : 같음     (007 == 7)
+```
+
+
+---
+
+**Q106.** 계정 상태(`status="locked"`)와 등급(`grade="admin"` 또는 `"manager"`)을 함께 검사해, 상태가 `active`이고 등급이 `admin` 또는 `manager`일 때만 `"접근 허용"`을 출력하는 복합 조건을 `[[ ]]`의 `&&`/`||`/`( )`로 작성하시오. `[ ]`의 `-a`/`-o`는 사용하지 말 것.
+
+> 💡 **힌트:** `[[ ]]` 안에서는 괄호를 이스케이프 없이 그대로 우선순위 지정에 사용할 수 있다.
+
+### 정답
+
+```bash
+status="active"
+grade="manager"
+
+if [[ "$status" == "active" && ( "$grade" == "admin" || "$grade" == "manager" ) ]]; then
+    echo "접근 허용"
+else
+    echo "접근 거부"
+fi
+# 출력: 접근 허용
+```
+
+
+---
+
+**Q107. test 인자 개수 규칙을 이용한 안전한 필수값 검사 함수**
+
+함수 인자가 비어 있는지(`unset`이든 빈 문자열이든) 검사해 비어 있으면 `"필수값 누락"`을 출력하고 `return 1`, 값이 있으면 그대로 진행하는 `require_arg` 함수를 작성하고, 값이 없을 때/있을 때 각각 호출해 확인하시오.
+
+> 💡 **힌트:** `[ "$1" ]`은 인자가 1개일 때 "비어있지 않으면 참"이라는 test의 인자 개수 규칙을 이용한 것이다.
+
+### 정답
+
+```bash
+#!/bin/bash
+require_arg () {
+    if [ "$1" ]; then
+        echo "값 확인됨 : $1"
+        return 0
+    else
+        echo "필수값 누락"
+        return 1
+    fi
+}
+
+require_arg ""
+require_arg "backup.sh"
+```
+
+
+---
+
+## PART 23. 패턴 매칭 (Glob · extglob)
+
+
+### 📌 핵심 개념 복습
+
+```text
+기본 글롭  : *(0개 이상) ?(정확히 1글자) [abc](문자집합) [!abc]/[^abc](제외)
+POSIX 클래스: [[:digit:]] [[:alpha:]] [[:alnum:]] [[:upper:]] [[:lower:]] [[:space:]]
+extglob    : shopt -s extglob 로 활성화
+  ?(패턴) 0또는1회  *(패턴) 0회이상  +(패턴) 1회이상  @(패턴) 정확히1개  !(패턴) 제외
+치환 패턴  : ${var/패턴/대체}(첫번째만) ${var//패턴/대체}(전체) — 여기서 패턴은 정규식이 아니라 글롭
+글롭 vs 정규식 : 글롭은 문자열 전체 매치 기준, 정규식([[ =~ ]])은 부분 일치 허용
+```
+
+---
+
+### 🟢 기초 (Level 1)
+
+**Q108.** `case`문으로 인자 하나를 받아 `.sh`로 끝나면 `"쉘 스크립트"`, `.py`로 끝나면 `"파이썬 스크립트"`, 숫자로 시작하면 `"숫자로 시작하는 파일"`, 그 외는 `"기타 파일"`을 출력하는 `filetype.sh`를 작성하시오.
+
+> 💡 **힌트:** `case`의 각 패턴은 글롭 문법(`*`, `[0-9]*`)을 그대로 사용한다.
+
+### 정답
+
+```bash
+#!/bin/bash
+case "$1" in
+    *.sh)
+        echo "쉘 스크립트"
+        ;;
+    *.py)
+        echo "파이썬 스크립트"
+        ;;
+    [0-9]*)
+        echo "숫자로 시작하는 파일"
+        ;;
+    *)
+        echo "기타 파일"
+        ;;
+esac
+```
+
+```bash
+chmod +x filetype.sh
+./filetype.sh  deploy.sh     # 쉘 스크립트
+./filetype.sh  2026report.md # 숫자로 시작하는 파일
+```
+
+
+---
+
+**Q109.** `[[:upper:]]`, `[[:digit:]]` POSIX 문자 클래스를 이용해 `"영문 대문자 2개 + 숫자 4개"` 형식(예: `AB1234`)의 자산 코드인지 검증하는 스크립트를 작성하시오.
+
+> 💡 **힌트:** 필요한 개수만큼 문자 클래스를 반복해서 나열한다.
+
+### 정답
+
+```bash
+#!/bin/bash
+read -p "자산 코드를 입력하세요 : " code
+
+if [[ "$code" == [[:upper:]][[:upper:]][[:digit:]][[:digit:]][[:digit:]][[:digit:]] ]]; then
+    echo "형식이 올바른 자산 코드입니다."
+else
+    echo "형식이 올바르지 않습니다."
+fi
+```
+
+
+---
+
+**Q110.** `msg="cpu warning, disk warning, mem ok"` 문자열에서 `${var//패턴/대체}`를 이용해 `"warning"`을 모두 `"WARN"`으로 치환하시오. 이어서 `${var/패턴/대체}`로 첫 번째 등장만 치환했을 때와 결과를 비교하시오.
+
+> 💡 **힌트:** `//`는 전체 치환, `/`는 첫 번째 매치만 치환한다.
+
+### 정답
+
+```bash
+msg="cpu warning, disk warning, mem ok"
+
+echo "${msg//warning/WARN}"
+# 출력: cpu WARN, disk WARN, mem ok
+
+echo "${msg/warning/WARN}"
+# 출력: cpu WARN, disk warning, mem ok
+```
+
+
+---
+
+### 🔵 응용 (Level 2)
+
+**Q111.** `shopt -s extglob`을 켠 뒤, 값이 `숫자로만 이루어져 있는지`(`+([0-9])`), `y/n/yes/no 중 하나인지`(`@(...)`), `.tmp로 끝나지 않는지`(`!(...)`)를 `case`로 판별하는 `answer_check.sh`를 새로운 시나리오로 작성하시오. (기존 예제와 다른 값으로 테스트할 것)
+
+> 💡 **힌트:** `+()`는 1회 이상 반복, `@()`는 후보 중 정확히 하나, `!()`는 제외 패턴이다.
+
+### 정답
+
+```bash
+#!/bin/bash
+shopt -s extglob
+
+read -p "설정값을 입력하세요 : " val
+
+case "$val" in
+    +([0-9]))
+        echo "숫자로만 이루어져 있습니다."
+        ;;
+    @(y|n|yes|no))
+        echo "Yes/No 응답입니다."
+        ;;
+    !(*.tmp))
+        echo ".tmp 파일이 아닙니다."
+        ;;
+    *)
+        echo "그 외 형식입니다."
+        ;;
+esac
+```
+
+```bash
+chmod +x answer_check.sh
+./answer_check.sh    # 입력: 20260909  -> 숫자로만 이루어져 있습니다.
+./answer_check.sh    # 입력: no        -> Yes/No 응답입니다.
+```
+
+
+---
+
+**Q112.** `/tmp/reports` 디렉터리에서 `.csv`, `.xlsx`로 끝나는 파일만 남기고 나머지(`.tmp`, `.log` 등)는 모두 삭제하는 스크립트를 `extglob`의 `!(...)`와 `@(...)`를 조합해 작성하시오.
+
+> 💡 **힌트:** `!(*.csv|*.xlsx)`처럼 여러 확장자를 `|`로 묶어 제외 패턴을 만들 수 있다.
+
+### 정답
+
+```bash
+#!/bin/bash
+shopt -s extglob
+
+target_dir="/tmp/reports"
+echo "삭제 전 : $(ls "$target_dir")"
+
+rm -f "$target_dir"/!(*.csv|*.xlsx)
+
+echo "삭제 후 : $(ls "$target_dir")"
+```
+
+
+---
+
+**Q113. 글롭과 정규식을 함께 사용해 로그 파일명 검증하기**
+
+파일명 `name="app-2026-09-09.log"`에 대해 다음 두 가지를 모두 만족하는지 확인하는 스크립트를 작성하시오.
+
+1. `[[ == ]]` 글롭으로 `app-*.log` 형식과 매치되는지
+2. `[[ =~ ]]` 정규식으로 `YYYY-MM-DD` 형태의 날짜가 파일명 안에 포함되어 있는지 (부분 일치)
+
+둘 다 참이면 `"유효한 앱 로그 파일"`, 아니면 `"형식 불일치"`를 출력하시오.
+
+> 💡 **힌트:** 글롭은 문자열 전체가 패턴과 일치해야 하고, 정규식(`=~`)은 부분 일치만으로도 매치된다는 차이를 이용한다.
+
+### 정답
+
+```bash
+#!/bin/bash
+name="app-2026-09-09.log"
+
+glob_ok=false
+regex_ok=false
+
+[[ "$name" == app-*.log ]] && glob_ok=true
+[[ "$name" =~ [0-9]{4}-[0-9]{2}-[0-9]{2} ]] && regex_ok=true
+
+if $glob_ok && $regex_ok; then
+    echo "유효한 앱 로그 파일"
+else
+    echo "형식 불일치"
+fi
+# 출력: 유효한 앱 로그 파일
+```
+
+
+---
+
 ## 최종 문제
 
-앞서 다룬 PART 1~16의 기본 문법을 실제 운영 스크립트 3개(`rl9_setup.sh`, `vimrc_setup.sh`, `guest_setup.sh`)에 통합 적용해보는 종합 문제다.
+앞서 다룬 PART 1~23의 기본 문법을 실제 운영 스크립트 3개(`rl9_setup.sh`, `vimrc_setup.sh`, `guest_setup.sh`)에 통합 적용해보는 종합 문제다.
 
 ### 최종 문제 1) Rocky Linux 9 필수 패키지 & 셸 환경 일괄 설정 스크립트
 

@@ -25,7 +25,7 @@ Rocky Linux 9 기반 리눅스 시스템 관리 핵심 정리
 - [Rocky Linux 9 vs Rocky Linux 10](linux/rocky9-vs-rocky10.md)
 - [실습 문제](linux/practice.md)
 
-### 💻 Shell Script (8)
+### 💻 Shell Script (9)
 
 Bash 쉘 스크립트 문법과 실전 활용
 
@@ -36,6 +36,7 @@ Bash 쉘 스크립트 문법과 실전 활용
 - [cron · crond](shell-script/05-cron.md)
 - [배열 · 위치 매개변수](shell-script/06-arrays-parameters.md)
 - [함수 (Function)](shell-script/07-functions.md)
+- [문법 총정리 (Syntax Master)](shell-script/08-syntax-master.md)
 - [실습 문제](shell/07-example-scripts.md)
 
 ### 🗄️ Database — MariaDB (6)

@@ -95,3 +95,4 @@
   * [ALB · Auto Scaling](aws/g06-load-balancer-autoscaling.md)
   * [EC2와 S3 연동](aws/g07-ec2-s3.md)
   * [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md)
+  * [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md)

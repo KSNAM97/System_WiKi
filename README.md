@@ -91,7 +91,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (14)
+### ☁️ AWS (15)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -102,7 +102,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [VPC](aws/t03-vpc.md) — 사설망·NAT, CIDR·서브넷, VPC·라우트 테이블, 퍼블릭/프라이빗 서브넷·인터넷 게이트웨이, 기본/커스텀 VPC, Bastion Host·NAT Gateway, 보안 그룹·Stateful·Source·Prefix List, NACL(Stateless·규칙 번호·Deny), VPC Endpoint(Interface·Gateway), EICE, VPC Peering, Transit Gateway, Direct Connect
 - [S3](aws/t04-s3.md) — 객체 스토리지 개념, 버킷·객체 구성 요소, S3 비용·스토리지 클래스(Standard·IA·Glacier), S3 권한(IAM·버킷 정책·ACL), 버전 관리·객체 잠금(WORM), 수명주기(Lifecycle), 정적 웹 호스팅, 액세스 로깅·이벤트 알림(Lambda 이미지 리사이징)
 - [RDS](aws/t05-rds.md) — RDB 개념, RDS 개요·EC2 연동, Multi-AZ 고가용성·Read Replica, RDS 접속·인증(Username/Password·IAM DB 인증), Amazon Aurora(분산 스토리지·Quorum·Self-Healing·Cluster Failover), Aurora Global Database(RPO/RTO), 백업·Clone·Backtrack
-- [모니터링 (CloudWatch · CloudTrail · KMS)](aws/t06-monitoring.md) — CloudWatch 지표·로그·경보·Composite Alarm, EC2 커스텀 지표 및 404 알람 실습, CloudTrail(Trail·Management/Data/Insight Event) 및 계정 활동 추적 실습, AWS KMS 개요
+- [모니터링 (CloudWatch · CloudTrail · KMS)](aws/t06-monitoring.md) — CloudWatch 지표·로그·경보·Composite Alarm, CloudTrail(Trail·Management/Data/Insight Event), AWS KMS 개요
 
 **가이드**
 
@@ -114,5 +114,6 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [ALB · Auto Scaling](aws/g06-load-balancer-autoscaling.md) — VPC 3-tier 보안 그룹(sg-alb·sg-web·sg-rds) 구성, ALB 생성·대상 그룹·헬스 체크, Auto Scaling(시작 템플릿·대상 추적 정책) 그룹 생성
 - [EC2와 S3 연동](aws/g07-ec2-s3.md) — S3 버킷 생성, S3 접근 권한 IAM 역할 생성·EC2 연결, AWS CLI(cp·sync)로 파일 주고받기, User Data로 S3 콘텐츠 자동 배포
 - [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md) — IAM 역할·VPC·RDS·EFS·S3 준비, User Data 자동 배포, AMI·ASG·ALB 구성, ALB 환경 정적 리소스 CORS 트러블슈팅, 보안 그룹 강화, 리소스 삭제
+- [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md) — EC2 웹 서버 로그 → CloudWatch Agent 수집 → Metric Filter로 404 지표화 → Alarm → SNS 연동 실습, CloudTrail로 Management/Data Event 추적 실습
 
 왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

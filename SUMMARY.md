@@ -115,3 +115,4 @@
 * [클래스 심화](python/13-classes-advanced.md)
 * [표준 라이브러리 살펴보기](python/14-stdlib-tour.md)
 * [가상 환경 심화와 부동소수점](python/15-venv-precision.md)
+* [표준 라이브러리 심화와 테스트](python/16-stdlib-advanced.md)

@@ -470,6 +470,94 @@ True
 
 **정리**: 리스트·튜플·문자열 같은 시퀀스는 앞 요소부터 차례로 비교하다가 값이 처음으로 달라지는 지점에서 대소가 결정되는 사전식 비교 규칙을 따르며, 모든 요소가 같고 길이만 다르면 더 짧은 쪽이 작은 것으로 취급되므로, 버전 번호(`(1, 2, 0) < (1, 3, 0)`)나 순위 비교처럼 여러 값을 한 번에 비교해야 하는 상황에서 튜플 비교를 활용하면 편리하다.
 
+## bisect 모듈 — 정렬된 리스트 유지하기
+
+이미 정렬되어 있는 리스트에 새 값을 넣을 때마다 매번 `sorted()`로 전체를 다시 정렬하는 것은 비효율적이다. `bisect` 모듈은 정렬된 리스트에 알맞은 위치를 빠르게 찾거나, 그 위치에 바로 삽입하는 기능을 제공한다.
+
+```python
+import bisect
+
+scores = [60, 75, 90]
+
+bisect.insort(scores, 82)
+print(scores)
+
+bisect.insort(scores, 55)
+print(scores)
+```
+
+```text
+(base) C:\Users\guest\project> python bisect_insort.py
+[60, 75, 82, 90]
+[55, 60, 75, 82, 90]
+```
+
+- `bisect.insort(정렬된리스트, 값)`은 리스트가 이미 정렬되어 있다는 전제 하에, 정렬 상태를 유지하면서 값을 알맞은 위치에 삽입한다. `append()` 후 다시 `sort()`를 호출하는 것보다 위치 탐색이 이진 탐색(binary search)으로 이루어져 더 효율적이다.
+
+**bisect_left / bisect_right — 삽입 위치만 확인하기**
+
+```python
+import bisect
+
+nums = [10, 20, 20, 20, 30]
+
+print(bisect.bisect_left(nums, 20))
+print(bisect.bisect_right(nums, 20))
+```
+
+```text
+(base) C:\Users\guest\project> python bisect_left_right.py
+1
+4
+```
+
+- `bisect_left(리스트, 값)`은 리스트를 정렬 상태로 유지하면서 그 값을 삽입할 수 있는 **가장 왼쪽** 위치(인덱스)를 반환하고, `bisect_right(리스트, 값)`은 **가장 오른쪽** 위치를 반환한다. 실제로 리스트를 변경하지는 않고 위치만 계산해서 돌려준다.
+- `nums`에서 `20`은 인덱스 1~3에 걸쳐 세 개가 있는데, `bisect_left`는 그 앞자리인 `1`을, `bisect_right`는 그 뒷자리인 `4`를 반환한다. 이 차이를 이용하면 리스트 안에 특정 값이 몇 개 있는지(`bisect_right - bisect_left`)도 계산할 수 있다.
+
+**정리**: `bisect` 모듈은 이미 정렬된 리스트를 대상으로 이진 탐색을 이용해 값을 삽입할 위치를 빠르게 찾아주며, `bisect.insort()`는 그 위치에 바로 값을 삽입해 정렬 상태를 유지하고, `bisect_left()`/`bisect_right()`는 리스트를 바꾸지 않고 삽입 가능한 위치(중복 값의 왼쪽 끝/오른쪽 끝)만 알려주므로 순위표나 점수 구간 판정처럼 정렬된 데이터를 계속 유지해야 하는 상황에 유용하다.
+
+## heapq 모듈 — 힙(우선순위 큐)
+
+**힙(heap)**은 가장 작은(또는 가장 큰) 값을 항상 빠르게 꺼낼 수 있도록 정리된 자료구조로, **우선순위 큐(priority queue)**를 구현할 때 널리 쓰인다. `heapq` 모듈은 일반 리스트를 **최소 힙(min-heap)**처럼 다룰 수 있게 해준다.
+
+```python
+import heapq
+
+nums = [5, 1, 8, 3, 9, 2]
+heapq.heapify(nums)
+print(nums)
+```
+
+```text
+(base) C:\Users\guest\project> python heapq_heapify.py
+[1, 3, 2, 5, 9, 8]
+```
+
+- `heapq.heapify(리스트)`는 일반 리스트를 그 자리에서(in-place) 힙 순서를 만족하는 형태로 재배열한다. 완전히 정렬된 리스트가 되는 것은 아니지만, 항상 `리스트[0]`에 전체 중 가장 작은 값이 위치하도록 구조가 재정리된다.
+
+**heappush / heappop — 값 추가와 최솟값 꺼내기**
+
+```python
+heapq.heappush(nums, 0)
+print(nums)
+
+print(heapq.heappop(nums))
+print(heapq.heappop(nums))
+```
+
+```text
+(base) C:\Users\guest\project> python heapq_push_pop.py
+[0, 3, 1, 5, 9, 8, 2]
+0
+1
+```
+
+- `heapq.heappush(힙, 값)`은 힙 구조를 유지하면서 새 값을 추가한다. 추가 후에도 여전히 가장 작은 값이 인덱스 `0`에 위치한다.
+- `heapq.heappop(힙)`은 힙에서 가장 작은 값을 꺼내면서 제거하고, 남은 요소들로 힙 구조를 다시 정리한다. 매번 `heappop()`을 호출하면 오름차순으로 값을 하나씩 꺼낼 수 있다.
+- 리스트를 매번 정렬해서 맨 앞 값을 꺼내는 것보다, `heapq`는 추가·제거 모두 O(log n) 시간에 처리되므로 "가장 작은(우선순위가 높은) 항목을 반복해서 꺼내야 하는" 작업 큐나 스케줄러 구현에 자주 사용된다.
+
+**정리**: `heapq` 모듈은 일반 리스트를 최소 힙으로 다룰 수 있게 해주는 함수들을 제공하며, `heapify()`로 기존 리스트를 힙 구조로 바꾸고 `heappush()`/`heappop()`으로 힙 구조를 유지한 채 값을 추가·제거할 수 있어, 항상 가장 작은(또는 우선순위가 가장 높은) 값을 빠르게 꺼내야 하는 우선순위 큐를 별도의 클래스 구현 없이 리스트 하나로 처리할 수 있다.
+
 ## 실습 예제 (EX1~EX4)
 
 **EX1) deque로 최근 방문 기록 N개만 유지하기**

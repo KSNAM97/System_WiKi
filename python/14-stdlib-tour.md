@@ -391,6 +391,126 @@ print(dict(groups))
 
 **정리**: `collections` 모듈은 PY-10에서 다룬 `deque` 외에도 각 요소의 등장 횟수를 자동으로 세고 `most_common()`으로 상위 항목을 뽑아주는 `Counter`, 그리고 존재하지 않는 키에 접근할 때 지정한 타입의 기본값을 자동으로 생성해주는 `defaultdict`를 제공하며, 두 도구 모두 일반 딕셔너리로 직접 구현하면 반복적으로 등장하는 "키 존재 확인 후 초기화" 패턴을 간결하게 대체해준다.
 
+## struct 모듈 — 이진 데이터 다루기
+
+지금까지 다룬 파일은 대부분 텍스트였지만, 이미지 파일 헤더나 네트워크 프로토콜처럼 **정해진 바이트 구조**를 가진 이진(binary) 데이터를 다뤄야 할 때도 있다. `struct` 모듈은 파이썬 값과 고정된 형식의 바이트열(`bytes`)을 서로 변환해준다.
+
+```python
+import struct
+
+packed = struct.pack("i", 1000)
+print(packed, len(packed))
+
+value = struct.unpack("i", packed)
+print(value)
+```
+
+```text
+(base) C:\Users\guest\project> python struct_basic.py
+b'\xe8\x03\x00\x00' 4
+(1000,)
+```
+
+- `struct.pack(포맷문자열, 값, ...)`은 파이썬 값을 지정한 형식에 맞춰 고정 길이의 `bytes`로 변환한다. `"i"`는 4바이트 부호 있는 정수(int)를 의미하며, `1000`이 4바이트짜리 이진 데이터로 변환된 것을 확인할 수 있다.
+- `struct.unpack(포맷문자열, 바이트열)`은 반대로 이진 데이터를 다시 파이썬 값으로 복원하며, 값이 하나뿐이어도 항상 튜플로 반환한다.
+
+**여러 필드를 한 번에 묶어 pack/unpack하기**
+
+```python
+import struct
+
+data = struct.pack("<2sH", b"AB", 300)
+print(data)
+
+code, count = struct.unpack("<2sH", data)
+print(code, count)
+```
+
+```text
+(base) C:\Users\guest\project> python struct_multi.py
+b'AB,\x01'
+b'AB' 300
+```
+
+- 포맷 문자열은 여러 형식 지정자를 이어 붙여 한 번에 여러 값을 처리할 수 있다. `<`는 리틀 엔디안(little-endian) 바이트 순서를 뜻하고, `2s`는 2바이트 길이의 문자열(bytes), `H`는 2바이트 부호 없는 정수(unsigned short)를 의미한다.
+- `unpack()`의 결과는 `pack()`에 넘긴 값의 개수와 순서에 맞춰 튜플로 반환되므로, 위 예제처럼 여러 변수로 한 번에 언패킹해서 받을 수 있다.
+
+**정리**: `struct` 모듈은 정수·문자열 같은 파이썬 값을 `"i"`(정수)·`"s"`(문자열)·`"H"`(부호 없는 정수) 같은 형식 지정자로 이루어진 포맷 문자열에 맞춰 고정된 바이트 구조로 `pack()`하고, 반대로 그 바이트열을 다시 파이썬 값으로 `unpack()`할 수 있게 해주며, 파일 헤더 파싱이나 네트워크 프로토콜처럼 정해진 바이트 레이아웃을 가진 이진 데이터를 다룰 때 사용한다.
+
+## timeit 모듈 — 정밀한 실행 시간 측정
+
+앞서 `time.time()`으로 실행 시간을 측정하는 방법을 다뤘지만, 이 방식은 시스템의 다른 작업이나 한 번의 측정 오차에 영향을 받기 쉬워 아주 짧게 끝나는 코드 한 줄의 속도를 정밀하게 비교하기에는 부족하다. `timeit` 모듈은 같은 코드를 여러 번 반복 실행해 평균적인 실행 시간을 안정적으로 측정해준다.
+
+```python
+import timeit
+
+result = timeit.timeit("x = [i ** 2 for i in range(100)]", number=100000)
+print(f"{result:.4f}초 (환경에 따라 달라지는 예시 값)")
+```
+
+```text
+(base) C:\Users\guest\project> python timeit_basic.py
+0.8123초 (환경에 따라 달라지는 예시 값)
+```
+
+- `timeit.timeit(코드문자열, number=반복횟수)`는 첫 번째 인자로 넘긴 코드를 `number`에 지정한 횟수만큼 반복 실행한 뒤, 그 **총** 소요 시간을 초 단위 실수로 반환한다. 위 실행 결과(`0.8123초`)는 환경마다 달라지는 예시 값이며, 실제로 실행하면 사용 중인 컴퓨터 성능에 따라 다른 값이 나온다.
+- `time.time()`으로 코드 한 줄을 한 번만 측정하면 그 순간 운영체제가 다른 작업에 CPU를 잠깐 내주는 등의 우연한 요인으로 결과가 들쭉날쭉할 수 있다. `timeit`은 같은 코드를 수만~수백만 번 반복 실행해 이런 우연한 오차의 영향을 줄이고, 테스트 대상 코드를 실행하는 동안 가비지 컬렉션을 기본적으로 비활성화하는 등 측정 자체의 정확도를 높이도록 설계되어 있어, 아주 짧게 끝나는 코드 조각들의 상대적인 속도를 비교할 때 `time.time()`보다 신뢰할 수 있는 결과를 준다.
+
+**정리**: `timeit` 모듈은 코드 조각을 지정한 횟수만큼 반복 실행해 그 총 소요 시간을 측정하는 `timeit.timeit(코드, number=횟수)`를 제공하며, 한 번의 측정에 우연한 오차가 섞이기 쉬운 `time.time()`과 달리 반복 실행과 측정 환경 정리를 통해 짧은 코드 조각의 성능을 비교하는 마이크로 벤치마크에 더 신뢰할 수 있는 결과를 제공한다.
+
+## zipfile · gzip 모듈 — 압축
+
+파이썬 표준 라이브러리는 별도 설치 없이 파일을 압축·해제하는 기능도 제공한다. 여러 파일을 하나로 묶는 zip 아카이브는 `zipfile` 모듈로, 단일 스트림 압축은 `gzip` 모듈로 다룰 수 있다.
+
+**zipfile — zip 아카이브 만들고 읽기**
+
+```python
+import zipfile
+
+with zipfile.ZipFile("archive.zip", "w") as zf:
+    zf.writestr("hello.txt", "안녕하세요\n")
+    zf.writestr("memo.txt", "압축 테스트 메모\n")
+
+with zipfile.ZipFile("archive.zip", "r") as zf:
+    print(zf.namelist())
+    print(zf.read("hello.txt").decode("utf-8"))
+```
+
+```text
+(base) C:\Users\guest\project> python zipfile_demo.py
+['hello.txt', 'memo.txt']
+안녕하세요
+```
+
+- `zipfile.ZipFile(경로, "w")`로 열면 새 zip 아카이브를 만들 수 있고, `writestr(파일이름, 내용)`은 실제 파일 없이 문자열(또는 바이트열) 내용을 아카이브 안에 바로 파일로 추가한다. 디스크에 이미 존재하는 파일을 담고 싶다면 `zf.write(파일경로)`를 사용한다.
+- `zipfile.ZipFile(경로, "r")`로 다시 열면 `namelist()`로 아카이브 안에 담긴 파일 목록을 확인하고, `read(파일이름)`으로 특정 파일의 내용을 바이트열로 꺼낼 수 있다. 텍스트로 다루려면 `.decode("utf-8")`로 디코딩해야 한다.
+
+**gzip — 단일 데이터 압축·해제**
+
+```python
+import gzip
+
+data = "반복되는 로그 데이터 " * 100
+original_bytes = data.encode("utf-8")
+compressed = gzip.compress(original_bytes)
+
+print("원본보다 작아졌는가:", len(compressed) < len(original_bytes))
+
+decompressed = gzip.decompress(compressed).decode("utf-8")
+print("압축 해제 결과가 원본과 같은가:", decompressed == data)
+```
+
+```text
+(base) C:\Users\guest\project> python gzip_demo.py
+원본보다 작아졌는가: True
+압축 해제 결과가 원본과 같은가: True
+```
+
+- `gzip.compress(바이트열)`은 바이트 데이터를 gzip 형식으로 압축한 바이트열을 반환하고, `gzip.decompress(압축된바이트열)`은 이를 원래 바이트열로 되돌린다. 같은 내용이 반복되는 데이터일수록 압축 효율이 높아 원본보다 훨씬 작아지는 경우가 많다.
+- 파일 단위로 다루고 싶다면 `gzip.open(경로, "wb")`/`gzip.open(경로, "rb")`을 `open()`과 같은 방식으로 사용할 수 있다.
+
+**정리**: `zipfile`은 여러 파일을 하나의 zip 아카이브로 묶거나(`writestr()`/`write()`) 그 안의 목록과 내용을 꺼내는(`namelist()`/`read()`) 기능을, `gzip`은 바이트 데이터 하나를 통째로 압축·해제하는(`compress()`/`decompress()`) 기능을 제공하며, 둘 다 외부 프로그램이나 추가 설치 없이 표준 라이브러리만으로 로그 파일이나 백업 데이터를 압축해 저장 공간을 절약하는 데 사용할 수 있다.
+
 ## 실습 예제 (EX1~EX4)
 
 **EX1) glob으로 특정 확장자 파일만 찾아 개수 세기**

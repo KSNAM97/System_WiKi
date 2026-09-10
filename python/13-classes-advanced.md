@@ -197,6 +197,77 @@ print(acc._BankAccount2__balance)
 
 **정리**: 파이썬에는 다른 언어의 `private` 같은 강제적인 접근 제한 문법이 없으며, `_변수`는 "내부용이니 건드리지 말라"는 관례적 신호일 뿐 문법적으로는 여전히 접근 가능하고, `__변수`는 `_클래스이름__변수`로 이름이 자동 변환되는 네임 맹글링 덕분에 클래스 바깥이나 자식 클래스에서 같은 이름으로 실수로 충돌하는 것을 막아주지만 완전히 접근을 차단하는 것은 아니다.
 
+## 다중 상속과 메서드 결정 순서(MRO)
+
+PY-07까지는 부모 클래스가 하나뿐인 **단일 상속**만 다뤘다. 파이썬은 `class 자식(부모1, 부모2, ...):`처럼 괄호 안에 클래스를 여러 개 나열하는 **다중 상속**도 지원한다. 문제는 여러 부모가 같은 이름의 메서드를 가지고 있을 때 파이썬이 어떤 부모의 것을 먼저 쓸지인데, 이 순서를 정하는 규칙이 **MRO(Method Resolution Order, 메서드 결정 순서)**다.
+
+```python
+class Flyer:
+    def move(self):
+        return "날아서 이동"
+
+class Swimmer:
+    def move(self):
+        return "헤엄쳐서 이동"
+
+class Duck(Flyer, Swimmer):
+    pass
+
+d = Duck()
+print(d.move())
+print(Duck.__mro__)
+```
+
+```text
+(base) C:\Users\guest\project> python mro_basic.py
+날아서 이동
+(<class '__main__.Duck'>, <class '__main__.Flyer'>, <class '__main__.Swimmer'>, <class 'object'>)
+```
+
+- `Duck(Flyer, Swimmer)`처럼 괄호 안에 부모 클래스를 왼쪽부터 나열하면, 같은 이름의 메서드가 여러 부모에 있어도 **먼저 적은 부모**의 것이 우선 적용된다. `Flyer`를 `Swimmer`보다 먼저 썼기 때문에 `d.move()`는 `Flyer.move`를 실행한다.
+- `클래스이름.__mro__`(또는 `클래스이름.mro()`)를 출력해보면 파이썬이 속성을 찾을 때 실제로 훑는 클래스 순서를 튜플로 직접 확인할 수 있다. 모든 클래스는 결국 `object`로 끝난다.
+
+**다이아몬드 상속과 `super()`**
+
+여러 부모가 다시 하나의 공통 조상을 공유하는 구조를 **다이아몬드 상속**이라 부른다. 이때 각 부모 클래스가 `super()`로 협력하면, 자식 쪽에서 한 번만 호출해도 부모들이 정해진 순서대로 연쇄적으로 실행된다.
+
+```python
+class Animal:
+    def describe(self):
+        return "동물"
+
+class Flyer2(Animal):
+    def describe(self):
+        return super().describe() + " > 날 수 있음"
+
+class Swimmer2(Animal):
+    def describe(self):
+        return super().describe() + " > 헤엄칠 수 있음"
+
+class Duck2(Flyer2, Swimmer2):
+    def describe(self):
+        return super().describe() + " > 오리"
+
+d2 = Duck2()
+print(d2.describe())
+for cls in Duck2.__mro__:
+    print(cls.__name__, end=" -> ")
+print("끝")
+```
+
+```text
+(base) C:\Users\guest\project> python mro_diamond.py
+동물 > 헤엄칠 수 있음 > 날 수 있음 > 오리
+Duck2 -> Flyer2 -> Swimmer2 -> Animal -> object -> 끝
+```
+
+- `Duck2`, `Flyer2`, `Swimmer2`, `Animal`이 다이아몬드 모양(`Duck2`의 두 부모가 결국 같은 `Animal`을 공유)으로 얽혀 있어도, `Duck2.__mro__`를 출력해보면 파이썬이 **C3 선형화(linearization)** 알고리즘으로 `[Duck2, Flyer2, Swimmer2, Animal, object]`라는 중복 없는 한 줄의 순서를 계산해둔 것을 알 수 있다. 각 부모는 MRO에 정확히 한 번씩만 나타난다.
+- `Duck2.describe()`에서 `super().describe()`를 호출하면, 파이썬이 `Duck2`가 아니라 "`self`의 MRO에서 `Duck2` 바로 다음 클래스"인 `Flyer2`의 `describe`를 실행한다. `Flyer2.describe` 역시 자신의 `super().describe()`로 다음 순서인 `Swimmer2`를 호출하고, `Swimmer2`는 다시 `Animal`을 호출한다. 그 결과 `Animal`의 결과부터 거슬러 올라오며 문자열이 이어 붙어, 부모를 두 번 부르지 않고도 모든 조상 클래스의 로직이 한 번씩 순서대로 실행된다.
+- 만약 `super()` 없이 각 클래스가 부모를 직접 이름으로 호출(`Animal.describe(self)`)했다면, 다이아몬드 구조에서는 `Animal.describe`가 두 번 호출될 위험이 있다. `super()`가 `self.__class__`가 아니라 **MRO 상의 다음 클래스**를 기준으로 동작하기 때문에, 다중 상속 구조에서도 공통 조상이 중복 실행되지 않는다.
+- MRO는 무작정 정해지는 것이 아니라, 자식 클래스를 부모보다 항상 앞에 두고 부모들 사이의 왼쪽-우선 순서를 지키도록 계산되며, 이 규칙을 지킬 수 없게 클래스를 설계하면(예: 부모 나열 순서가 서로 모순되는 경우) `TypeError: Cannot create a consistent method resolution order`가 발생해 클래스 정의 자체가 실패한다.
+
+**정리**: 다중 상속은 `class 자식(부모1, 부모2, ...):`처럼 부모를 여러 개 나열해 여러 클래스의 기능을 동시에 물려받는 방법이며, 같은 이름의 메서드가 여러 부모에 있을 때 어느 것을 쓸지는 `클래스이름.__mro__`로 확인 가능한 **MRO(메서드 결정 순서)**가 정하고, 부모를 나열한 왼쪽 순서를 지키면서 각 조상 클래스가 정확히 한 번씩만 나타나도록 계산된다는 점이 핵심이다. 여러 부모가 공통 조상을 공유하는 다이아몬드 상속 구조에서는 `super()`가 `self.__class__`가 아닌 MRO상의 다음 클래스를 호출해주기 때문에, 자식이 한 번만 호출해도 부모들이 MRO 순서대로 연쇄 협력하며 공통 조상이 중복 실행되지 않는다.
+
 ## 이터레이터
 
 `for item in 리스트:`처럼 반복 가능한 객체를 순회할 수 있는 이유는, 그 객체들이 **이터레이터 프로토콜**을 따르기 때문이다. 이 프로토콜은 `__iter__`와 `__next__`라는 두 메서드로 이루어진다.

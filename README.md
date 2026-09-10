@@ -1,8 +1,8 @@
 # System Wiki
 
-> Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS 기술 문서 모음
+> Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS, Python 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 63개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 70개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -116,9 +116,16 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md) — IAM 역할·VPC·RDS·EFS·S3 준비, User Data 자동 배포, AMI·ASG·ALB 구성, ALB 환경 정적 리소스 CORS 트러블슈팅, 보안 그룹 강화, 리소스 삭제
 - [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md) — EC2 웹 서버 로그 → CloudWatch Agent 수집 → Metric Filter로 404 지표화 → Alarm → SNS 연동 실습, CloudTrail로 Management/Data Event 추적 실습
 
-### 🐍 Python (2)
+### 🐍 Python (9)
 
 - [Python 설치](python/00-install.md) — 온라인 컴파일러, Anaconda 설치(Windows), VS Code + Python 확장 설치, REPL/스크립트 실행으로 설치 확인
 - [파이썬의 기본](python/01-basics.md) — 순차 실행, print() 함수(sep·end 옵션), 주석(#, 여러 줄 문자열)
+- [변수와 자료형](python/02-variables.md) — 변수 선언/재할당, 값 복사 vs 참조, int/float/str/bool/NoneType과 type(), 산술 연산자·우선순위, 형변환, 복합 대입 연산자, 변수명 규칙
+- [함수](python/03-functions.md) — def 문법, 매개변수·타입 힌트, 기본값 매개변수, 반환값, 지역/전역 변수 스코프, 변수 가림(shadowing), 중첩 함수, 상호 재귀
+- [리스트와 딕셔너리](python/04-lists-dictionaries.md) — 리스트 인덱싱·2차원 리스트·슬라이싱·sum/min/max/len, append/extend/del/remove/pop, 딕셔너리 keys()/values()
+- [조건문과 반복문](python/05-conditions-loops.md) — if/elif/else, 비교·불리언 연산자, while/for(range·enumerate·zip), 중첩 반복문과 break, 홀수 필터링·약수·최대공약수 실전 예제
+- [클래스](python/06-classes.md) — 절차 지향 vs 객체 지향, __init__ 생성자, self, 상속, super(), 메서드 오버라이딩, 학생 출석·성적 관리 실전 예제
+- [모듈과 라이브러리](python/07-modules-libraries.md) — import/from import, 패키지·점 표기법, 와일드카드 임포트, math·os·shutil, pip으로 matplotlib 설치
+- [에러 처리](python/08-error-handling.md) — 에러 메시지·스택 트레이스 읽는 법, try/except/else/finally, VS Code 디버거, 흔한 실수, 특정 버전 pip 설치
 
 왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

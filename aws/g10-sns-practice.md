@@ -175,4 +175,3 @@ EventBridge 규칙의 이벤트 패턴은 기본적으로 `source`(이벤트를 
 
 **정리**: EventBridge 이벤트 패턴은 `source`/`detail-type`/`detail`의 조합으로 좁게도, 넓게도 구성할 수 있다. 필터를 규칙 단계에서 미리 걸어두면 뒤에 연결된 Lambda나 SNS로 불필요한 이벤트가 흘러가는 것을 막을 수 있으므로, 코드 레벨 필터링과 EventBridge 패턴 필터링을 함께 쓰는 것이 실무에서 흔한 조합이다.
 
-[Amazon SNS](t08-sns.md) · [SNS FIFO 실습](g11-sns-fifo-practice.md)

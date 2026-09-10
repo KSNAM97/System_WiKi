@@ -134,4 +134,3 @@ ec2-user    3270    2724  0 06:43 pts/3    00:00:00 grep --color=auto sqs_consum
 
 **정리**: SNS FIFO Topic으로 발행한 메시지는 구독자(SQS FIFO)에게 그대로 전달되는 것이 아니라 `Type`/`MessageId`/`SequenceNumber`/`TopicArn` 등을 포함한 봉투 형태로 감싸져 도착하며, `SequenceNumber` 필드를 통해 FIFO 특유의 순서 추적이 실제로 동작함을 확인할 수 있었다. 소비자 코드를 작성할 때는 `msg["Body"]`가 SNS 봉투인지, 원본 메시지인지(Raw Message Delivery 여부)를 먼저 확인하고 그에 맞게 파싱해야 한다는 점을 기억해둘 만하다.
 
-[Amazon SNS](t08-sns.md) · [S3 업로드 알림 실습](g10-sns-practice.md)

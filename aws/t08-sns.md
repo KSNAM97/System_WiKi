@@ -1,7 +1,7 @@
 # Amazon SNS (Simple Notification Service)
 
 
-> 실습(S3 업로드를 Lambda로 감지해 SNS로 알림을 보내는 구성)은 [SNS 실습](g10-sns-practice.md)에서 다룬다.
+> 실습(S3 업로드를 Lambda로 감지해 SNS로 알림을 보내는 구성)은 [SNS 실습](g10-sns-practice.md)에서, SNS FIFO·SQS FIFO 소비자 실습은 [SNS FIFO 실습](g11-sns-fifo-practice.md)에서 다룬다.
 
 
 ## 1. SNS란

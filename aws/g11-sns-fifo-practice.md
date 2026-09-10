@@ -13,20 +13,57 @@ SNS FIFO와 SQS FIFO의 순서 보장·중복 제거 개념(Message Group ID, De
 
 **1) SQS FIFO 큐 생성**
 
-**SQS** 콘솔로 이동해 오른쪽 상단의 [Create queue]를 클릭한다.
+AWS 콘솔 왼쪽 상단 서비스 검색창에 `SQS`를 입력해 **Amazon SQS** 콘솔로 이동한다. 왼쪽 메뉴에서 [Queues]가 선택된 상태로, 화면 오른쪽 상단의 [Create queue] 버튼을 클릭한다.
 
-- **Type**: `FIFO`를 선택한다. FIFO를 선택하면 이름 입력란에 `.fifo` 접미사가 자동으로 붙는다.
-- **Name**: `my-test-queue`를 입력하면 `my-test-queue.fifo`로 저장된다(뒤에서 다룰 소비자 스크립트의 `QUEUE_NAME`과 반드시 일치해야 한다).
-- **Configuration**의 `Visibility timeout`은 기본 `30`초로 두고, 나머지 옵션도 기본값으로 둔 채 [Create queue]를 클릭한다.
-- 큐가 생성되면 [Access policy] 탭에서 뒤에서 만들 SNS FIFO Topic이 이 큐로 메시지를 보낼 수 있도록 권한을 허용해야 하는데, SNS Topic 쪽에서 [Create subscription]으로 이 큐를 구독자로 등록하면 콘솔이 필요한 권한을 자동으로 큐의 Access policy에 추가해준다.
+- **Type**: 화면 맨 위 두 개의 라디오 버튼 중 `FIFO`를 선택한다. `Standard`가 기본 선택값이므로 반드시 직접 바꿔야 한다. FIFO를 선택하면 바로 아래 **Name** 입력란 옆에 `.fifo`가 고정 접미사로 표시된다.
+- **Name**: 입력란에 `my-test-queue`만 입력하면 된다(`.fifo`는 자동으로 붙어 최종 이름은 `my-test-queue.fifo`가 되며, 뒤에서 다룰 소비자 스크립트의 `QUEUE_NAME`과 반드시 일치해야 한다).
+- 아래로 스크롤하면 나오는 **Configuration** 섹션은 펼쳐볼 필요 없이 기본값(`Visibility timeout` 기본 `30`초, `Message retention period` 기본 `4 days`, `Content-based deduplication` 체크 해제 상태)을 그대로 둔다.
+- **Access policy**, **Encryption**, **Redrive policy**, **Tags** 섹션도 모두 기본값(Basic access policy 등)으로 둔 채 맨 아래 [Create queue] 버튼을 클릭한다.
+- 큐가 생성되면 상세 페이지 상단에 **URL**과 **ARN**이 표시된다. 이 ARN은 뒤에서 SNS Topic이 이 큐를 구독자로 등록할 때 필요하다.
+- 큐 자체의 [Access policy] 탭은 지금 당장 손댈 필요가 없다 — SNS Topic 쪽에서 [Create subscription]으로 이 큐를 구독자로 등록하면, 콘솔이 "이 SNS Topic이 이 큐로 메시지를 보낼 수 있다"는 권한을 큐의 Access policy에 자동으로 추가해준다.
 
-**2) EC2 인스턴스에 user-data 스크립트 등록**
+**2) IAM 역할 생성 — EC2가 SQS에 접근할 권한**
 
-**EC2** 콘솔에서 [Launch instance]를 클릭하고, 이름·AMI(Amazon Linux 2023 권장)·인스턴스 유형(`t2.micro`)·키 페어·보안 그룹을 [EC2 설정](g03-ec2-setup.md)과 동일한 방식으로 설정한다. 화면 아래쪽 [Advanced details]를 펼치면 맨 아래에 **User data** 입력란이 있는데, 여기에 아래 user-data 스크립트 전체를 붙여넣는다.
+**IAM** 콘솔로 이동해 왼쪽의 [Roles] → 오른쪽 상단 [Create role]을 클릭한다.
 
-이 인스턴스가 SQS 큐에 접근하려면 `sqs:ReceiveMessage`·`sqs:DeleteMessage`·`sqs:GetQueueUrl` 권한이 필요하므로, [IAM] → [Roles]에서 이 권한을 담은 역할을 만들어 인스턴스 생성 화면의 **IAM instance profile** 항목에 연결해야 한다(리소스를 특정 큐 ARN으로 좁혀 최소 권한 원칙을 지키는 것은 [S3 업로드 알림 실습](g10-sns-practice.md)의 Lambda IAM 정책과 같은 맥락이다).
+- **Trusted entity type**: `AWS service`를 선택한다.
+- **Use case**: 드롭다운 또는 목록에서 `EC2`를 선택하고 [Next]를 클릭한다.
+- **Permissions policies** 단계에서는 [Create policy]를 새 탭으로 열어, JSON 탭에 아래와 같이 `sqs:ReceiveMessage`·`sqs:DeleteMessage`·`sqs:GetQueueUrl` 세 가지 권한을 이 큐의 ARN 하나로 좁힌 정책을 작성한다(이렇게 `Resource`를 특정 큐 ARN으로 고정하는 것은 [S3 업로드 알림 실습](g10-sns-practice.md)의 Lambda IAM 정책에서 다룬 것과 같은 최소 권한 원칙이다).
 
-**3) user-data 스크립트 내용**
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueUrl"
+      ],
+      "Resource": "arn:aws:sqs:ap-northeast-2:<ACCOUNT_ID>:my-test-queue.fifo"
+    }
+  ]
+}
+```
+
+- 정책 이름을 `ec2-sqs-fifo-consumer-policy`처럼 지정해 저장한 뒤, 원래 창으로 돌아와 새로고침하면 방금 만든 정책이 목록에 나타난다. 체크박스로 선택하고 [Next]로 진행한다.
+- **Role name**에 `ec2-sqs-consumer-role`처럼 입력하고 [Create role]로 마무리한다.
+
+**3) EC2 인스턴스 시작과 user-data 등록**
+
+**EC2** 콘솔에서 [Launch instance]를 클릭한다.
+
+- **Name**: `sqs-fifo-consumer`처럼 지정한다.
+- **Application and OS Images**: `Amazon Linux 2023`을 선택한다.
+- **Instance type**: 프리 티어 대상인 `t2.micro`를 선택한다.
+- **Key pair**: [EC2 설정](g03-ec2-setup.md)에서 다룬 것과 동일하게 기존 키 페어를 선택하거나 새로 생성한다.
+- **Network settings**: 기본 VPC·서브넷 그대로 두고, 보안 그룹은 SSH(22번 포트) 접속만 허용하면 충분하다(이 인스턴스는 외부에서 HTTP로 접근할 필요가 없다).
+- **Advanced details** 섹션을 펼친다. 여러 항목 중 **IAM instance profile** 드롭다운에서 방금 만든 `ec2-sqs-consumer-role`을 선택한다.
+- 같은 **Advanced details** 섹션 맨 아래로 스크롤하면 **User data** 입력란이 있다. 여기에 아래 user-data 스크립트 전체를 그대로 붙여넣는다.
+- 화면 오른쪽의 [Launch instance] 버튼을 클릭해 인스턴스를 시작한다.
+
+**4) user-data 스크립트 내용**
 
 ```bash
 #!/bin/bash
@@ -84,9 +121,9 @@ nohup python3 /home/ec2-user/sqs_consumer.py > /home/ec2-user/consumer.log 2>&1 
 - 처리 후 삭제(`sqs.delete_message`): 메시지를 로그 파일에 기록한 뒤 `ReceiptHandle`로 큐에서 명시적으로 삭제한다. SQS는 메시지를 받았다고 자동으로 지워주지 않으므로, 처리가 끝난 메시지를 직접 삭제해야 같은 메시지가 다시 수신되지 않는다.
 - `nohup ... &`: 인스턴스가 부팅되는 동안 실행된 이 스크립트가 세션 종료 후에도 백그라운드에서 계속 동작하도록 한다.
 
-**4) 실제 기동 확인**
+**5) 실제 기동 확인**
 
-인스턴스가 시작되면 **EC2** 콘솔에서 해당 인스턴스를 선택하고 [Connect] 버튼으로 EC2 Instance Connect 또는 SSH 세션에 접속한다. user-data로 자동 기동되는지와 별개로, 콘솔 세션에서 직접 스크립트를 실행하고 프로세스가 떠 있는지 확인했다.
+인스턴스 목록에서 방금 만든 인스턴스의 **Instance state**가 `Running`으로 바뀌면, 체크박스로 선택한 뒤 상단의 [Connect] 버튼을 클릭한다. [EC2 Instance Connect] 탭이 기본 선택되어 있으므로 그대로 아래쪽 [Connect] 버튼을 누르면 브라우저 안에서 바로 터미널 세션이 열린다. user-data로 자동 기동되는지와 별개로, 이 콘솔 세션에서 직접 스크립트를 실행하고 프로세스가 떠 있는지 확인했다.
 
 ```text
 [ec2-user@ip-172-31-24-44 ~]# python3 /home/ec2-user/sqs_consumer.py
@@ -106,9 +143,21 @@ ec2-user    3270    2724  0 06:43 pts/3    00:00:00 grep --color=auto sqs_consum
 
 **1) SNS FIFO Topic 생성과 SQS FIFO 구독 연결**
 
-**SNS** 콘솔의 [Topics] → [Create topic]에서 **Type**을 `FIFO`로 선택한다. **Name**에 `my-test-topic`을 입력하면 `my-test-topic.fifo`로 생성된다. `Content-based message deduplication`을 활성화하면 퍼블리셔 쪽에서 별도의 Deduplication ID를 지정하는 코드 없이도 본문 해시 기준으로 중복이 제거된다.
+**SNS** 콘솔로 이동해 왼쪽의 [Topics] → 오른쪽 상단 [Create topic]을 클릭한다.
 
-Topic이 생성되면 [Create subscription]을 클릭하고, **Protocol**을 `Amazon SQS`로, **Endpoint**를 앞서 만든 `my-test-queue.fifo`의 ARN으로 지정해 구독을 등록한다. SNS FIFO는 SQS FIFO·SQS Standard 큐만 구독자로 허용하므로(본문에서 다룬 연동 제한), 이메일이나 Lambda를 구독자로 선택하는 항목 자체가 나타나지 않는다.
+- **Type**: 화면 맨 위 두 라디오 버튼 중 `FIFO`를 선택한다(기본값은 `Standard`이므로 직접 바꿔야 한다).
+- **Name**: `my-test-topic`을 입력하면 이름 입력란 옆에 `.fifo`가 고정 접미사로 붙어 최종 이름은 `my-test-topic.fifo`가 된다.
+- 아래로 스크롤하면 나오는 **FIFO** 섹션에서 `Content-based message deduplication` 체크박스를 켠다. 이를 활성화하면 퍼블리셔 쪽에서 별도의 Deduplication ID를 지정하는 코드 없이도 메시지 본문 해시 기준으로 중복이 제거된다.
+- 나머지 **Encryption**, **Access policy** 등은 기본값으로 두고 맨 아래 [Create topic]을 클릭한다.
+
+Topic 상세 페이지로 이동하면 화면 중앙의 [Create subscription] 버튼이 보인다. 클릭한 뒤:
+
+- **Protocol** 드롭다운에서 `Amazon SQS`를 선택한다.
+- **Endpoint**에는 직접 입력하지 않고, 입력란을 클릭하면 같은 계정의 SQS 큐 목록이 드롭다운으로 뜨므로 앞서 만든 `my-test-queue.fifo`를 선택한다(FIFO Topic이므로 FIFO 큐만 목록에 나타나고, Standard 큐는 선택할 수 없다).
+- 나머지 옵션은 기본값으로 두고 [Create subscription]을 클릭한다.
+- 구독 목록에 등록된 항목의 **Status**가 `Confirmed`로 바로 표시되면 정상이다. SQS 구독은 이메일 구독과 달리 별도의 확인 링크 클릭 절차 없이 즉시 확인 처리된다.
+
+SNS FIFO는 SQS FIFO·SQS Standard 큐만 구독자로 허용하므로(본문에서 다룬 연동 제한), **Protocol** 드롭다운에도 이메일이나 Lambda 같은 다른 옵션 자체는 선택할 수 있게 나오지만 실제로 이 Topic에 연결하면 오류가 발생하거나, 콘솔 버전에 따라 아예 목록에서 제외되어 나타난다.
 
 **2) 테스트 메시지 발행**
 
@@ -117,6 +166,8 @@ Topic 상세 페이지에서 [Publish message] 버튼을 클릭하면 메시지�
 ```json
 {"orderId":"1001", "status":"new"}
 ```
+
+터미널 대신 콘솔에서도 메시지 도착 여부를 확인할 수 있다. **SQS** 콘솔에서 `my-test-queue.fifo`를 클릭해 큐 상세 페이지로 들어간 뒤 [Send and receive messages] 버튼을 누르면, 오른쪽 **Receive messages** 영역의 [Poll for messages] 버튼으로 큐에 쌓인 메시지를 직접 눈으로 확인할 수 있다. 다만 이 방법으로 메시지를 가져오면 실습 1의 EC2 소비자보다 먼저 메시지를 채가서 소비자 로그에는 아무것도 안 찍힐 수 있으므로, 이번 실습에서는 확인만 하고 [Delete] 없이 그대로 두거나 EC2 소비자 쪽 로그로 확인하는 것을 권장한다.
 
 **3) 소비자가 실제로 수신한 로그**
 
@@ -154,4 +205,3 @@ Topic 상세 페이지에서 [Publish message] 버튼을 클릭하면 메시지�
 이렇게 SQS가 SNS 메시지를 원본 그대로가 아니라 `Type`, `MessageId`, `TopicArn` 등의 메타데이터로 한 번 감싼 "봉투(envelope)" 형태로 전달하는 것이 SNS→SQS 구독의 기본 동작이다. [SNS](t08-sns.md)에서 다룬 SNS 메시지 래핑 개념이 여기서 실제 로그로 확인된 셈이다. 만약 이 봉투 없이 원본 `Message` 내용만 그대로 받고 싶다면 구독 설정에서 **Raw Message Delivery**를 활성화하면 되는데, 이 경우 소비자 코드에서 `msg["Body"]`를 더 이상 SNS 포맷으로 파싱할 필요 없이 원본 JSON으로 바로 다룰 수 있게 된다.
 
 **정리**: SNS FIFO Topic으로 발행한 메시지는 구독자(SQS FIFO)에게 그대로 전달되는 것이 아니라 `Type`/`MessageId`/`SequenceNumber`/`TopicArn` 등을 포함한 봉투 형태로 감싸져 도착하며, `SequenceNumber` 필드를 통해 FIFO 특유의 순서 추적이 실제로 동작함을 확인할 수 있었다. 소비자 코드를 작성할 때는 `msg["Body"]`가 SNS 봉투인지, 원본 메시지인지(Raw Message Delivery 여부)를 먼저 확인하고 그에 맞게 파싱해야 한다는 점을 기억해둘 만하다.
-

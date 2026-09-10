@@ -86,6 +86,8 @@
   * [S3](aws/t04-s3.md)
   * [RDS](aws/t05-rds.md)
   * [모니터링 (CloudWatch · CloudTrail · KMS)](aws/t06-monitoring.md)
+  * [디커플링 서비스와 SQS](aws/t07-decoupling-sqs.md)
+  * [SNS (Simple Notification Service)](aws/t08-sns.md)
 * 가이드
   * [AWS 가입하기](aws/g01-signup.md)
   * [IAM MFA 설정](aws/g02-iam-mfa.md)
@@ -96,6 +98,7 @@
   * [EC2와 S3 연동](aws/g07-ec2-s3.md)
   * [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md)
   * [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md)
+  * [SNS 실습 (S3 업로드 알림 · EventBridge · SQS FIFO)](aws/g10-sns-practice.md)
 
 ## 🐍 Python
 

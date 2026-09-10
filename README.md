@@ -2,7 +2,7 @@
 
 > Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS, Python 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 80개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 83개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -91,7 +91,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (15)
+### ☁️ AWS (18)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -103,6 +103,8 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [S3](aws/t04-s3.md) — 객체 스토리지 개념, 버킷·객체 구성 요소, S3 비용·스토리지 클래스(Standard·IA·Glacier), S3 권한(IAM·버킷 정책·ACL), 버전 관리·객체 잠금(WORM), 수명주기(Lifecycle), 정적 웹 호스팅, 액세스 로깅·이벤트 알림(Lambda 이미지 리사이징)
 - [RDS](aws/t05-rds.md) — RDB 개념, RDS 개요·EC2 연동, Multi-AZ 고가용성·Read Replica, RDS 접속·인증(Username/Password·IAM DB 인증), Amazon Aurora(분산 스토리지·Quorum·Self-Healing·Cluster Failover), Aurora Global Database(RPO/RTO), 백업·Clone·Backtrack
 - [모니터링 (CloudWatch · CloudTrail · KMS)](aws/t06-monitoring.md) — CloudWatch 지표·로그·경보·Composite Alarm, CloudTrail(Trail·Management/Data/Insight Event), AWS KMS 개요
+- [디커플링 서비스와 SQS](aws/t07-decoupling-sqs.md) — 디커플링 개념, 결합(Coupling) 유형, Amazon SQS(Standard/FIFO, 멱등성, 메시지 상태, Producer/Consumer, Visibility Timeout, Long/Short Polling)
+- [SNS (Simple Notification Service)](aws/t08-sns.md) — SNS Pub/Sub·Fan Out, SNS vs SQS, 메시지 필터링, SQS/SNS FIFO(Deduplication ID, Message Group ID), SNS FIFO Archive/Replay
 
 **가이드**
 
@@ -115,6 +117,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [EC2와 S3 연동](aws/g07-ec2-s3.md) — S3 버킷 생성, S3 접근 권한 IAM 역할 생성·EC2 연결, AWS CLI(cp·sync)로 파일 주고받기, User Data로 S3 콘텐츠 자동 배포
 - [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md) — IAM 역할·VPC·RDS·EFS·S3 준비, User Data 자동 배포, AMI·ASG·ALB 구성, ALB 환경 정적 리소스 CORS 트러블슈팅, 보안 그룹 강화, 리소스 삭제
 - [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md) — EC2 웹 서버 로그 → CloudWatch Agent 수집 → Metric Filter로 404 지표화 → Alarm → SNS 연동 실습, CloudTrail로 Management/Data Event 추적 실습
+- [SNS 실습 (S3 업로드 알림 · EventBridge · SQS FIFO)](aws/g10-sns-practice.md) — S3 업로드를 Lambda로 감지해 SNS 알림 발행, EventBridge 이벤트 패턴 필터링, EC2에 SQS FIFO 소비자 배포, SNS 메시지 봉투 구조 확인
 
 ### 🐍 Python (19)
 

@@ -111,3 +111,7 @@
 * [제어 흐름 심화](python/09-control-flow-advanced.md)
 * [자료구조 심화](python/10-data-structures-advanced.md)
 * [입력과 출력](python/11-io-files.md)
+* [예외 처리 심화](python/12-exceptions-advanced.md)
+* [클래스 심화](python/13-classes-advanced.md)
+* [표준 라이브러리 살펴보기](python/14-stdlib-tour.md)
+* [가상 환경 심화와 부동소수점](python/15-venv-precision.md)

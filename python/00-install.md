@@ -121,3 +121,227 @@ print("파이썬 실행 환경이 정상적으로 구성되었습니다.")
 ```
 
 **정리**: `python`만 입력하면 한 줄씩 입력하고 바로 결과를 확인하는 **대화형 인터프리터(REPL)**가 실행되고, `python 파일명.py`처럼 파일을 지정하면 스크립트 전체가 위에서부터 순서대로 실행된다. 이 두 실행 방식은 이후 모든 파이썬 문법 학습에서 계속 사용된다.
+
+
+## pip 기초
+
+**pip**는 파이썬 패키지(외부 라이브러리)를 설치·삭제·관리하는 표준 명령줄 도구다. Anaconda Prompt나 VS Code 터미널에서 `pip` 명령으로 바로 사용할 수 있다.
+
+### 패키지 설치
+
+```text
+(base) C:\Users\guest\project> pip install requests
+Collecting requests
+  Downloading requests-2.32.3-py3-none-any.whl (64 kB)
+Installing collected packages: requests
+Successfully installed requests-2.32.3
+```
+
+- 버전을 지정해서 설치하려면 패키지 이름 뒤에 `==버전번호`를 붙인다.
+
+```text
+(base) C:\Users\guest\project> pip install requests==2.31.0
+```
+
+### 설치된 패키지 확인
+
+```text
+(base) C:\Users\guest\project> pip list
+Package            Version
+------------------ -------
+pip                24.0
+requests            2.32.3
+```
+
+- 특정 패키지 하나의 상세 정보(버전, 설치 위치, 의존 패키지 등)는 `pip show`로 확인한다.
+
+```text
+(base) C:\Users\guest\project> pip show requests
+Name: requests
+Version: 2.32.3
+Summary: Python HTTP for Humans.
+Location: C:\Users\guest\anaconda3\Lib\site-packages
+Requires: certifi, charset-normalizer, idna, urllib3
+```
+
+### 패키지 삭제
+
+```text
+(base) C:\Users\guest\project> pip uninstall requests
+Found existing installation: requests 2.32.3
+Uninstalling requests-2.32.3:
+  Would remove:
+    ...
+Proceed (Y/n)? y
+Successfully uninstalled requests-2.32.3
+```
+
+### requirements.txt로 패키지 목록 관리
+
+현재 환경에 설치된 패키지 목록을 파일로 저장해두면, 같은 환경을 다른 PC에서도 동일하게 재현할 수 있다.
+
+```text
+(base) C:\Users\guest\project> pip freeze > requirements.txt
+```
+
+- `requirements.txt`에는 `패키지명==버전` 형식으로 설치된 패키지 목록이 한 줄씩 기록된다.
+- 이 파일을 다른 환경에서 그대로 설치하려면 `-r` 옵션을 사용한다.
+
+```text
+(base) C:\Users\guest\project> pip install -r requirements.txt
+```
+
+**정리**: pip는 `install`로 패키지를 설치하고 `list`/`show`로 설치 상태를 확인하며 `uninstall`로 제거하는 파이썬 표준 패키지 관리 도구이며, `pip freeze > requirements.txt`와 `pip install -r requirements.txt`를 짝지어 사용하면 프로젝트의 패키지 구성을 그대로 옮기거나 공유할 수 있다.
+
+## 가상환경(virtual environment) 기초
+
+여러 프로젝트를 동시에 진행하다 보면 프로젝트마다 필요한 패키지 버전이 서로 다를 수 있다. 하나의 파이썬 환경에 모든 패키지를 섞어서 설치하면, 한 프로젝트에서 특정 패키지를 업그레이드했을 때 다른 프로젝트가 예전 버전에 의존하고 있어 충돌이 발생할 수 있다.
+
+**가상환경(virtual environment)**은 프로젝트별로 독립된 파이썬 실행 환경과 패키지 설치 공간을 따로 만들어, 이런 버전 충돌을 막는 장치다. 가상환경을 만드는 대표적인 방법은 두 가지다.
+
+### 1) 표준 라이브러리 venv 사용
+
+파이썬에는 별도 설치 없이 바로 쓸 수 있는 `venv` 모듈이 내장되어 있다.
+
+```text
+PS C:\Users\guest\project> python -m venv venv
+```
+
+- 위 명령을 실행하면 현재 폴더에 `venv`라는 이름의 하위 폴더가 만들어지고, 그 안에 독립된 파이썬 실행 파일과 패키지 설치 공간이 구성된다.
+
+**활성화(activate)**
+
+```text
+PS C:\Users\guest\project> venv\Scripts\activate
+(venv) PS C:\Users\guest\project>
+```
+
+- 활성화되면 프롬프트 맨 앞에 `(venv)`처럼 현재 활성화된 가상환경 이름이 표시되어, 지금 어떤 환경에서 작업 중인지 바로 확인할 수 있다.
+- 이 상태에서 `pip install`로 설치한 패키지는 전역 환경이 아니라 `venv` 폴더 안에만 설치된다.
+
+**비활성화(deactivate)**
+
+```text
+(venv) PS C:\Users\guest\project> deactivate
+PS C:\Users\guest\project>
+```
+
+### 2) Anaconda의 conda 환경 사용
+
+Anaconda를 설치했다면 `conda` 명령으로도 동일한 목적의 가상환경을 만들 수 있다.
+
+```text
+(base) C:\Users\guest> conda create -n myenv python=3.12
+```
+
+- `-n myenv`는 새로 만들 환경의 이름을 지정하는 옵션이고, `python=3.12`는 그 환경에 설치할 파이썬 버전을 지정한다.
+
+**활성화(activate)**
+
+```text
+(base) C:\Users\guest> conda activate myenv
+(myenv) C:\Users\guest>
+```
+
+- venv와 마찬가지로 프롬프트 맨 앞이 `(base)`에서 `(myenv)`로 바뀌어, 현재 `myenv` 환경이 활성화되었음을 보여준다.
+
+**비활성화(deactivate)**
+
+```text
+(myenv) C:\Users\guest> conda deactivate
+(base) C:\Users\guest>
+```
+
+- conda 환경은 완전히 빠져나오지 않는 이상 항상 어떤 환경이든 하나가 활성화된 상태이므로, `deactivate`를 실행하면 이전 환경(보통 `base`)으로 돌아간다.
+
+**정리**: 가상환경은 프로젝트별로 독립된 패키지 설치 공간을 분리해 버전 충돌을 막는 장치이며, 표준 라이브러리 `python -m venv`와 Anaconda의 `conda create -n`은 만드는 방법만 다를 뿐 목적은 같고, 두 방식 모두 활성화 시 프롬프트 앞에 현재 환경 이름이 표시되며 `deactivate`로 빠져나온다.
+
+## VS Code에서 가상환경 인터프리터 선택하기
+
+앞서 "Visual Studio Code + Python 확장 설치"에서 살펴본 우측 하단 상태 표시줄의 인터프리터 표시는, 새로 만든 가상환경으로도 그대로 전환할 수 있다.
+
+```text
+1. VS Code에서 프로젝트 폴더 열기 (venv 또는 conda 환경을 이미 만들어 둔 상태)
+2. 화면 우측 하단 상태 표시줄의 파이썬 버전 표시 클릭
+   (또는 Ctrl+Shift+P -> "Python: Select Interpreter" 입력)
+3. 목록에서 원하는 인터프리터 선택
+   예) Python 3.12.4 ('venv': venv)  ./venv/Scripts/python.exe
+   예) Python 3.12.4 ('myenv': conda)
+```
+
+- 목록에는 시스템에 설치된 파이썬과 함께, 현재 프로젝트 폴더 하위에서 발견된 `venv` 가상환경, 그리고 conda로 만든 환경들이 함께 표시된다.
+- 인터프리터를 전환하면 그 이후 통합 터미널에서 새로 여는 세션과 코드 실행(▷) 버튼이 모두 선택한 환경을 기준으로 동작한다.
+- 상태 표시줄에 표시되는 이름이 원하는 가상환경 이름과 일치하는지 확인하는 것이 가장 빠른 확인 방법이다.
+
+**정리**: VS Code는 프로젝트 폴더 안의 venv와 시스템에 등록된 conda 환경을 자동으로 탐지하므로, 우측 하단 상태 표시줄이나 "Python: Select Interpreter" 명령으로 원하는 가상환경을 선택하면 이후 실행·디버깅이 모두 그 환경 기준으로 이루어진다.
+
+## 자주 겪는 설치 문제 해결
+
+### `python`이나 `conda` 명령을 찾을 수 없다는 오류
+
+```text
+PS C:\Users\guest> python --version
+'python'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
+배치 파일이 아닙니다.
+```
+
+- Anaconda 설치 시 `Add Anaconda3 to my PATH environment variable`을 체크하지 않았다면, 일반 명령 프롬프트나 PowerShell에서는 `python`, `conda` 명령이 인식되지 않는다.
+- 이 경우 시작 메뉴에서 **Anaconda Prompt**를 실행해서 작업하면 별도 설정 없이 바로 사용할 수 있다.
+
+### 여러 파이썬 버전이 설치되어 있을 때
+
+시스템에 파이썬이 여러 개 설치되어 있으면 `python` 명령이 어느 버전을 가리키는지 헷갈릴 수 있다. 이때는 `--version`으로 실제 실행되는 버전을 확인한다.
+
+```text
+(base) C:\Users\guest> python --version
+Python 3.12.4
+```
+
+- 가상환경을 활성화한 상태에서 같은 명령을 실행하면, 그 가상환경에 설치된 파이썬 버전이 대신 출력된다. 즉 `python --version`의 결과는 현재 활성화된 환경에 따라 달라진다.
+
+### pip로 설치한 패키지를 import할 수 없을 때
+
+```text
+>>> import requests
+ModuleNotFoundError: No module named 'requests'
+```
+
+- 패키지를 분명히 `pip install`로 설치했는데도 이런 오류가 나면, 패키지를 설치한 환경과 현재 코드를 실행 중인 환경(인터프리터)이 서로 다른 경우가 대부분이다.
+- 예를 들어 `(base)`에 설치했지만 VS Code는 `(myenv)` 인터프리터로 실행 중이라면, `(myenv)`에는 그 패키지가 없어서 오류가 발생한다.
+- 해결하려면 코드를 실행할 환경을 활성화한 상태에서 다시 `pip install`을 실행하거나, VS Code의 인터프리터 선택을 패키지가 설치된 환경으로 맞춘다.
+
+**정리**: 설치 관련 문제 대부분은 PATH 미등록(Anaconda Prompt 사용으로 해결), 여러 버전 공존(`--version`으로 실제 실행 버전 확인), 설치 환경과 실행 환경 불일치(가상환경/인터프리터 선택 확인) 세 가지로 좁혀지며, 오류 메시지만 보고 당황하기보다 "지금 어떤 환경이 활성화되어 있는가"를 먼저 확인하는 습관이 문제 해결의 출발점이다.
+
+## 실습 예제 (EX1~EX3)
+
+**EX1) 가상환경 생성과 activate 확인**
+- `python -m venv` 로 가상환경을 만들고 activate한 뒤, 프롬프트에 환경 이름이 표시되는지 확인하시오.
+
+```text
+PS C:\Users\guest\project> python -m venv venv
+PS C:\Users\guest\project> venv\Scripts\activate
+(venv) PS C:\Users\guest\project> python --version
+Python 3.12.4
+```
+
+**EX2) 패키지 설치 후 requirements.txt 생성**
+- 활성화한 가상환경에 `requests` 패키지를 설치하고, `pip freeze`로 `requirements.txt`를 만드시오.
+
+```text
+(venv) PS C:\Users\guest\project> pip install requests
+(venv) PS C:\Users\guest\project> pip freeze > requirements.txt
+(venv) PS C:\Users\guest\project> type requirements.txt
+requests==2.32.3
+```
+
+**EX3) VS Code에서 새 가상환경으로 인터프리터 전환**
+- VS Code에서 EX1에서 만든 `venv` 환경을 인터프리터로 선택한 뒤, `hello.py`를 실행해 정상 동작을 확인하시오.
+
+```text
+1. VS Code 상태 표시줄 클릭 -> "Python: Select Interpreter"
+2. Python 3.12.4 ('venv': venv) 선택
+3. 통합 터미널 새로 열기 -> 프롬프트 앞에 (venv) 표시 확인
+4. hello.py 실행 -> Hello, Python! 출력 확인
+```
+
+**정리**: EX1~EX3은 가상환경을 만들고(activate 확인) 패키지를 설치해 requirements.txt로 남긴 뒤, VS Code 인터프리터를 그 가상환경으로 맞추는 흐름을 통해 앞선 pip·가상환경·VS Code 설정 내용을 하나의 작업 순서로 이어서 연습하는 예제다.

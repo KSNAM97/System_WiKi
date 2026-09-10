@@ -394,7 +394,7 @@ print(dict(groups))
 ## 실습 예제 (EX1~EX4)
 
 **EX1) glob으로 특정 확장자 파일만 찾아 개수 세기**
-- 여러 확장자의 파일이 섞인 폴더에서 `.txt` 파일만 찾아 개수를 출력하시오.
+- 여러 확장자의 파일이 섞인 폴더에서 `.txt` 파일만 찾아 개수를 출력한다.
 
 ```python
 # ex01_glob_count.py
@@ -416,7 +416,7 @@ txt 파일 2개: ['reports\\feb.txt', 'reports\\jan.txt']
 ```
 
 **EX2) 정규표현식으로 이메일 주소만 추출하기**
-- 여러 줄의 텍스트에서 이메일 형식의 문자열만 모두 찾아 리스트로 출력하시오.
+- 여러 줄의 텍스트에서 이메일 형식의 문자열만 모두 찾아 리스트로 출력한다.
 
 ```python
 # ex02_extract_emails.py
@@ -438,7 +438,7 @@ print(emails)
 ```
 
 **EX3) 오늘부터 30일 후가 무슨 요일인지 계산하기**
-- 특정 날짜에 `timedelta`를 더해 30일 후의 날짜를 계산하고 형식에 맞춰 출력하시오.
+- 특정 날짜에 `timedelta`를 더해 30일 후의 날짜를 계산하고 형식에 맞춰 출력한다.
 
 ```python
 # ex03_thirty_days_later.py
@@ -458,7 +458,7 @@ print("30일 후:", target_date.strftime("%Y-%m-%d"))
 ```
 
 **EX4) Counter와 defaultdict로 로그 분석하기**
-- 로그 목록에서 상태 코드별 등장 횟수를 세고, 상태 코드별로 관련 URL 목록을 모아 정리하시오.
+- 로그 목록에서 상태 코드별 등장 횟수를 세고, 상태 코드별로 관련 URL 목록을 모아 정리한다.
 
 ```python
 # ex04_log_analysis.py

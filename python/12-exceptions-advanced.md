@@ -373,7 +373,7 @@ age 키가 누락된 것으로 보입니다.
 ## 실습 예제 (EX1~EX4)
 
 **EX1) 나이 입력값 검증 함수 만들기**
-- 나이를 입력받아 0 이상 150 이하가 아니면 `ValueError`를 직접 발생시키는 함수를 작성하시오.
+- 나이를 입력받아 0 이상 150 이하가 아니면 `ValueError`를 직접 발생시키는 함수를 작성한다.
 
 ```python
 # ex01_validate_age.py
@@ -397,7 +397,7 @@ for value in [25, -5, 200]:
 ```
 
 **EX2) 커스텀 예외로 재고 관리하기**
-- 재고가 부족할 때 발생시킬 `OutOfStockError`를 정의하고, 주문 처리 함수에서 이를 활용하시오.
+- 재고가 부족할 때 발생시킬 `OutOfStockError`를 정의하고, 주문 처리 함수에서 이를 활용해 구현한다.
 
 ```python
 # ex02_out_of_stock.py
@@ -452,7 +452,7 @@ except RuntimeError as e:
 ```
 
 **EX4) 여러 필드를 검증하고 예외 그룹으로 한꺼번에 보고하기**
-- 여러 개의 입력 필드를 검증해 문제가 있는 필드들을 `ExceptionGroup`으로 묶어 한 번에 보고하시오.
+- 여러 개의 입력 필드를 검증해 문제가 있는 필드들을 `ExceptionGroup`으로 묶어 한 번에 정리한다.
 
 ```python
 # ex04_exception_group.py

@@ -316,7 +316,7 @@ ModuleNotFoundError: No module named 'requests'
 ## 실습 예제 (EX1~EX3)
 
 **EX1) 가상환경 생성과 activate 확인**
-- `python -m venv` 로 가상환경을 만들고 activate한 뒤, 프롬프트에 환경 이름이 표시되는지 확인하시오.
+- `python -m venv` 로 가상환경을 만들고 activate한 뒤, 프롬프트에 환경 이름이 표시되는지 확인한다.
 
 ```text
 PS C:\Users\guest\project> python -m venv venv
@@ -336,7 +336,7 @@ requests==2.32.3
 ```
 
 **EX3) VS Code에서 새 가상환경으로 인터프리터 전환**
-- VS Code에서 EX1에서 만든 `venv` 환경을 인터프리터로 선택한 뒤, `hello.py`를 실행해 정상 동작을 확인하시오.
+- VS Code에서 EX1에서 만든 `venv` 환경을 인터프리터로 선택한 뒤, `hello.py`를 실행해 정상 동작을 확인한다.
 
 ```text
 1. VS Code 상태 표시줄 클릭 -> "Python: Select Interpreter"

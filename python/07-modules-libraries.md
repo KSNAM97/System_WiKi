@@ -353,7 +353,7 @@ sqrt(x, /)
 ## 실습 예제 (EX1~EX4)
 
 **EX1) 나만의 계산 모듈 만들고 불러오기**
-- `add`, `subtract`, `multiply` 함수를 담은 `mymath.py` 모듈을 만들고, 다른 파일에서 `import`해서 사용하시오.
+- `add`, `subtract`, `multiply` 함수를 담은 `mymath.py` 모듈을 만들고, 다른 파일에서 `import`해서 사용하는 과정을 확인한다.
 
 ```python
 # mymath.py
@@ -384,7 +384,7 @@ print(mymath.multiply(5, 5))
 ```
 
 **EX2) math 모듈로 원기둥 부피 계산기**
-- `math.pi`를 사용해 원기둥의 부피(밑넓이 × 높이)를 계산하시오.
+- `math.pi`를 사용해 원기둥의 부피(밑넓이 × 높이)를 계산한다.
 
 ```python
 # ex02_cylinder_volume.py
@@ -402,7 +402,7 @@ print(f"{cylinder_volume(3, 10):.2f}")
 ```
 
 **EX3) os 모듈로 현재 폴더의 .py 파일만 골라내기**
-- `os.listdir()`로 현재 폴더의 파일 목록을 가져와, 확장자가 `.py`인 파일만 걸러내 출력하시오.
+- `os.listdir()`로 현재 폴더의 파일 목록을 가져와, 확장자가 `.py`인 파일만 걸러내 출력한다.
 
 ```python
 # ex03_list_py_files.py
@@ -422,7 +422,7 @@ print(py_files)
 - `[f for f in files if f.endswith(".py")]`는 리스트 컴프리헨션이라는 문법으로, `for`와 `if`를 한 줄로 축약해 조건에 맞는 값만 골라 새 리스트를 만드는 관용적인 표현이다.
 
 **EX4) matplotlib로 월별 판매량 선 그래프 그리기**
-- `pip install matplotlib` 설치 후, 월별 판매량 리스트를 선 그래프로 그려 이미지 파일로 저장하시오.
+- `pip install matplotlib` 설치 후, 월별 판매량 리스트를 선 그래프로 그려 이미지 파일로 저장하도록 작성한다.
 
 ```python
 # ex04_line_chart.py

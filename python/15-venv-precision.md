@@ -303,7 +303,7 @@ round(number, ndigits=None)
 ## 실습 예제 (EX1~EX4)
 
 **EX1) requirements.txt 작성 시나리오 정리하기**
-- 특정 라이브러리 목록이 주어졌을 때, 이를 `requirements.txt` 형식의 문자열로 만들고 다시 파싱해 딕셔너리로 정리하시오.
+- 특정 라이브러리 목록이 주어졌을 때, 이를 `requirements.txt` 형식의 문자열로 만들고 다시 파싱해 딕셔너리로 정리한다.
 
 ```python
 # ex01_requirements_format.py
@@ -332,7 +332,7 @@ True
 ```
 
 **EX2) 부동소수점 오차 때문에 실패하는 비교를 올바르게 고치기**
-- 실수 두 값이 "거의 같은지"를 판단하는 함수를 오차 허용 범위를 이용해 작성하시오.
+- 실수 두 값이 "거의 같은지"를 판단하는 함수를 오차 허용 범위를 이용해 작성한다.
 
 ```python
 # ex02_almost_equal.py
@@ -353,7 +353,7 @@ print("오차 허용 비교:", almost_equal(x, y))
 ```
 
 **EX3) Decimal로 영수증 합계 정확히 계산하기**
-- 여러 상품의 가격을 `float`와 `Decimal`로 각각 합산해 결과를 비교하시오.
+- 여러 상품의 가격을 `float`와 `Decimal`로 각각 합산해 결과를 비교한다.
 
 ```python
 # ex03_decimal_receipt.py
@@ -377,7 +377,7 @@ Decimal == 1.7: True
 ```
 
 **EX4) REPL에서 _ 변수를 활용해 단계별 계산 이어가기**
-- REPL을 직접 열어 `_`를 활용해 연속된 계산을 이어가는 과정을 확인하시오.
+- REPL을 직접 열어 `_`를 활용해 연속된 계산을 이어가는 과정을 확인한다.
 
 ```text
 (base) C:\Users\guest\project> python

@@ -98,7 +98,8 @@
   * [EC2와 S3 연동](aws/g07-ec2-s3.md)
   * [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md)
   * [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md)
-  * [SNS 실습 (S3 업로드 알림 · EventBridge · SQS FIFO)](aws/g10-sns-practice.md)
+  * [SNS 실습 (S3 업로드 알림 · EventBridge)](aws/g10-sns-practice.md)
+  * [SNS FIFO 실습 (SQS FIFO 소비자 배포)](aws/g11-sns-fifo-practice.md)
 
 ## 🐍 Python
 

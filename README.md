@@ -2,7 +2,7 @@
 
 > Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS, Python 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 83개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 84개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -91,7 +91,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (18)
+### ☁️ AWS (19)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -117,7 +117,8 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [EC2와 S3 연동](aws/g07-ec2-s3.md) — S3 버킷 생성, S3 접근 권한 IAM 역할 생성·EC2 연결, AWS CLI(cp·sync)로 파일 주고받기, User Data로 S3 콘텐츠 자동 배포
 - [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md) — IAM 역할·VPC·RDS·EFS·S3 준비, User Data 자동 배포, AMI·ASG·ALB 구성, ALB 환경 정적 리소스 CORS 트러블슈팅, 보안 그룹 강화, 리소스 삭제
 - [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md) — EC2 웹 서버 로그 → CloudWatch Agent 수집 → Metric Filter로 404 지표화 → Alarm → SNS 연동 실습, CloudTrail로 Management/Data Event 추적 실습
-- [SNS 실습 (S3 업로드 알림 · EventBridge · SQS FIFO)](aws/g10-sns-practice.md) — S3 업로드를 Lambda로 감지해 SNS 알림 발행, EventBridge 이벤트 패턴 필터링, EC2에 SQS FIFO 소비자 배포, SNS 메시지 봉투 구조 확인
+- [SNS 실습 (S3 업로드 알림 · EventBridge)](aws/g10-sns-practice.md) — S3 업로드를 Lambda로 감지해 SNS 알림 발행, EventBridge 이벤트 패턴 필터링
+- [SNS FIFO 실습 (SQS FIFO 소비자 배포)](aws/g11-sns-fifo-practice.md) — EC2에 SQS FIFO 소비자(user-data) 배포, SNS FIFO 알림 발행·수신 확인, SNS 메시지 봉투 구조 확인
 
 ### 🐍 Python (19)
 

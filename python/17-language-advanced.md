@@ -793,4 +793,4 @@ project_data 폴더에서 '*.txt' 패턴과 일치하는 파일: 1개
 
 **정리**: EX1~EX4는 데코레이터로 함수 실행 시간을 측정하며 `functools.wraps`로 원본 이름을 지키는 방법, dataclass와 `field(default_factory=list)`로 안전한 기본값을 가진 학생 성적 클래스를 구현하는 방법, `lru_cache`로 반복되는 소수 판별을 캐시하면서 `itertools.combinations`로 조합을 정리하는 방법, 그리고 `argparse`와 `pathlib`을 함께 사용해 폴더 안의 파일 개수를 세는 실용적인 커맨드라인 도구를 작성하는 방법까지, 이 문서에서 다룬 언어 심화 주제를 실무에 가까운 형태로 조합해보는 예제다.
 
-[Python 16 — 표준 라이브러리 심화와 테스트](16-stdlib-advanced.md)
+[Python 16 — 표준 라이브러리 심화와 테스트](16-stdlib-advanced.md) · [Python 18 — 패키징과 배포](18-packaging.md)

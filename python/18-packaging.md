@@ -326,4 +326,4 @@ print("호환 불가 변경 후:", bump_version(current, "major"))
 
 **정리**: EX1~EX4는 `greetings`라는 예제 패키지를 src 레이아웃으로 구성해 `__init__.py`로 공개 API를 정리하는 과정, `pyproject.toml`에 패키지 정보와 의존성을 작성하고 `pip install -e .`로 그 의존성이 함께 설치되는지 확인하는 과정, `python -m build`로 실제 배포용 아카이브 두 종류를 만들어보는 과정, 그리고 시맨틱 버저닝 규칙에 따라 변경 유형별로 버전 번호가 어떻게 올라가는지 계산해보는 과정까지, 이 문서에서 다룬 패키징의 전체 흐름을 직접 코드와 명령어로 확인해보는 예제다.
 
-[Python 16 — 표준 라이브러리 심화와 테스트](16-stdlib-advanced.md)
+[Python 17 — 언어 심화](17-language-advanced.md)

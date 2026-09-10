@@ -2,7 +2,7 @@
 
 > Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS, Python 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 70개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 73개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -116,7 +116,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md) — IAM 역할·VPC·RDS·EFS·S3 준비, User Data 자동 배포, AMI·ASG·ALB 구성, ALB 환경 정적 리소스 CORS 트러블슈팅, 보안 그룹 강화, 리소스 삭제
 - [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md) — EC2 웹 서버 로그 → CloudWatch Agent 수집 → Metric Filter로 404 지표화 → Alarm → SNS 연동 실습, CloudTrail로 Management/Data Event 추적 실습
 
-### 🐍 Python (9)
+### 🐍 Python (12)
 
 - [Python 설치](python/00-install.md) — 온라인 컴파일러, Anaconda 설치(Windows), VS Code + Python 확장 설치, REPL/스크립트 실행으로 설치 확인
 - [파이썬의 기본](python/01-basics.md) — 순차 실행, print() 함수(sep·end 옵션), 주석(#, 여러 줄 문자열)
@@ -127,5 +127,8 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [클래스](python/06-classes.md) — 절차 지향 vs 객체 지향, __init__ 생성자, self, 상속, super(), 메서드 오버라이딩, 학생 출석·성적 관리 실전 예제
 - [모듈과 라이브러리](python/07-modules-libraries.md) — import/from import, 패키지·점 표기법, 와일드카드 임포트, math·os·shutil, pip으로 matplotlib 설치
 - [에러 처리](python/08-error-handling.md) — 에러 메시지·스택 트레이스 읽는 법, try/except/else/finally, VS Code 디버거, 흔한 실수, 특정 버전 pip 설치
+- [제어 흐름 심화](python/09-control-flow-advanced.md) — match 문(구조적 패턴 매칭), *args/**kwargs, 인자 목록 언패킹, 위치 전용·키워드 전용 매개변수, lambda, 함수 애너테이션, PEP 8 네이밍
+- [자료구조 심화](python/10-data-structures-advanced.md) — 스택/큐(collections.deque), 리스트·중첩·딕셔너리 컴프리헨션, 튜플 언패킹, 집합(합·교·차집합), sorted()/reversed(), 시퀀스 사전식 비교
+- [입력과 출력](python/11-io-files.md) — f-string 포맷 스펙(정렬·소수점·진법), str.format(), open()/with 파일 입출력, read/readline/readlines/write, json 모듈
 
 왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

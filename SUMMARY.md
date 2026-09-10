@@ -108,3 +108,6 @@
 * [클래스](python/06-classes.md)
 * [모듈과 라이브러리](python/07-modules-libraries.md)
 * [에러 처리](python/08-error-handling.md)
+* [제어 흐름 심화](python/09-control-flow-advanced.md)
+* [자료구조 심화](python/10-data-structures-advanced.md)
+* [입력과 출력](python/11-io-files.md)

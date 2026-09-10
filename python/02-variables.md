@@ -520,5 +520,3 @@ print(first_place, user_name, class_name)
 - `1st_place`는 숫자로 시작해서 `first_place`로, `user-name`은 하이픈이 뺄셈으로 해석되어 `user_name`으로, `class`는 예약어라서 `class_name`으로 고쳐야 한다.
 
 **정리**: EX1~EX4는 값 복사와 참조 공유의 차이, 산술 연산자를 활용한 실전 계산, 형변환 없이 f-string으로 값을 출력하는 방법, 변수명 규칙 위반 사례를 고쳐보는 연습까지 이 문서의 핵심 내용을 코드로 직접 확인해보는 예제이며, 다음 문서에서는 변수와 값을 재사용 가능한 단위로 묶는 함수(function)를 다룬다.
-
-[Python 01 — 파이썬의 기본](01-basics.md) · [Python 03 — 함수](03-functions.md)

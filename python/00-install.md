@@ -346,5 +346,3 @@ requests==2.32.3
 ```
 
 **정리**: EX1~EX3은 가상환경을 만들고(activate 확인) 패키지를 설치해 requirements.txt로 남긴 뒤, VS Code 인터프리터를 그 가상환경으로 맞추는 흐름을 통해 앞선 pip·가상환경·VS Code 설정 내용을 하나의 작업 순서로 이어서 연습하는 예제다.
-
-[Python 01 — 파이썬의 기본](01-basics.md)

@@ -614,5 +614,3 @@ for status, urls in url_by_status.items():
 ```
 
 **정리**: EX1~EX4는 `glob`으로 조건에 맞는 파일만 찾아 개수를 세는 방법, `re` 모듈로 텍스트에서 이메일 같은 특정 패턴을 추출하는 방법, `datetime`과 `timedelta`로 날짜 연산을 수행하는 방법, 그리고 `Counter`와 `defaultdict`를 함께 사용해 로그 데이터를 집계하고 분류하는 방법까지, 이 문서에서 다룬 표준 라이브러리 모듈들을 실무에 가까운 형태로 조합해보는 예제다.
-
-[Python 13 — 클래스 심화](13-classes-advanced.md) · [Python 15 — 가상 환경 심화와 부동소수점](15-venv-precision.md)

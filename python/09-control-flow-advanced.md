@@ -575,5 +575,3 @@ for p in sorted_products:
 - `key=lambda p: (p["price"], p["name"])`처럼 튜플을 반환하면, 첫 번째 값으로 먼저 정렬하고 값이 같을 때만 두 번째 값으로 다시 정렬하는 다중 기준 정렬을 한 줄로 표현할 수 있다.
 
 **정리**: EX1~EX4는 `match` 문으로 구조화된 분기 처리를 하는 방법, `*args`로 가변 개수의 인자를 받아 안전하게 처리하는 방법, `**kwargs`와 딕셔너리 언패킹으로 설정값을 병합하는 방법, `lambda`를 `sorted()`의 정렬 키로 활용해 다중 기준 정렬을 구현하는 방법까지 이 문서에서 다룬 제어 흐름 심화 개념을 직접 코드로 확인해보는 예제다.
-
-[Python 08 — 에러 처리](08-error-handling.md) · [Python 10 — 자료구조 심화](10-data-structures-advanced.md)

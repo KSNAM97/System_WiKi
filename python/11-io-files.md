@@ -554,4 +554,4 @@ print(word_count)
 
 **정리**: EX1~EX4는 f-string 포맷 스펙으로 표 형태 출력을 정렬하는 방법, `with`와 파일 쓰기/읽기로 텍스트 데이터를 안전하게 저장·조회하는 방법, `json.dump()`/`json.load()`로 파이썬 딕셔너리를 파일에 저장했다가 그대로 복원하는 방법, 텍스트를 분석해 만든 결과를 JSON으로 저장하는 방법까지 이 문서에서 다룬 입출력 심화 개념을 직접 코드로 확인해보는 예제다.
 
-[Python 10 — 자료구조 심화](10-data-structures-advanced.md)
+[Python 10 — 자료구조 심화](10-data-structures-advanced.md) · [Python 12 — 예외 처리 심화](12-exceptions-advanced.md)

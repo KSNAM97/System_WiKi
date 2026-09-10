@@ -11,7 +11,19 @@ SNS(Simple Notification Service)의 기본 개념 — Topic, 구독, Publish/Sub
 
 **목표**: S3 버킷의 `uploads/` 경로에 파일이 올라오면 Lambda가 이를 감지해 SNS Topic으로 알림 메시지를 발행하도록 구성한다.
 
-**1) IAM 정책 — Lambda에 SNS 발행 권한 부여**
+**1) SNS Topic 생성**
+
+콘솔 왼쪽 메뉴에서 서비스 검색창에 `SNS`를 입력해 **Amazon SNS** 콘솔로 이동한다. 왼쪽의 [Topics]를 클릭하고, 오른쪽 상단의 [Create topic] 버튼을 누른다.
+
+- **Type**: `Standard`를 선택한다(순서 보장이 필요 없는 일반 알림이므로 FIFO가 아니다).
+- **Name**: `s3-upload-sms-email`처럼 알아보기 쉬운 이름을 입력한다.
+- 나머지 옵션은 기본값으로 두고 [Create topic]을 클릭한다.
+
+Topic이 생성되면 상세 페이지 상단에 **Topic ARN**이 표시된다(`arn:aws:sns:ap-northeast-2:<계정ID>:s3-upload-sms-email` 형태). 이 ARN을 뒤에서 IAM 정책과 Lambda 코드에 그대로 사용한다.
+
+이어서 같은 페이지에서 [Create subscription]을 눌러 Email 또는 SMS 구독자를 등록해두면, Lambda가 발행하는 알림을 실제로 받아볼 수 있다. Email로 구독하면 등록한 주소로 확인 메일이 오는데, 메일 안의 **Confirm subscription** 링크를 클릭해야 구독이 최종 완료된다(본문에서 다룬 최초 구독 확인 절차).
+
+**2) IAM 정책 — Lambda에 SNS 발행 권한 부여**
 
 Lambda가 SNS Topic에 메시지를 발행하려면 `sns:Publish` 권한이 필요하다. 이 권한은 계정 내 모든 Topic이 아니라 실제로 사용할 Topic의 ARN 하나로 범위를 좁혀서 부여하는 것이 안전하다 — 최소 권한 원칙에 따라, Lambda 실행 역할이 다른 Topic까지 건드릴 수 없도록 `Resource`를 특정 ARN으로 고정한다.
 
@@ -28,9 +40,18 @@ Lambda가 SNS Topic에 메시지를 발행하려면 `sns:Publish` 권한이 필�
 }
 ```
 
-이 정책을 Lambda 실행 역할에 연결해두면, 함수 코드 안에서 `sns.publish()`를 호출할 때 별도 자격 증명 없이 이 역할의 권한으로 동작한다.
+콘솔에서는 **IAM** 서비스로 이동해 왼쪽의 [Policies] → [Create policy]를 클릭하고, JSON 탭에서 위 정책을 붙여넣은 뒤 이름을 `lambda-sns-publish-policy`처럼 지정해 생성한다. 이 정책을 Lambda 실행 역할에 연결해두면, 함수 코드 안에서 `sns.publish()`를 호출할 때 별도 자격 증명 없이 이 역할의 권한으로 동작한다(역할 연결은 다음 단계에서 Lambda 함수를 만들 때 함께 진행한다).
 
-**2) Lambda 함수 — S3 이벤트를 받아 SNS로 발행**
+**3) Lambda 함수 생성 — S3 이벤트를 받아 SNS로 발행**
+
+**Lambda** 콘솔로 이동해 오른쪽 상단의 [Create function]을 클릭한다.
+
+- [Author from scratch]를 선택한다.
+- **Function name**: `s3-upload-notifier`처럼 지정한다.
+- **Runtime**: `Python 3.12`(또는 사용 가능한 최신 3.x 버전)를 선택한다.
+- **Execution role**: [Create a new role with basic Lambda permissions]로 새 역할을 만들거나, 기존 역할을 쓴다면 [Use an existing role]을 선택한다. 함수 생성 뒤 [Configuration] → [Permissions] 탭에서 이 실행 역할에 앞서 만든 `lambda-sns-publish-policy`를 [Attach policies]로 추가로 연결해야 `sns.publish()` 호출이 성공한다.
+
+함수가 생성되면 [Code] 탭의 코드 편집창에 기본 템플릿이 들어있는데, 이를 아래 코드로 전부 교체하고 [Deploy] 버튼을 눌러 반영한다.
 
 S3 버킷에 `ObjectCreated` 이벤트가 발생하면 아래 Lambda 함수가 트리거된다.
 
@@ -96,11 +117,36 @@ def lambda_handler(event, context):
 - `uploads/` 접두사 검사: S3 버킷 전체에 대해 이벤트를 받되, 실제로 알림이 필요한 것은 `uploads/` 경로로 올라온 파일뿐이라면 이런 코드 레벨 필터가 필요하다. 이 조건에 걸리지 않는 업로드(예: 임시 파일, 다른 경로)는 조용히 무시하고 종료한다.
 - 메시지 구성 및 발행: 버킷 이름과 파일 경로를 담은 텍스트 메시지를 만들어 `sns.publish()`로 지정한 Topic에 발행한다. Topic에 Email, SMS 등 구독자가 연결되어 있다면 이 한 번의 `publish` 호출로 모든 구독자에게 알림이 전달된다.
 
+**4) S3 버킷에 이벤트 알림 연결**
+
+마지막으로 S3 버킷 업로드 이벤트가 실제로 이 Lambda 함수를 호출하도록 연결한다. **S3** 콘솔에서 대상 버킷으로 들어가 [Properties] 탭으로 이동한 뒤, 맨 아래쪽 [Event notifications] 항목에서 [Create event notification]을 클릭한다.
+
+- **Event name**: `uploads-notify`처럼 지정한다.
+- **Prefix**: `uploads/`를 입력해, Lambda 코드에서도 다시 확인하는 것과 동일한 범위로 이벤트 발생 자체를 좁힌다.
+- **Event types**: `All object create events`(`s3:ObjectCreated:*`)를 체크한다.
+- **Destination**: `Lambda function`을 선택하고, 앞서 만든 `s3-upload-notifier`를 지정한다.
+
+저장하면 S3가 이 Lambda 함수에 대한 호출 권한(리소스 기반 정책)을 자동으로 추가해주므로, 별도로 Lambda 쪽에 트리거 권한을 설정할 필요는 없다.
+
 **정리**: S3 이벤트 → Lambda → SNS로 이어지는 가장 단순한 알림 파이프라인을 구성했다. 핵심은 IAM 정책을 Topic 단위로 최소화하는 것과, Lambda 안에서 Object Key 디코딩·경로 필터링을 빠뜨리지 않는 것이다. 경로 필터링을 Lambda 트리거 설정(S3 이벤트 알림의 Prefix 필터)에서 미리 걸 수도 있지만, 이 실습에서는 코드 레벨에서도 한 번 더 확인하는 방식을 택했다.
 
 ## 3. 실습 2: EventBridge로 S3 이벤트 필터링하기
 
 **목표**: S3 이벤트를 Lambda가 아니라 EventBridge를 거쳐 받을 때, 이벤트 패턴(Event Pattern)으로 어떤 이벤트만 규칙에 매칭시킬지 좁혀본다.
+
+**1) EventBridge에서 S3 이벤트를 받으려면 — EventBridge 알림 활성화**
+
+EventBridge가 S3 버킷의 이벤트를 받으려면, 먼저 해당 버킷에서 EventBridge로 이벤트를 보내도록 켜야 한다. **S3** 콘솔의 버킷 [Properties] 탭 맨 아래 [Amazon EventBridge] 항목에서 [Edit] → [On]으로 설정하고 저장한다. 이 설정이 꺼져 있으면 아래에서 아무리 규칙을 잘 만들어도 이벤트 자체가 EventBridge로 넘어오지 않는다.
+
+**2) EventBridge 규칙 생성**
+
+**EventBridge** 콘솔로 이동해 왼쪽의 [Rules] → [Create rule]을 클릭한다.
+
+- **Name**: `s3-upload-rule`처럼 지정하고, Event bus는 `default`를 그대로 둔다.
+- **Rule type**: `Rule with an event pattern`을 선택하고 [Next]로 진행한다.
+- **Event source**: `AWS services`를 선택하고, **AWS service**에서 `Simple Storage Service (S3)`를, **Event type**에서 `Object Created`를 선택한다.
+- 화면 아래 **Event pattern** 편집창에서 [Edit pattern]을 눌러 JSON을 직접 수정할 수 있는데, 여기에 아래에서 다룰 세 가지 패턴 중 하나를 붙여넣어 테스트한다.
+- **Target**을 지정하는 단계에서는 실습 1의 SNS Topic이나 별도의 Lambda 함수를 선택해, 매칭된 이벤트가 실제로 어디로 전달되는지 함께 확인할 수 있다.
 
 EventBridge 규칙의 이벤트 패턴은 기본적으로 `source`(이벤트를 발생시킨 서비스), `detail-type`(이벤트 종류), `detail`(이벤트의 세부 필드) 세 부분으로 구성된다. S3 업로드 이벤트라면 `source`는 `aws.s3`, `detail-type`은 `Object Created`가 되고, `detail.bucket.name`으로 버킷을 좁히거나 `detail.object.key`에 `prefix` 조건을 걸어 특정 폴더 아래로 들어온 파일만 매칭시킬 수 있다.
 
@@ -123,7 +169,7 @@ EventBridge 규칙의 이벤트 패턴은 기본적으로 `source`(이벤트를 
 
 이 구조를 바탕으로 실습에서는 필터 범위를 좁은 것부터 넓은 것까지 세 단계로 나누어 테스트했다.
 
-**1) 버킷 + 접두사 필터 (가장 좁은 범위)**
+**3) 버킷 + 접두사 필터 (가장 좁은 범위)**
 
 ```json
 {
@@ -144,7 +190,7 @@ EventBridge 규칙의 이벤트 패턴은 기본적으로 `source`(이벤트를 
 
 특정 버킷의 `uploads/` 경로로 올라온 파일만 매칭된다. 실습 1의 Lambda 코드 레벨 필터와 동일한 효과를 EventBridge 규칙 단계에서 미리 걸어두는 방식으로, 불필요한 이벤트가 아예 Lambda까지 전달되지 않아 호출 비용과 처리 로직을 줄일 수 있다.
 
-**2) 버킷만 필터 (접두사 조건 제거)**
+**4) 버킷만 필터 (접두사 조건 제거)**
 
 ```json
 {
@@ -160,7 +206,7 @@ EventBridge 규칙의 이벤트 패턴은 기본적으로 `source`(이벤트를 
 
 버킷 경로와 무관하게 해당 버킷에 생성되는 모든 객체 이벤트를 받는다. 서울 리전에서 이 패턴으로 테스트해 특정 버킷의 업로드를 폴더 구분 없이 전부 수신하는 동작을 확인했다.
 
-**3) 필터 없음 (가장 넓은 범위)**
+**5) 필터 없음 (가장 넓은 범위)**
 
 ```json
 {
@@ -171,7 +217,7 @@ EventBridge 규칙의 이벤트 패턴은 기본적으로 `source`(이벤트를 
 
 `detail` 조건이 전혀 없어 계정 내 모든 S3 버킷의 Object Created 이벤트가 매칭된다. 도쿄 리전에서 이 패턴으로 테스트해, 버킷·경로를 특정하지 않았을 때 얼마나 넓게 이벤트가 잡히는지를 좁은 패턴과 비교했다.
 
-세 패턴을 나란히 두고 보면, 실제 운영 환경에서는 (1)처럼 버킷과 경로까지 좁힌 패턴을 쓰는 것이 일반적이다. (2), (3)처럼 범위를 넓히는 것은 이번처럼 "필터가 정확히 어디까지 걸러주는지" 동작을 검증하거나 여러 리전에서 이벤트 발생 패턴을 비교해볼 때 유용하다.
+세 패턴을 나란히 두고 보면, 실제 운영 환경에서는 (3)처럼 버킷과 경로까지 좁힌 패턴을 쓰는 것이 일반적이다. (4), (5)처럼 범위를 넓히는 것은 이번처럼 "필터가 정확히 어디까지 걸러주는지" 동작을 검증하거나 여러 리전에서 이벤트 발생 패턴을 비교해볼 때 유용하다.
 
 **정리**: EventBridge 이벤트 패턴은 `source`/`detail-type`/`detail`의 조합으로 좁게도, 넓게도 구성할 수 있다. 필터를 규칙 단계에서 미리 걸어두면 뒤에 연결된 Lambda나 SNS로 불필요한 이벤트가 흘러가는 것을 막을 수 있으므로, 코드 레벨 필터링과 EventBridge 패턴 필터링을 함께 쓰는 것이 실무에서 흔한 조합이다.
 

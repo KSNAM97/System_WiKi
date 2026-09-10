@@ -11,7 +11,22 @@ SNS FIFO와 SQS FIFO의 순서 보장·중복 제거 개념(Message Group ID, De
 
 **목표**: EC2 인스턴스가 부팅되면서 자동으로 SQS FIFO 큐를 폴링하는 Python 소비자를 설치·기동하도록 user-data 스크립트를 구성한다.
 
-**1) user-data 스크립트**
+**1) SQS FIFO 큐 생성**
+
+**SQS** 콘솔로 이동해 오른쪽 상단의 [Create queue]를 클릭한다.
+
+- **Type**: `FIFO`를 선택한다. FIFO를 선택하면 이름 입력란에 `.fifo` 접미사가 자동으로 붙는다.
+- **Name**: `my-test-queue`를 입력하면 `my-test-queue.fifo`로 저장된다(뒤에서 다룰 소비자 스크립트의 `QUEUE_NAME`과 반드시 일치해야 한다).
+- **Configuration**의 `Visibility timeout`은 기본 `30`초로 두고, 나머지 옵션도 기본값으로 둔 채 [Create queue]를 클릭한다.
+- 큐가 생성되면 [Access policy] 탭에서 뒤에서 만들 SNS FIFO Topic이 이 큐로 메시지를 보낼 수 있도록 권한을 허용해야 하는데, SNS Topic 쪽에서 [Create subscription]으로 이 큐를 구독자로 등록하면 콘솔이 필요한 권한을 자동으로 큐의 Access policy에 추가해준다.
+
+**2) EC2 인스턴스에 user-data 스크립트 등록**
+
+**EC2** 콘솔에서 [Launch instance]를 클릭하고, 이름·AMI(Amazon Linux 2023 권장)·인스턴스 유형(`t2.micro`)·키 페어·보안 그룹을 [EC2 설정](g03-ec2-setup.md)과 동일한 방식으로 설정한다. 화면 아래쪽 [Advanced details]를 펼치면 맨 아래에 **User data** 입력란이 있는데, 여기에 아래 user-data 스크립트 전체를 붙여넣는다.
+
+이 인스턴스가 SQS 큐에 접근하려면 `sqs:ReceiveMessage`·`sqs:DeleteMessage`·`sqs:GetQueueUrl` 권한이 필요하므로, [IAM] → [Roles]에서 이 권한을 담은 역할을 만들어 인스턴스 생성 화면의 **IAM instance profile** 항목에 연결해야 한다(리소스를 특정 큐 ARN으로 좁혀 최소 권한 원칙을 지키는 것은 [S3 업로드 알림 실습](g10-sns-practice.md)의 Lambda IAM 정책과 같은 맥락이다).
+
+**3) user-data 스크립트 내용**
 
 ```bash
 #!/bin/bash
@@ -69,9 +84,9 @@ nohup python3 /home/ec2-user/sqs_consumer.py > /home/ec2-user/consumer.log 2>&1 
 - 처리 후 삭제(`sqs.delete_message`): 메시지를 로그 파일에 기록한 뒤 `ReceiptHandle`로 큐에서 명시적으로 삭제한다. SQS는 메시지를 받았다고 자동으로 지워주지 않으므로, 처리가 끝난 메시지를 직접 삭제해야 같은 메시지가 다시 수신되지 않는다.
 - `nohup ... &`: 인스턴스가 부팅되는 동안 실행된 이 스크립트가 세션 종료 후에도 백그라운드에서 계속 동작하도록 한다.
 
-**2) 실제 기동 확인**
+**4) 실제 기동 확인**
 
-user-data로 자동 기동되는지와 별개로, 콘솔 세션에서 직접 스크립트를 실행하고 프로세스가 떠 있는지 확인했다.
+인스턴스가 시작되면 **EC2** 콘솔에서 해당 인스턴스를 선택하고 [Connect] 버튼으로 EC2 Instance Connect 또는 SSH 세션에 접속한다. user-data로 자동 기동되는지와 별개로, 콘솔 세션에서 직접 스크립트를 실행하고 프로세스가 떠 있는지 확인했다.
 
 ```text
 [ec2-user@ip-172-31-24-44 ~]# python3 /home/ec2-user/sqs_consumer.py
@@ -89,15 +104,21 @@ ec2-user    3270    2724  0 06:43 pts/3    00:00:00 grep --color=auto sqs_consum
 
 **목표**: SNS FIFO Topic에 발행한 메시지가 SQS FIFO 큐를 통해 실제로 어떤 형태로 도착하는지 확인하고, 필드별 의미를 정리한다.
 
-**1) 테스트 메시지 발행**
+**1) SNS FIFO Topic 생성과 SQS FIFO 구독 연결**
 
-아래와 같은 간단한 JSON을 원본 메시지로 SNS Topic에 발행했다.
+**SNS** 콘솔의 [Topics] → [Create topic]에서 **Type**을 `FIFO`로 선택한다. **Name**에 `my-test-topic`을 입력하면 `my-test-topic.fifo`로 생성된다. `Content-based message deduplication`을 활성화하면 퍼블리셔 쪽에서 별도의 Deduplication ID를 지정하는 코드 없이도 본문 해시 기준으로 중복이 제거된다.
+
+Topic이 생성되면 [Create subscription]을 클릭하고, **Protocol**을 `Amazon SQS`로, **Endpoint**를 앞서 만든 `my-test-queue.fifo`의 ARN으로 지정해 구독을 등록한다. SNS FIFO는 SQS FIFO·SQS Standard 큐만 구독자로 허용하므로(본문에서 다룬 연동 제한), 이메일이나 Lambda를 구독자로 선택하는 항목 자체가 나타나지 않는다.
+
+**2) 테스트 메시지 발행**
+
+Topic 상세 페이지에서 [Publish message] 버튼을 클릭하면 메시지를 직접 발행해볼 수 있다. **Subject**에 `order-alarm`을, **Message body**에 아래 JSON을 입력하고, FIFO Topic이므로 추가로 나타나는 **Message group ID** 입력란에는 `order`처럼 임의의 그룹 이름을 채운 뒤 [Publish message]를 누른다.
 
 ```json
 {"orderId":"1001", "status":"new"}
 ```
 
-**2) 소비자가 실제로 수신한 로그**
+**3) 소비자가 실제로 수신한 로그**
 
 실습 1에서 띄워둔 SQS FIFO 소비자가 이 메시지를 수신한 결과는 다음과 같다.
 
@@ -119,7 +140,7 @@ ec2-user    3270    2724  0 06:43 pts/3    00:00:00 grep --color=auto sqs_consum
 
 처음 두 번의 "메시지 없음..." 출력은 실습 1에서 구성한 Long Polling 루프가 메시지가 도착할 때까지 `WaitTimeSeconds=10` 만큼 대기와 재시도를 반복하고 있다는 뜻이며, 이후 실제 메시지가 도착하자 SNS가 감싼 형태 그대로 로그에 출력됐다. Topic 이름이 `my-test-topic.fifo`로 `.fifo` 접미사를 갖고 있다는 점에서 이 Topic이 SNS FIFO로 생성되었음을 확인할 수 있다.
 
-**3) 필드별 의미**
+**4) 필드별 의미**
 
 - `Type`: `"Notification"` — 이 메시지가 SNS에서 발행된 "알림(Notification)"이라는 것을 나타낸다.
 - `MessageId`: SNS가 이 메시지에 부여한 고유 ID.

@@ -116,4 +116,9 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md) — IAM 역할·VPC·RDS·EFS·S3 준비, User Data 자동 배포, AMI·ASG·ALB 구성, ALB 환경 정적 리소스 CORS 트러블슈팅, 보안 그룹 강화, 리소스 삭제
 - [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md) — EC2 웹 서버 로그 → CloudWatch Agent 수집 → Metric Filter로 404 지표화 → Alarm → SNS 연동 실습, CloudTrail로 Management/Data Event 추적 실습
 
+### 🐍 Python (2)
+
+- [Python 설치](python/00-install.md) — 온라인 컴파일러, Anaconda 설치(Windows), VS Code + Python 확장 설치, REPL/스크립트 실행으로 설치 확인
+- [파이썬의 기본](python/01-basics.md) — 순차 실행, print() 함수(sep·end 옵션), 주석(#, 여러 줄 문자열)
+
 왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

@@ -96,3 +96,8 @@
   * [EC2와 S3 연동](aws/g07-ec2-s3.md)
   * [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md)
   * [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md)
+
+## 🐍 Python
+
+* [Python 설치](python/00-install.md)
+* [파이썬의 기본](python/01-basics.md)

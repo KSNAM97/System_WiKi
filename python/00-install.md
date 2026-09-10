@@ -212,10 +212,11 @@ PS C:\Users\guest\project> python -m venv venv
 **활성화(activate)**
 
 ```text
-PS C:\Users\guest\project> venv\Scripts\activate
+PS C:\Users\guest\project> .\venv\Scripts\Activate.ps1
 (venv) PS C:\Users\guest\project>
 ```
 
+- PowerShell에서는 cmd.exe와 달리 확장자를 자동으로 붙여주지 않으므로, 배치 파일인 `activate.bat`가 아니라 PowerShell 전용 스크립트 `Activate.ps1`을 `.\`(현재 경로) 접두사와 함께 명시해서 실행해야 한다. (명령 프롬프트(cmd.exe)에서는 `venv\Scripts\activate.bat`를 사용한다.)
 - 활성화되면 프롬프트 맨 앞에 `(venv)`처럼 현재 활성화된 가상환경 이름이 표시되어, 지금 어떤 환경에서 작업 중인지 바로 확인할 수 있다.
 - 이 상태에서 `pip install`로 설치한 패키지는 전역 환경이 아니라 `venv` 폴더 안에만 설치된다.
 
@@ -319,7 +320,7 @@ ModuleNotFoundError: No module named 'requests'
 
 ```text
 PS C:\Users\guest\project> python -m venv venv
-PS C:\Users\guest\project> venv\Scripts\activate
+PS C:\Users\guest\project> .\venv\Scripts\Activate.ps1
 (venv) PS C:\Users\guest\project> python --version
 Python 3.12.4
 ```

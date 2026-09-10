@@ -2,7 +2,7 @@
 
 > Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS, Python 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 78개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 80개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -116,7 +116,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [3-Tier 워드프레스 클러스터](aws/g08-wordpress-3tier.md) — IAM 역할·VPC·RDS·EFS·S3 준비, User Data 자동 배포, AMI·ASG·ALB 구성, ALB 환경 정적 리소스 CORS 트러블슈팅, 보안 그룹 강화, 리소스 삭제
 - [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md) — EC2 웹 서버 로그 → CloudWatch Agent 수집 → Metric Filter로 404 지표화 → Alarm → SNS 연동 실습, CloudTrail로 Management/Data Event 추적 실습
 
-### 🐍 Python (17)
+### 🐍 Python (19)
 
 - [Python 설치](python/00-install.md) — 온라인 컴파일러, Anaconda 설치(Windows), VS Code + Python 확장 설치, REPL/스크립트 실행으로 설치 확인
 - [파이썬의 기본](python/01-basics.md) — 순차 실행, print() 함수(sep·end 옵션), 주석(#, 여러 줄 문자열)
@@ -135,5 +135,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [표준 라이브러리 살펴보기](python/14-stdlib-tour.md) — sys.argv/sys.exit(), glob 와일드카드, re 정규표현식(match/search/findall/sub), datetime/timedelta, random, time 실행 시간 측정, collections(Counter/defaultdict)
 - [가상 환경 심화와 부동소수점](python/15-venv-precision.md) — venv/pip와 requirements.txt 협업 워크플로, 부동소수점 표현 오차와 round()의 한계, decimal.Decimal, REPL 팁(탭 완성·히스토리·_), PY-00~PY-15 학습 로드맵 정리
 - [표준 라이브러리 심화와 테스트](python/16-stdlib-advanced.md) — logging 모듈(레벨·getLogger), threading 기초(Thread·join·GIL·Lock), urllib(urlopen·URLError/HTTPError), unittest·doctest로 테스트 작성
+- [언어 심화](python/17-language-advanced.md) — 데코레이터(functools.wraps·데코레이터 팩토리), dataclasses(field default_factory·frozen), typing 심화(Optional/Union/제네릭/Protocol), functools.lru_cache/partial·itertools, pathlib, argparse
+- [패키징과 배포](python/18-packaging.md) — src 레이아웃, pyproject.toml([build-system]/[project]), pip install -e .·python -m build, PyPI/TestPyPI 업로드 개념, 시맨틱 버저닝
 
 왼쪽 목차(SUMMARY)를 따라 순서대로 읽거나, 필요한 주제로 바로 이동하여 참고할 수 있다.

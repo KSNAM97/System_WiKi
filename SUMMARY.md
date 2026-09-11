@@ -88,6 +88,7 @@
   * [모니터링 (CloudWatch · CloudTrail · KMS)](aws/t06-monitoring.md)
   * [디커플링 서비스와 SQS](aws/t07-decoupling-sqs.md)
   * [SNS (Simple Notification Service)](aws/t08-sns.md)
+  * [Route 53](aws/t09-route53.md)
 * 가이드
   * [AWS 가입하기](aws/g01-signup.md)
   * [IAM MFA 설정](aws/g02-iam-mfa.md)
@@ -100,6 +101,7 @@
   * [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md)
   * [SNS 실습 (S3 업로드 알림 · EventBridge)](aws/g10-sns-practice.md)
   * [SNS FIFO 실습 (SQS FIFO 소비자 배포)](aws/g11-sns-fifo-practice.md)
+  * [고가용성 웹 서비스 구축 종합 실습 (VPC+S3+EC2+ALB+ASG+Route53)](aws/g12-ha-web-service-practice.md)
 
 ## 🐍 Python
 

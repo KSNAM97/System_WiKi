@@ -2,7 +2,7 @@
 
 > Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS, Python 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 84개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 86개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -91,7 +91,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (19)
+### ☁️ AWS (21)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -105,6 +105,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [모니터링 (CloudWatch · CloudTrail · KMS)](aws/t06-monitoring.md) — CloudWatch 지표·로그·경보·Composite Alarm, CloudTrail(Trail·Management/Data/Insight Event), AWS KMS 개요
 - [디커플링 서비스와 SQS](aws/t07-decoupling-sqs.md) — 디커플링 개념, 결합(Coupling) 유형, Amazon SQS(Standard/FIFO, 멱등성, 메시지 상태, Producer/Consumer, Visibility Timeout, Long/Short Polling)
 - [SNS (Simple Notification Service)](aws/t08-sns.md) — SNS Pub/Sub·Fan Out, SNS vs SQS, 메시지 필터링, SQS/SNS FIFO(Deduplication ID, Message Group ID), SNS FIFO Archive/Replay
+- [Route 53](aws/t09-route53.md) — DNS 개념, 도메인·APEX·서브도메인, 레코드 종류(A·AAAA·CNAME·Alias·NS·MX·TXT), TTL, Hosted Zone, Alias Record 우선 사용 이유, 라우팅 정책, 도메인 등록(Route 53 vs 외부)
 
 **가이드**
 
@@ -119,6 +120,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [CloudWatch 모니터링 실습](aws/g09-cloudwatch-monitoring.md) — EC2 웹 서버 로그 → CloudWatch Agent 수집 → Metric Filter로 404 지표화 → Alarm → SNS 연동 실습, CloudTrail로 Management/Data Event 추적 실습
 - [SNS 실습 (S3 업로드 알림 · EventBridge)](aws/g10-sns-practice.md) — S3 업로드를 Lambda로 감지해 SNS 알림 발행, EventBridge 이벤트 패턴 필터링
 - [SNS FIFO 실습 (SQS FIFO 소비자 배포)](aws/g11-sns-fifo-practice.md) — EC2에 SQS FIFO 소비자(user-data) 배포, SNS FIFO 알림 발행·수신 확인, SNS 메시지 봉투 구조 확인
+- [고가용성 웹 서비스 구축 종합 실습 (VPC+S3+EC2+ALB+ASG+Route53)](aws/g12-ha-web-service-practice.md) — VPC(Public/Private Subnet)+S3+IAM Role+보안 그룹+Launch Template(User Data)+Target Group+ALB+Auto Scaling Group+Route 53 통합 구축, 트래픽 흐름 정리, 장애 테스트
 
 ### 🐍 Python (19)
 

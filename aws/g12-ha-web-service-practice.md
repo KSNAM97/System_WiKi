@@ -247,11 +247,11 @@ Instance ID: i-xxxxxxxxxxxxxxxxx
 
 **Group size** 설정은 다음과 같이 지정한다.
 
-- **Desired capacity**: `2`
+- **Desired capacity**: `3`
 - **Minimum capacity**: `2`
 - **Maximum capacity**: `5`
 
-> **주의**: Auto Scaling Group은 Desired Capacity가 항상 Minimum과 Maximum 사이(Min ≤ Desired ≤ Max)에 있어야 정상 동작한다. Minimum을 Desired보다 크게 설정하면(예: Desired 2, Minimum 3) 그룹이 즉시 스케일 아웃을 시도하거나 설정 자체가 거부될 수 있으므로, Minimum Capacity는 반드시 Desired Capacity 이하로 맞춰야 한다. 이번 실습에서는 평소 2대를 유지하다가 트래픽이 늘어나면 최대 5대까지 늘어나는 구조를 의도했으므로 Minimum과 Desired를 동일하게 2로 설정한다.
+> **주의**: Auto Scaling Group은 Desired Capacity가 항상 Minimum과 Maximum 사이(Min ≤ Desired ≤ Max)에 있어야 정상 동작한다. Minimum을 Desired보다 크게 설정하면(예: Desired 2, Minimum 3) 그룹이 즉시 스케일 아웃을 시도하거나 설정 자체가 거부될 수 있으므로, Minimum Capacity는 반드시 Desired Capacity 이하로 맞춰야 한다. 이번 실습에서는 평소 3대를 유지하다가 트래픽이 줄어들면 최소 2대까지 줄고, 늘어나면 최대 5대까지 늘어나는 구조를 의도했으므로 Minimum을 2, Desired를 3으로 설정한다.
 
 ## 12. 실습 11: 서비스 동작 확인
 
@@ -267,7 +267,7 @@ Auto Scaling Group이 생성한 각 EC2 인스턴스에 SSH 또는 EC2 Instance 
 tail -f /var/log/httpd/access_log
 ```
 
-이 상태에서 ALB의 DNS 주소로 웹 브라우저를 여러 번 새로고침하면서 접속하면, 요청이 어느 EC2로 분산되는지 각 인스턴스의 로그에서 직접 확인할 수 있다. 특정 인스턴스의 로그에만 요청이 쌓이거나, 두 인스턴스에 번갈아 쌓이는 패턴을 관찰하면 ALB의 트래픽 분산 동작을 눈으로 검증할 수 있다.
+이 상태에서 ALB의 DNS 주소로 웹 브라우저를 여러 번 새로고침하면서 접속하면, 요청이 어느 EC2로 분산되는지 각 인스턴스의 로그에서 직접 확인할 수 있다. 특정 인스턴스의 로그에만 요청이 쌓이거나, 여러 인스턴스에 번갈아 쌓이는 패턴을 관찰하면 ALB의 트래픽 분산 동작을 눈으로 검증할 수 있다.
 
 ## 14. 실습 13: Route 53 도메인 연결
 
@@ -318,7 +318,7 @@ Auto Scaling Group의 자동 복구 동작을 직접 확인하기 위해 장애 
 
 1. **Target Group 상태 변화**: [Target Groups] → `my-web-tg`의 [Targets] 탭에서 종료된 인스턴스가 `unhealthy` 또는 목록에서 제거되는 상태로 바뀌는지 확인한다.
 2. **새 EC2 자동 생성 여부**: [Auto Scaling Groups] → `my-web-asg`의 [Activity] 탭에서 새 인스턴스가 시작되는 활동 로그가 기록되는지 확인한다.
-3. **Desired Capacity 유지**: 인스턴스가 1대 종료되어도 Auto Scaling Group이 곧바로 새 인스턴스를 띄워 Desired Capacity `2`를 다시 맞추는지 확인한다.
+3. **Desired Capacity 유지**: 인스턴스가 1대 종료되어도 Auto Scaling Group이 곧바로 새 인스턴스를 띄워 Desired Capacity `3`을 다시 맞추는지 확인한다.
 4. **새 EC2의 Target Group 자동 등록**: 새로 생성된 인스턴스가 별도 조작 없이 `my-web-tg`에 자동으로 등록되는지 확인한다.
 5. **Health Check 통과 후 트래픽 전달**: 새 인스턴스가 Health Check를 통과하면 ALB가 이 인스턴스로도 트래픽을 전달하기 시작하는지, 실습 12와 같은 방식으로 Access Log를 확인해 검증한다.
 

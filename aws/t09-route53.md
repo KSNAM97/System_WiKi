@@ -138,7 +138,7 @@ Route 53은 하나의 도메인에 대해 트래픽을 어떻게 분산할지 �
 | **가중치 라우팅(Weighted Routing)** | 여러 리소스에 지정한 비율만큼 트래픽을 나누어 분산한다. |
 | **지연 시간 라우팅(Latency-based Routing)** | 사용자에게 가장 빠른 응답 속도를 제공하는 리소스로 연결한다. |
 
-**정리**: 이 문서에서 다루는 실습([AWS-G12-HA-Web-Service-Practice.md](g12-ha-web-service-practice.md))에서는 ALB 하나에 도메인을 연결하는 가장 단순한 라우팅 정책만 사용한다. 지리적·가중치·지연 시간 라우팅은 여러 리전이나 여러 환경(Blue/Green 배포 등)에 걸쳐 트래픽을 정교하게 분산해야 할 때 활용하는 정책으로, 여기서는 개념만 소개한다.
+**정리**: 이 문서에서 다루는 실습([AWS-G12-HA-Web-Service-Practice.md](g12-ha-web-service-practice.md))에서는 ALB 하나에 도메인을 연결하는 가장 단순한 라우팅 정책만 사용한다. 지리적·가중치·지연 시간 라우팅은 여러 리전이나 여러 환경(Blue/Green 배포 등)에 걸쳐 트래픽을 정교하게 분산해야 할 때 활용하는 정책으로, 여기서는 개념만 소개한다. 더 자세한 Health Check와 8가지 라우팅 정책 전체(Failover, Geoproximity, IP-based, Multivalue Answer 포함)는 [AWS-T10. Route 53 Health Check와 라우팅 정책](t10-route53-healthcheck-routingpolicy.md) 문서에서 다룬다.
 
 ## 9. Route 53 사용 과정 3단계
 

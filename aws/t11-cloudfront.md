@@ -56,6 +56,10 @@
 
 **정리**: 엣지 로케이션은 Region/AZ와 목적이 다른 네트워크 거점으로, CloudFront가 콘텐츠를 사용자와 가까운 곳에서 전달할 수 있게 하는 핵심 인프라다. Global Accelerator와는 상호 보완적으로 함께 사용할 수 있다.
 
+![캐시 미스 상황: Edge location에 캐시가 없어 Origin(Amazon EC2)까지 가서 img.png를 가져오고 200 OK 응답 후 Edge location에 캐싱하는 흐름](images/aws-15/edge-location-far-origin.jpeg)
+
+![캐시 히트 vs 캐시 미스 비교: img_1.png는 이미 캐시되어 즉시 응답하고, img_2.png는 캐시가 없어 Origin까지 가서 가져오는 두 요청을 나란히 비교](images/aws-15/edge-location-nearby-cache.jpeg)
+
 ## 3. 정적 콘텐츠 vs 동적 콘텐츠
 
 CloudFront가 다루는 콘텐츠는 크게 정적 콘텐츠와 동적 콘텐츠로 나뉘며, 이 구분은 이후 Origin 선택과 Behavior 설계의 기준이 된다.
@@ -92,6 +96,8 @@ CloudFront가 다루는 콘텐츠는 크게 정적 콘텐츠와 동적 콘텐츠
 **활용 예시**: 정적 콘텐츠는 S3, 동적 콘텐츠는 EC2/ALB로 나누어 등록하면, CloudFront 하나로 여러 Origin의 콘텐츠를 하나의 도메인 아래에서 서비스할 수 있다. 구체적인 라우팅 방법은 [9. Behavior](#9-behavior)와 [12. CloudFront와 API 연동](#12-cloudfront와-api-연동)에서 다룬다.
 
 **정리**: Origin은 CloudFront가 콘텐츠를 가져오는 원천이며, S3 Origin과 Custom Origin 중 무엇을 쓸지는 정적/동적 콘텐츠 구분에 따라 결정된다. 하나의 Distribution에 여러 Origin을 섞어 등록하는 것이 CloudFront 설계의 기본 패턴이다.
+
+![AWS Cloud 안의 Origin 종류(Amazon EC2, Amazon S3, ALB)와 온프레미스 Server가 Amazon CloudFront를 통해 Viewer와 양방향으로 연결되는 Origin 종류 전체 개요](images/aws-15/origin-overview.jpeg)
 
 ## 5. S3 Origin 상세
 
@@ -160,6 +166,8 @@ S3 정적 웹사이트 호스팅 기능을 사용하는 경우에는 도메인 �
 
 **정리**: Origin Group은 Primary Origin에 문제가 생겼을 때 CloudFront가 자동으로 Secondary Origin으로 전환하는 고가용성 기능이다. GET/HEAD/OPTIONS 같은 읽기 요청에만 적용되며, 두 Origin 모두 실패했을 때를 대비한 사용자 정의 에러 페이지까지 함께 준비해두는 것이 실무 패턴이다.
 
+![Origin Group Failover: Amazon CloudFront가 장애가 발생한 Primary(ALB, 빨간 금지 아이콘)를 건너뛰고 Secondary(온프레미스 Server)로 우회하는 흐름](images/aws-15/origin-group.jpeg)
+
 ## 8. Origin Custom Header
 
 **Origin Custom Header**는 CloudFront가 Origin으로 요청을 보낼 때, 사용자가 지정한 추가 Header를 함께 전달하는 기능이다. 클라이언트가 같은 이름의 Header를 보내더라도, CloudFront에서 설정한 값으로 덮어써서 Origin에 전달할 수 있다.
@@ -172,6 +180,8 @@ S3 정적 웹사이트 호스팅 기능을 사용하는 경우에는 도메인 �
 - **접근 제어**: 특정 Header 값을 가진 요청만 Origin이 허용하도록 구성한다.
 
 **정리**: Origin Custom Header는 CloudFront와 Origin 사이의 통신에만 존재하는 값을 추가해, 사용자가 Origin을 우회해서 직접 접근하는 것을 막거나 Origin 쪽 인증·구분 로직을 단순화하는 데 활용된다.
+
+![Viewer의 GET 요청 헤더에 CloudFront가 Origin Custom Header(Application: MyApp, Secret: A12JWU6%!)를 추가해서 Origin(ALB)으로 전달하는 실제 HTTP 요청 헤더 예시](images/aws-15/origin-custom-header.jpeg)
 
 ## 9. Behavior
 
@@ -224,6 +234,10 @@ TTL(최소 TTL/기본 TTL/최대 TTL)로 얼마 동안 캐시할지 정하며, �
 **2) Origin Request Policy(원본 요청 정책)**: CloudFront가 Origin(EC2, S3 등)으로 요청을 보낼 때 어떤 헤더, 쿠키, 쿼리스트링을 함께 전달할지 결정한다. 캐시 정책과는 별개로 Origin에 전달되는 내용을 세밀하게 조정할 수 있다.
 
 **3) Response Headers Policy(응답 헤더 정책)**: Origin이 응답을 보낸 뒤, CloudFront가 최종적으로 Viewer에게 돌려줄 때 헤더를 추가·수정·삭제할 수 있다. 예를 들어 email, phone, user_id 같은 민감한 정보가 담긴 헤더를 응답에서 제거하고, `service:prodapp` 같은 커스텀 헤더를 추가하는 식으로 활용한다.
+
+![Cache Policy(cachekey: url path, querystring color)와 Origin Request Policy(Allowed QueryString: color, user_id)가 각각 캐시 키와 Origin 전달 기준으로 삼는 항목을, http://example.com/img.png?color=red&user_id=chris 예시와 함께 CloudFront에서 Origin(Amazon EC2)으로 전달하는 흐름](images/aws-15/cache-policy-origin-request-policy.jpeg)
+
+![Amazon S3 응답에 있던 user_id, email, phone 헤더를 Response Headers Policy가 제거(Remove headers)하고 service: prodapp 커스텀 헤더를 추가(Custom headers)해서 Viewer에게 전달하는 흐름](images/aws-15/response-headers-policy.jpeg)
 
 **정리**: Cache Policy는 "무엇을 기준으로 캐시할지", Origin Request Policy는 "Origin에 무엇을 전달할지", Response Headers Policy는 "Viewer에게 무엇을 돌려줄지"를 각각 담당한다. 세 정책은 서로 독립적으로 조합 가능하며, Behavior 단위로 재사용할 수 있다.
 
@@ -299,6 +313,8 @@ CloudFront 캐시에 저장된 파일을 강제로 무효화해서 Origin에서 
 
 **제한과 비용**: 한 번 요청으로 최대 3,000개 파일까지 무효화할 수 있다(예: 100개씩 30번, 또는 1,000개씩 3번 요청). 한 달에 1,000개 경로(Path)까지는 무료이며(모든 Distribution 합산 기준), 무료 횟수를 초과하면 경로당 약 $0.005의 비용이 발생한다.
 
+![Edge location에 캐시된 img.png가 오래된 상태에서 http://mydmn.com/img.png 요청이 Origin(Amazon EC2)까지 가서 200 OK로 새 파일을 받아오는 Invalidation 동작 흐름](images/aws-15/invalidation-flow.jpeg)
+
 **2) 버저닝 관리 방식**
 
 파일을 수정할 때 파일 이름에 버전 정보를 붙여 새 파일로 만드는 방식이다(예: `style_v1.css` → `style_v2.css`). CloudFront는 파일 이름이 다르면 서로 다른 파일로 인식하므로, `style_v1.css`와 `style_v2.css`는 완전히 별개의 파일로 처리된다. 새로운 `style_v2.css`를 요청하면 기존 캐시와 무관하게 Origin에서 새 파일을 가져와 캐싱한다.
@@ -319,6 +335,8 @@ CloudFront 캐시에 저장된 파일을 강제로 무효화해서 Origin에서 
 | 실무 활용 | 파일명을 고정해야 하는 환경, 긴급 수정 | 정적 자산 배포 파이프라인(빌드 시 해시 자동 부여) |
 
 실무에서는 `app-v1.abc123.js` → `app-v2.abc456.js`처럼 콘텐츠 해시를 파일명에 붙이는 방식으로 캐시 무효화 없이 버저닝을 관리하는 경우가 많다. 빌드 도구가 파일 내용을 기준으로 해시를 자동 생성해주므로, 내용이 바뀌지 않은 파일은 캐시가 계속 유지되고 실제로 바뀐 파일만 새 캐시 키를 갖게 된다.
+
+![img_1.png(이미 캐시되어 CloudFront가 즉시 응답)와 img_2.png(새 버전, 캐시가 없어 Origin까지 감)를 별도의 CloudFront 배포/요청으로 나란히 비교하는 버저닝 방식 다이어그램](images/aws-15/versioning-flow.jpeg)
 
 **정리**: 싱글 파일 관리 방식은 파일명을 고정할 수 있지만 변경 반영을 위해 Invalidation을 실행해야 하고, 버저닝 관리 방식은 Invalidation 없이 즉시 반영되지만 참조 경로를 함께 수정해야 한다. 실무에서는 정적 자산 배포에는 버저닝(해시 기반 파일명)을, 급한 수정이나 파일명을 바꿀 수 없는 상황에는 Invalidation을 활용하는 식으로 병행하는 경우가 많다.
 

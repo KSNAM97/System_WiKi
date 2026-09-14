@@ -2,7 +2,7 @@
 
 > Rocky Linux 9 기반 시스템 관리, 쉘 스크립트, 데이터베이스, HTML, Docker, Kubernetes, AWS, Python 기술 문서 모음
 
-이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 88개 문서로 구성되어 있다.
+이 문서는 리눅스 시스템 관리부터 컨테이너 오케스트레이션, 클라우드, 파이썬까지, 실무에서 바로 참고할 수 있도록 정리한 시스템 엔지니어링 문서이다. 총 7개 카테고리, 90개 문서로 구성되어 있다.
 
 ## 구성
 
@@ -91,7 +91,7 @@ MariaDB/MySQL 설치부터 JOIN 실습까지
 - [ConfigMap · Secret](kubernetes/12-configmap-secret.md)
 - [AutoScaling (HPA · VPA · Cluster Autoscaler)](kubernetes/13-autoscaling.md)
 
-### ☁️ AWS (23)
+### ☁️ AWS (25)
 
 Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 
@@ -107,6 +107,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [SNS (Simple Notification Service)](aws/t08-sns.md) — SNS Pub/Sub·Fan Out, SNS vs SQS, 메시지 필터링, SQS/SNS FIFO(Deduplication ID, Message Group ID), SNS FIFO Archive/Replay
 - [Route 53](aws/t09-route53.md) — DNS 개념, 도메인·APEX·서브도메인, 레코드 종류(A·AAAA·CNAME·Alias·NS·MX·TXT), TTL, Hosted Zone, Alias Record 우선 사용 이유, 라우팅 정책, 도메인 등록(Route 53 vs 외부)
 - [Route 53 Health Check와 라우팅 정책](aws/t10-route53-healthcheck-routingpolicy.md) — Health Check(모니터링 대상·리소스 점검 방식·18% 상태 판정 규칙·조합), 8가지 라우팅 정책(Simple·Failover·Geolocation·Geoproximity·Latency-Based·IP-based·Multivalue Answer·Weighted) 비교와 실무 포인트
+- [CloudFront](aws/t11-cloudfront.md) — CDN 개념, 엣지 로케이션, 정적/동적 콘텐츠 비교, S3 Origin·Custom Origin·Origin Group·Origin Custom Header, Behavior·Viewer 설정·Policy(Cache/Origin Request/Response Headers), API 연동과 ALB, OAC, 캐시 파일 관리(Invalidation vs 버저닝)
 
 **가이드**
 
@@ -123,6 +124,7 @@ Amazon Web Services 클라우드 기초 개념 및 핵심 서비스
 - [SNS FIFO 실습 (SQS FIFO 소비자 배포)](aws/g11-sns-fifo-practice.md) — EC2에 SQS FIFO 소비자(user-data) 배포, SNS FIFO 알림 발행·수신 확인, SNS 메시지 봉투 구조 확인
 - [고가용성 웹 서비스 구축 종합 실습 (VPC+S3+EC2+ALB+ASG+Route53)](aws/g12-ha-web-service-practice.md) — VPC(Public/Private Subnet)+S3+IAM Role+보안 그룹+Launch Template(User Data)+Target Group+ALB+Auto Scaling Group+Route 53 통합 구축, 트래픽 흐름 정리, 장애 테스트
 - [Route 53 Failover 라우팅 실습 (Health Check + Failover)](aws/g13-route53-failover-practice.md) — Primary/Secondary EC2 준비(User Data 자동화 vs scp 수동 배포), S3 정적 웹 호스팅 백업(선택), Health Check 생성, Failover 레코드 구성, 장애 조치 테스트, DNS 전파 확인
+- [CloudFront 실습 (OAC 접근 제어 · Origin Group Failover · Behavior 라우팅)](aws/g14-cloudfront-practice.md) — S3 Origin + OAC로 CloudFront 전용 접근 구성, Origin Group으로 Primary/Secondary EC2 장애 조치, Behavior로 정적 콘텐츠(S3)와 API(ALB→EC2) 요청 분기, 캐시 무효화 vs 버저닝 실습 팁
 
 ### 🐍 Python (19)
 

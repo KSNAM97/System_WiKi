@@ -106,30 +106,6 @@
   * [고가용성 웹 서비스 구축 종합 실습 (VPC+S3+EC2+ALB+ASG+Route53)](aws/g12-ha-web-service-practice.md)
   * [Route 53 Failover 라우팅 실습 (Health Check + Failover)](aws/g13-route53-failover-practice.md)
   * [CloudFront 실습 (OAC 접근 제어 · Origin Group Failover · Behavior 라우팅)](aws/g14-cloudfront-practice.md)
-* 실습 파일
-  * [AWS EC2 실습 파일](aws/l01-aws-ec2-lab-files.md)
-  * [AWS VPC 실습 파일](aws/l02-aws-vpc-lab-files.md)
-  * [AWS S3 실습 파일](aws/l03-aws-s3-lab-files.md)
-  * [AWS RDS 실습 파일](aws/l04-aws-rds-lab-files.md)
-  * [AWS CloudWatch 실습 파일](aws/l05-aws-monitoring-lab-files.md)
-  * [AWS 디커플링 (SQS · SNS) 실습 파일](aws/l06-aws-decoupling-lab-files.md)
-  * [Route 53 실습 파일](aws/l07-aws-route53-lab-files.md)
-  * [CloudFront 실습 파일](aws/l08-aws-cloudfront-lab-files.md)
-
-## 🏗️ Terraform
-
-* [환경 구축](terraform/01-terraform-environment-setup.md)
-* [AWS와 Terraform 개요](terraform/02-terraform-aws-overview.md)
-* [HCL 문법](terraform/03-terraform-hcl.md)
-* [Provider](terraform/04-terraform-provider.md)
-* [EC2 · VPC](terraform/05-terraform-ec2-vpc.md)
-* [Modules](terraform/06-terraform-modules.md)
-* [S3](terraform/07-terraform-s3.md)
-* [RDS](terraform/08-terraform-rds.md)
-* [ALB · ASG](terraform/09-terraform-alb-asg.md)
-* [IAM](terraform/10-terraform-iam.md)
-* [실습 파일 모음](terraform/11-terraform-practice-files.md)
-
 ## 🐍 Python
 
 * [Python 설치](python/00-install.md)

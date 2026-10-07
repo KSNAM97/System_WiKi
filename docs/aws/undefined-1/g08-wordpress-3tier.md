@@ -6,6 +6,10 @@
 
 이 문서는 [ALB · Auto Scaling](g06-load-balancer-autoscaling.md), [RDS](../undefined/t05-rds.md), [EC2와 S3 연동](g07-ec2-s3.md)에서 다룬 서비스를 조합해, 고가용성을 갖춘 워드프레스 클러스터를 처음부터 끝까지 구성하는 실습을 다룬다.
 
+![AWS에서는 ALB-EC2-RDS 조합으로 구현하는 경우가 많다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-4.png)
+
+![고가용성 : 장애에도 서비스 멈추지 않음 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-5.png)
+
 ## 2. 3-Tier Architecture란
 
 애플리케이션을 3가지 계층으로 나누어 구성하는 방식이다. 역할이 명확해지고 확장·유지보수가 쉬워진다.
@@ -16,7 +20,13 @@
 | **Application Tier**  | 실제 비즈니스 로직 처리(로그인 검증, 게시글 등록 등)              | Web EC2 인스턴스 (Auto Scaling Group) |
 | **Data Tier**         | 데이터 저장·관리                                    | Amazon RDS                        |
 
+![서비스 또는 사용 사례: EC2 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-9.png)
+
+![역할 이름 : test-3-tier-ec2-role 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-12.png)
+
 즉 ALB가 사용자 요청을 받아 EC2에 전달하고, EC2는 로직을 처리하며 RDS와 데이터를 주고받는 구조다.
+
+![AWS에서는 ALB-EC2-RDS 조합으로 구현하는 경우가 많다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp09-1.png)
 
 ![3-Tier 워드프레스 클러스터: ALB + Auto Scaling Group(Web Server) + EFS + RDS](../../.gitbook/assets/wordpress-3tier-architecture.png)
 
@@ -24,6 +34,10 @@
 
 * **고가용성 확보**: ALB로 다수의 EC2에 트래픽 분산, Auto Scaling으로 부하에 따라 서버 수 자동 증감, Multi-AZ 배치로 AZ 장애에도 서비스 지속
 * **EFS(Elastic File System) 공유 스토리지**: 여러 EC2 인스턴스가 동일한 워드프레스 파일(업로드 이미지, 플러그인 등)에 접근할 수 있도록 중앙 스토리지 역할을 하며, 웹 서버 간 데이터 일관성을 유지한다.
+
+![IAM  -->  역할  -->  역할 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-7.png)
+
+![s3full 검색 후  AmazonS3FullAccess 체크박스 클릭 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-10.png)
 
 ## 3. 구성 순서
 
@@ -38,6 +52,14 @@
 9. ALB DNS 기준으로 워드프레스 사이트 주소 수정 (11장 참고)
 10. 보안 그룹을 강화해 EC2 직접 접근 차단 (12장 참고)
 
+![VPC이동  -->  VPC  -->  VPC 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-13.png)
+
+![IPv4 CIDR 블록: 10.0.0.0/16-VPC 엔드포인트: 없음 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-15.png)
+
+![IPv4 CIDR 블록: 10.0.0.0/16-VPC 엔드포인트: 없음 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-16.png)
+
+![VPC가 생성된 것을 확인할 수 있다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-17.png)
+
 ## 4. 사전 준비: IAM 역할과 VPC
 
 ### IAM 역할 생성
@@ -48,6 +70,8 @@ EC2가 S3에서 `wp-config.php`를 가져올 수 있도록 역할을 먼저 만�
 2. **신뢰할 수 있는 엔터티 유형**: AWS 서비스, **사용 사례**: EC2
 3. 권한 정책에서 `s3full` 검색 후 `AmazonS3FullAccess` 선택 (특정 버킷만 허용하려면 커스텀 정책으로 범위를 좁히는 것을 권장)
 4. 역할 이름 지정 (예: `wordpress-ec2-role`)
+
+![초기 데이터베이스 이름: wordpress 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-27.png)
 
 ![신뢰할 수 있는 엔터티 유형에서 AWS 서비스 · EC2를 선택하는 화면](../../.gitbook/assets/iam-role-trusted-entity.png)
 
@@ -64,7 +88,11 @@ VPC 콘솔의 \[VPC 생성] 마법사에서 **"VPC 등"**(VPC와 서브넷·라�
 
 생성이 끝나면 각 AZ에 퍼블릭 서브넷 1개, 프라이빗 서브넷 1개씩 총 4개의 서브넷이 만들어진다 — RDS는 이 중 **프라이빗 서브넷 2개**를 사용한다.
 
+![RDS  -->  데이터베이스  -->  데이터베이스 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-22.png)
+
 생성이 끝나면 VPC 목록에서 방금 만든 VPC(예: `test-3-tier-vpc`)가 `Available` 상태로 표시되고, 상세 정보 탭에서 VPC ID·CIDR·DNS 확인/호스트 이름 활성화 여부 등을 확인할 수 있다.
+
+![엔진 옵션: MySQL 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-23.png)
 
 ![VPC 생성 완료 후 VPC 목록과 세부 정보 화면](../../.gitbook/assets/vpc-list-created.png)
 
@@ -94,6 +122,10 @@ RDS 콘솔 → 데이터베이스 → \[데이터베이스 생성]
 * **VPC 보안 그룹**: 우선 기존 default 보안 그룹 선택 (실습 마지막에 [12장](g08-wordpress-3tier.md#12-보안-그룹-강화-ec2-직접-접근-차단)에서 강화)
 * **추가 구성 → 초기 데이터베이스 이름**: `wordpress` (지정하지 않으면 RDS가 데이터베이스를 자동으로 만들어주지 않는다)
 
+![VPC 클릭 후 새로만든 VPC ID 확인 test-3-tier-vpc = vpc-0d0997c198ecf3cd1 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-28.png)
+
+![보안그룹을 구분하기위해서 Name 설정 test-3-tier-default-sg 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-31.png)
+
 ![엔진 옵션에서 MySQL을 선택하고 마스터 사용자 이름을 지정하는 화면](../../.gitbook/assets/rds-db-create-engine.png)
 
 ![VPC·DB 서브넷 그룹·퍼블릭 액세스·초기 데이터베이스 이름을 설정하는 화면](../../.gitbook/assets/rds-db-additional-config.png)
@@ -104,7 +136,11 @@ RDS 콘솔 → 데이터베이스 → \[데이터베이스 생성]
 
 여러 대의 EC2가 동시에 접근할 수 있는 네트워크 공유 폴더다. 파일을 저장할수록 용량이 자동으로 커지므로 미리 디스크 크기를 정할 필요가 없고, 리전 내 여러 AZ에 자동 복제되어 한 곳에 장애가 나도 데이터가 안전하게 유지된다.
 
+![EFS  -->  파일시스템  -->  파일시스템 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-33.png)
+
 EFS 콘솔 → 파일시스템 → \[파일시스템 생성] → **VPC**에 앞서 생성한 VPC 선택.
+
+![이름: my-3tier-efs 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-34.png)
 
 ![EFS 파일시스템 생성 화면 (이름·VPC 선택)](../../.gitbook/assets/efs-create-form.png)
 
@@ -168,9 +204,17 @@ require_once ABSPATH . 'wp-settings.php';
 
 `DB_HOST`에는 RDS 콘솔에서 생성한 DB 인스턴스를 클릭해 확인할 수 있는 **엔드포인트 주소**를 입력한다 — RDS의 실제 IP는 고정되지 않으므로 반드시 DNS 엔드포인트를 사용해야 한다. 값을 채운 `wp-config.php`를 앞서 만든 S3 버킷에 업로드해 둔다.
 
+![S3  -->  버킷 만들기 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-37.png)
+
+![버킷이른 : test-3-tier-source-bucket-123456789012 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-39.png)
+
 ## 8. User Data로 워드프레스 자동 배포
 
 시작 템플릿(또는 첫 EC2의 사용자 데이터)에 아래 스크립트를 등록하면, 인스턴스가 최초 부팅될 때 워드프레스 환경이 자동으로 구성된다.
+
+![사용자 데이터에 demo_3_tier_userdata.txt 안의 데이터를 복사 후 붙여넣기 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-49.png)
+
+![EC2인스턴스 퍼블릭 IPv4 주소 복사 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-51.png)
 
 ```bash
 #!/bin/bash
@@ -217,6 +261,12 @@ s3://{S3버킷-ID}/wp-config.php \
 * 워드프레스 디렉터리 자체를 EFS 마운트 지점(`/var/www/html/wordpress`)으로 사용하므로, 모든 EC2 인스턴스가 동일한 워드프레스 소스·업로드 파일을 공유한다.
 * `wp-config.php`는 DB 접속 정보를 담고 있어 AMI나 코드 저장소에 직접 포함하지 않고, S3에 별도로 올려둔 뒤 `aws s3 cp`로 배포 시점에 가져온다 — 이를 위해 EC2에는 [4장](g08-wordpress-3tier.md#4-사전-준비-iam-역할과-vpc)에서 만든 IAM 역할이 연결되어 있어야 한다.
 
+![s3://{S3버킷-ID}/wp-config.php \ 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-41.png)
+
+![{S3버킷} = test-3-tier-source-bucket-123456789012 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-42.png)
+
+![EC2인스턴스 퍼블릭 IPv4 주소 복사 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-50.png)
+
 ## 9. EC2 실행과 워드프레스 초기 설치
 
 첫 EC2는 나중에 AMI로 만들 "원본"이므로 직접 하나 실행해 워드프레스 설치를 완료한다.
@@ -237,7 +287,15 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 
 > ⚠️ **이 설치 시점에 접속한 주소가 워드프레스 DB에 "사이트 주소"로 그대로 저장된다.** 지금은 EC2의 퍼블릭 IP로 접속했으므로, 이 값도 EC2 IP로 저장된다 — 이 점이 [11장](g08-wordpress-3tier.md#11-트러블슈팅-alb-환경에서-정적-리소스가-깨지는-문제)에서 다룰 문제의 원인이 된다.
 
+![인스턴스  -->  test-3-tier-ec2 선택  -->  작업  -->  이미지 및 템플릿  -->  이미지 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-54.png)
+
+![EC2  -->  시작 템플릿  -->  시작 템플릿 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-57.png)
+
 설치가 정상적으로 끝나면 워드프레스 기본 블로그 화면("Hello world!" 샘플 글)이 뜬다. 이 화면이 보이면 Apache·PHP·RDS 연결·EFS 마운트가 모두 정상 동작한다는 뜻이다.
+
+![이미지가 생성되고 있다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-56.png)
+
+![나머지는 모드 기본값 사용 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-60.png)
 
 ![워드프레스 설치 완료 후 뜨는 기본 블로그 화면 (Hello world!)](../../.gitbook/assets/wordpress-install-success-hello-world.png)
 
@@ -248,6 +306,10 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 인스턴스 → 대상 EC2 선택 → 작업 → 이미지 및 템플릿 → \[이미지 생성]. 지금 인스턴스의 디스크 상태(OS + 설정 + 패키지 + 워드프레스 소스)를 스냅샷 떠서 이미지(AMI)로 만든다.
 
 이미지 생성 화면에서는 대상 인스턴스 ID가 자동으로 채워지고, **이미지 이름**만 지정하면 된다(예: `test-3-tier-wordpress`). "인스턴스 재부팅 안 함" 옵션은 기본 체크 해제 상태(재부팅 수행)를 유지하는 것이 데이터 일관성 측면에서 안전하다. 볼륨 크기·유형은 기본값 그대로 두어도 무방하다.
+
+![EC2  -->  Auto Scaling 그룹 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-67.png)
+
+![인스턴스 관리 탭을 확인해보면 인스턴스 2개가 생성된 것을 확인할 수 있다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-77.png)
 
 ![이미지 생성 화면에서 이미지 이름을 지정하고 스토리지 옵션을 확인하는 화면](../../.gitbook/assets/ami-create-form.png)
 
@@ -282,6 +344,10 @@ Site Title, Username, Password, Email을 입력해 설치를 완료한다.
 * **상태 확인**: Elastic Load Balancer 상태 확인 켜기 (ALB 헬스 체크 결과로 비정상 인스턴스를 자동 교체)
 * 그룹 크기(예: 원하는 용량 2 / 최소 0 / 최대 2) 지정
 
+![EC2  -->  대상그룹  -->  대상그룹 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-61.png)
+
+![나머지 기본값 사용 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-73.png)
+
 ASG 이름을 입력하고, 앞서 만들어 둔 시작 템플릿과 그 버전(Default)을 선택하면 해당 템플릿에 저장된 AMI ID·인스턴스 유형·키 페어 등 세부 정보가 화면 하단에 요약으로 표시되어, 어떤 설정으로 인스턴스가 생성될지 시작 전에 확인할 수 있다.
 
 ![Auto Scaling 그룹 이름과 시작 템플릿·버전을 선택하는 화면, 하단에 AMI ID 등 템플릿 세부 정보가 요약 표시된다](../../.gitbook/assets/asg-launch-template-select.png)
@@ -308,6 +374,12 @@ ASG 이름을 입력하고, 앞서 만들어 둔 시작 템플릿과 그 버전(
 * **리스너**: HTTP 80, 기본 작업으로 위에서 만든 대상 그룹 지정
 
 ALB가 활성화되면 세부 정보에서 **DNS 이름**을 확인할 수 있다. 이 주소 뒤에 `/wordpress`를 붙여 접속하면 클러스터를 통해 사이트가 열린다.
+
+![성공 코드: 301 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-65.png)
+
+![키 = Name , 값 = test-3-tier-wordpress-asg 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-76.bmp)
+
+![Name test-3-tier-wordpress-asg로 확인된다. 이미지속의 이름은 오타 : test-2-tier-wordp 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-78.bmp)
 
 ![ALB DNS 주소로 접속해 워드프레스 초기 화면(Hello world!)이 정상적으로 뜨는 것을 확인](../../.gitbook/assets/alb-access-success.png)
 
@@ -344,6 +416,8 @@ Site Address (URL):      http://<ALB DNS 주소>/wordpress
 
 이 값은 RDS(모든 EC2가 공유하는 데이터베이스)에 저장되므로, **한 번만** 수정하면 이후 Auto Scaling으로 새로 생성되는 인스턴스에도 즉시 동일하게 적용된다. 관리자 화면 접근이 어려운 경우, [RDS](../undefined/t05-rds.md)에 직접 접속해 SQL로 같은 값을 수정할 수도 있다.
 
+![EC2  -->  로드밸런서  -->  로드밸런서 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-79.png)
+
 ```sql
 -- Bastion Host 등을 통해 RDS 접속 후
 USE wordpress;
@@ -360,9 +434,19 @@ UPDATE wp_options SET option_value='http://<ALB DNS 주소>/wordpress' WHERE opt
 
 `WordPress Address (URL)` / `Site Address (URL)`를 ALB DNS 주소로 수정한 뒤, 브라우저 개발자 도구(F12) 콘솔을 열어 CORS 에러가 더 이상 발생하지 않는지 확인한다.
 
+![프로토콜 : HTTP , 포트 : 80 , 기본 작업 : test-2-tier-target-group 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-84.png)
+
+![사이트 접속후 F12 키를 누르면 에러가 확인된다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-88.png)
+
+![처음 생성한 EC2 인스턴스의 퍼블릭 IP 주소를 확인해보면 위의 에러에서 표시되는 IP 주소와 동일하다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-90.png)
+
 ![ALB DNS 주소로 접속, 개발자 도구 콘솔을 열어도 CORS 에러 등 에러가 전혀 표시되지 않음을 확인](../../.gitbook/assets/alb-fixed-devtools-no-errors.png)
 
 콘솔뿐 아니라 실제 화면도 CSS·이미지 등 정적 리소스가 모두 정상적으로 로드되어 깨짐 없이 표시되는지 최종 확인한다.
+
+![로드밸런서가 생성되고 시간이 지나면 상태가 활성으로 변경된다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-85.png)
+
+![사이트 접속후 F12 키를 누르면 에러가 확인된다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-89.png)
 
 ![ALB DNS 주소로 최종 정상 접속을 확인 — 정적 리소스 깨짐 없이 정상 렌더링](../../.gitbook/assets/alb-fixed-final-verification.png)
 
@@ -376,6 +460,8 @@ UPDATE wp_options SET option_value='http://<ALB DNS 주소>/wordpress' WHERE opt
 * **아웃바운드**: HTTP, `0.0.0.0/0`
 
 보안 그룹 생성 화면에서 이름(예: `test-alb-wordpress-sg`)과 VPC를 지정하고, 인바운드 규칙은 비워둔 채 아웃바운드 규칙에만 HTTP · `0.0.0.0/0`을 추가한다.
+
+![로그인 페이지에서 username과 password를 입력하면 로그인할 수 있다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-91.png)
 
 ![ALB용 보안 그룹 생성 화면 — 인바운드 없음, 아웃바운드 HTTP 0.0.0.0/0](../../.gitbook/assets/alb-security-group-create.png)
 
@@ -402,9 +488,13 @@ UPDATE wp_options SET option_value='http://<ALB DNS 주소>/wordpress' WHERE opt
 
 3. **ALB**에는 ALB용 보안 그룹을 적용하고 기존 `default`는 제거한다. ALB 콘솔 → 로드 밸런서 선택 → **보안** 탭 → **편집**에서 보안 그룹을 `test-alb-wordpress-sg`로 교체한다.
 
+![로드밸런서의 DNS 이름을 복사 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-93.png)
+
 ![ALB 상세 화면의 보안 탭에서 보안 그룹을 편집하는 화면](../../.gitbook/assets/alb-security-group-edit.png)
 
 적용 후에는 EC2의 퍼블릭 DNS로 직접 접속을 시도하면 연결이 거부되고, 반드시 ALB DNS를 통해서만 사이트에 접속할 수 있게 된다. 실제로 ALB DNS로 접속해 새 글(`new title` / `new content`)이 정상적으로 보이는지 확인해 마무리한다.
+
+![로드밸런서 DNS 주소: test-2-tier-wordpress-alb-331906121.ap-northeast-2.elb.a 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-94.png)
 
 ![보안 그룹 적용 후 ALB DNS로 접속한 워드프레스 블로그 — 새 글이 정상 노출됨](../../.gitbook/assets/wordpress-blog-after-sg-hardening.png)
 
@@ -421,3 +511,27 @@ UPDATE wp_options SET option_value='http://<ALB DNS 주소>/wordpress' WHERE opt
 7. EFS 파일 시스템 삭제
 8. AMI 등록 취소 (이미지 삭제)
 9. AMI에 연결된 EBS 스냅샷 삭제
+
+![새 게시물 작성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-1.png)
+
+![계시물 작성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-2.png)
+
+![default 보안그룹은 모든 트래픽을 허용한다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-96.png)
+
+![EC2  -->  보안 그룹  -->  보안 그룹 생성 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-97.png)
+
+![아웃 바운드 규칙: HTTP , 0.0.0.0/0 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-99.png)
+
+![인스턴스  -->  test-3-tier-ec2 인스턴스 선택  -->  작업  -->  보안  -->  보안 그룹 변경 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-105.png)
+
+![test-3-tier-ec2의 퍼블릭 DNS 주소 복사 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-107.png)
+
+![로드 밸런서의 DNS 주소를 복사 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-109.png)
+
+![시작 템플릿 -->  test-3-tier-template 선택 -->  시작템플릿 버전 새부정보 -->  작업 -->  템플 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-111.png)
+
+![나머지는 모두 그대로 사용 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-113.png)
+
+![Auto Scaling  --> test-3-tier-wordpress 선택  -->  동작 -->  편집 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-114.png)
+
+![앞으로 트래픽이 증가해서 EC2 인스턴스가 생성될 때 수정한 시작 템플릿의 보안그룹이 적용되어 생성된다. 화면](../../.gitbook/assets/g08-wordpress-3tier-hwp10-116.png)

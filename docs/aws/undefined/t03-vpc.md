@@ -187,6 +187,8 @@
 * 목적지 `172.31.2.125` → `172.31.0.0/16` 경로 참조
 * 목적지 `1.23.5.123` → `0.0.0.0/0` 경로 참조
 
+![목적지 1.23.5.123: 0.0.0.0/0 경로 참조 화면](../../.gitbook/assets/t03-vpc-hwp04-5.png)
+
 **Private Subnet의 통신 제약**
 
 * Private Subnet은 Internet Gateway와 연결되지 않았기 때문에 외부로 통신할 수 없다. 단, 내부 간 통신은 가능하다.
@@ -194,6 +196,8 @@
 ![Private Subnet은 Internet Gateway 없이는 외부와 통신할 수 없는 구조](../../.gitbook/assets/private-subnet-no-external.png)
 
 * Private Subnet의 Route Table에는 외부로 가는 경로가 없기 때문에 외부로 통신할 수 없다.
+
+![목적지 1.23.5.123: 0.0.0.0/0 경로 참조 화면](../../.gitbook/assets/t03-vpc-hwp04-6.png)
 
 ![Public/Private Subnet의 Route Table 구성 비교](../../.gitbook/assets/private-subnet-route-table-no-igw.png)
 
@@ -261,6 +265,8 @@
 * 외부 인터넷에서 직접 프라이빗 인스턴스로 접속하는 것은 차단되며, Bastion Host를 통한 제한적 접근만 허용된다.
 * 보안 강화를 위해 일반적으로 MFA(다중 인증), IP 화이트리스트, 최소 권한 원칙과 함께 사용된다.
 
+![외부에서 바로 접속 못 하고 반드시 Bastion Host를 거쳐야 함 접속 경로 제한 화면](../../.gitbook/assets/t03-vpc-hwp04-1.png)
+
 ![관리자가 Bastion Host를 경유해 프라이빗 서브넷 EC2에 접근하는 흐름](../../.gitbook/assets/bastion-host-flow.png)
 
 ### 2) NAT Gateway / NAT Instance
@@ -284,6 +290,8 @@
 
 * **결론**: 운영 편의성과 안정성을 중시한다면 NAT Gateway를 권장하며, 비용 절감 또는 세밀한 제어가 필요하다면 NAT Instance를 선택할 수 있다.
 * 프라이빗 서브넷의 EC2 인스턴스는 관리자는 Bastion Host를 통해 접속하고, 소프트웨어 업데이트 및 외부 리소스 다운로드는 NAT Gateway/Instance를 통해 수행하는 이중 구조로 운영하는 것이 일반적이다.
+
+![NAT Gateway는 유료 서비스 화면](../../.gitbook/assets/t03-vpc-hwp04-28.png)
 
 ## 8. 보안 그룹
 
@@ -378,6 +386,8 @@
 | SeG-EC2 Inbound | pl-123456 | 80    | HTTP 접근 허용  |
 | SeG-RDS Inbound | pl-123456 | 3306  | MySQL 접근 허용 |
 
+![즉, 동일한 IP들을 대상으로 EC2 인스턴스에 HTTP 접근을 허용하는 규칙을 설정한 사례 화면](../../.gitbook/assets/t03-vpc-hwp04-15.png)
+
 * 즉, 동일한 IP 목록을 Prefix List(`pl-123456`)로 묶어 EC2에는 HTTP(80), RDS에는 MySQL(3306) 접근을 한 번에 허용하는 방식이다. IP 목록이 바뀌면 Prefix List 엔트리 한 곳만 수정하면 EC2·RDS 양쪽 규칙에 모두 반영된다.
 
 ![여러 개별 IP를 하나의 Prefix List로 묶어 EC2·RDS 보안그룹에 함께 적용하는 예시](../../.gitbook/assets/prefix-list-source-example.png)
@@ -407,6 +417,8 @@
 ![ELB를 거치지 않은 사용자의 직접 접근은 EC2 보안그룹에서 차단되는 구조](../../.gitbook/assets/asg-sg-source-direct-denied.png)
 
 * RDS 역시 마찬가지로 RDS의 보안그룹에서 Source를 Auto Scaling으로 만들어진 EC2들이 사용하는 보안그룹으로 설정하게 되면, EC2가 증가하거나 IP 주소가 변경되어도 자동으로 해당 EC2 서버의 트래픽만 허용하게 된다.
+
+![즉, 여러 개의 개별 IP를 지정하여 DB 인스턴스RDS에 MySQL 접근을 허용하는 규칙을 설정한 사례 화면](../../.gitbook/assets/t03-vpc-hwp04-16.png)
 
 ![RDS 보안그룹 Source를 EC2 보안그룹으로 설정해 Auto Scaling으로 늘어난 EC2도 자동 허용되는 구조](../../.gitbook/assets/rds-sg-source-asg.png)
 
@@ -446,6 +458,8 @@
 
 * **VPC Endpoint**는 VPC 안의 리소스가 인터넷 게이트웨이(IGW)나 NAT 게이트웨이 없이도 AWS 서비스(S3, DynamoDB 등)에 직접 연결할 수 있게 해주는 기능이다.
 * VPC 내부에서 특정 AWS 서비스로 사설 네트워크(Private Network)를 통해 접속할 수 있도록 해주는 엔드포인트로, 트래픽이 인터넷으로 나가지 않고 AWS 내부망을 통해 서비스에 도달한다. 이를 통해 **보안 강화**와 **비용 절감**을 동시에 얻을 수 있다.
+
+![트래픽이 인터넷으로 나가지 않고 AWS 내부망을 통해 서비스에 도달 --> 보안 강화 + 비용 절감 화면](../../.gitbook/assets/t03-vpc-hwp05-1.png)
 
 ### 1) Interface Endpoint (PrivateLink 기반)
 
@@ -533,6 +547,8 @@
 * **라우팅 설정 필수**: Peering 연결만 만들고 라우팅 테이블을 수정하지 않으면 서버끼리 서로를 찾지 못한다. 반드시 상대 VPC로 가는 경로를 라우팅 테이블에 등록해야 한다.
 
 **활용 예시**: 동일 조직 내 여러 VPC 환경을 연결하여 애플리케이션 모듈 분리 후 내부 통신, 별도 계정으로 분리된 개발 환경과 운영 환경의 안전한 연결, 멀티 리전 환경에서 데이터 복제·백업·장애조치(Failover) 지원.
+
+![VPC1과 VPC2는 IP 주소 대역이 달라야 한다. 화면](../../.gitbook/assets/t03-vpc-hwp05-7.png)
 
 ## 14. Transit Gateway
 

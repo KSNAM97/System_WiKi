@@ -356,6 +356,8 @@ EC2로 접속하는 방법은 여러 가지가 있지만 가장 대표적인 방
 
 **사용 예**: 고정 IP가 필요한 서비스(도메인 고정, 방화벽 화이트리스트 등록 등), EC2 인스턴스 교체 시에도 동일한 IP 유지
 
+![# 유저 데이터User Data와 메타 데이터Meta Data 화면](../../.gitbook/assets/t02-ec2-deployment-hwp02-11.png)
+
 ## 11. 유저 데이터와 메타 데이터
 
 유저 데이터(User Data)와 메타 데이터(Meta Data)는 AWS EC2에서 인스턴스를 설정하거나 정보를 얻을 때 자주 쓰이는 기능이다.
@@ -395,6 +397,8 @@ echo "Hello AWS" > /var/www/html/index.html
 * \*\*IMDS(Instance Metadata Service)\*\*를 사용하여 조회, 별도의 AWS CLI 명령 없이 HTTP 요청으로 조회 가능
   * IPv4 주소: `169.254.169.254` (일반 인터넷을 통해 외부에서 직접 접근하는 주소가 아님)
   * 일반적으로 해당 EC2 인스턴스 내부에서 IMDS에 접근하여 사용 (`http://169.254.169.254/latest/meta-data/`)
+
+![# EC2 권한 부여 화면](../../.gitbook/assets/t02-ec2-deployment-hwp02-12.png)
 
 **메타 데이터에서 확인 가능한 대표적인 정보**: Instance ID, AMI ID, Instance Type, Private IP, Public IPv4 주소(있는 경우), Hostname, MAC 주소, 네트워크 인터페이스 관련 정보, Security Group 정보, IAM Role 관련 정보, Availability Zone, Region 관련 정보, Block Device Mapping 정보
 
@@ -1077,6 +1081,10 @@ EC2를 잘 활용하려면 언제나 인스턴스가 떨어질 수 있다는 전
 * 모든 EC2 인스턴스는 동일한 EFS 파일 시스템을 마운트하여 사용한다. (예: EC2-1, EC2-2, EC2-3 모두 `/mnt/efs`로 마운트)
 * 모든 인스턴스가 동일한 디렉터리를 공유하므로, 어느 서버에 접속하더라도 동일한 데이터를 사용할 수 있다.
 
+![이로 인해 어느 서버에 접속하더라도 동일한 데이터를 사용할 수 있다. 화면](../../.gitbook/assets/t02-ec2-deployment-hwp03-3.png)
+
+![이로 인해 어느 서버에 접속하더라도 동일한 데이터를 사용할 수 있다. 화면](../../.gitbook/assets/t02-ec2-deployment-hwp05-10.png)
+
 ### EFS의 동작 방식 (NFS 기반)
 
 * EFS는 NFS(Network File System) 프로토콜을 기반으로 동작한다.
@@ -1123,6 +1131,10 @@ EC2를 잘 활용하려면 언제나 인스턴스가 떨어질 수 있다는 전
 * **Max I/O**: 대규모 병렬 작업과 높은 처리량이 필요한 환경에 적합하다. 빅데이터 처리, 미디어 렌더링 등에 활용된다.
 
 **주요 활용 사례**: 로그인 세션 저장소, 파일 업로드 저장 공간, 로그 파일 저장, 공용 설정 파일 관리, 컨테이너 볼륨 공유
+
+![컨테이너 볼륨 공유 화면](../../.gitbook/assets/t02-ec2-deployment-hwp03-4.png)
+
+![컨테이너 볼륨 공유 화면](../../.gitbook/assets/t02-ec2-deployment-hwp05-11.png)
 
 ### EFS 마운트 실습 (User Data)
 
@@ -1284,6 +1296,10 @@ vi /var/www/html/index.html
 | 변경되는 항목 | Public IP(Elastic IP 미사용 시), 임시 스토리지, 일부 네트워크 성능     |
 
 * Elastic IP를 사용하면 Public IP는 유지된다.
+
+![Elastic IP를 사용하면 Public IP는 유지된다. 화면](../../.gitbook/assets/t02-ec2-deployment-hwp03-6.png)
+
+![Elastic IP를 사용하면 Public IP는 유지된다. 화면](../../.gitbook/assets/t02-ec2-deployment-hwp03-7.jpg)
 
 ## 23. 실습: 웹 서버 배포 · 메타데이터 조회 · IAM 자격증명
 
